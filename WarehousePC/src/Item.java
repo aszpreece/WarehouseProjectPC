@@ -1,3 +1,4 @@
+package Files;
 
 public class Item {
 	
@@ -26,5 +27,7 @@ public class Item {
 		this.reward = reward;
 		this.weight = weight;
 	}
+	
+	
 	
 }
