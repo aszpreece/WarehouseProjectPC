@@ -18,6 +18,7 @@ public class Item {
 	 * x co-ordinate of the item.
 	 */
 	private int x;
+
 	/**
 	 * y co-ordinate of the item.
 	 */
@@ -37,6 +38,14 @@ public class Item {
 	
 	public Float getWeight(){
 		return weight;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
 	}
 	
 }

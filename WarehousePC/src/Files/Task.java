@@ -36,6 +36,9 @@ public class Task {
 		//How much reward per weight
 		this.reward = myItem.getReward()*quantity; 
 	}
+	public boolean getComplete() {
+		return completed;
+	}
 	
 	public void setComplete(boolean b){
 		this.completed = b;
@@ -47,6 +50,10 @@ public class Task {
 	
 	public int getQuantity(){
 		return this.quantity;
+	}
+	
+	public void changeQuantity(int change){
+		this.quantity += change; 
 	}
 	
 	public Float getReward(){
