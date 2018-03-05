@@ -1,29 +1,56 @@
 package Files;
 
+/*
+ * Created by Minhal - Job Selection
+ */
 public class Task {
 	
+	boolean completed = false;
 	/*
 	 * ID of the task from 'a-z' (Use this to get item from item table)
 	 */
 	private String itemId;
-	
 	/*
 	 * Number of items to pick from this location
 	 */
 	private int quantity;
+	/*
+	 * Reward for completing this task
+	 */
+	private Float reward;
+	/*
+	 * Item of task
+	 */
+	private Item myItem;
 	
-	
-	public Task(String itemId, int quantity){
+	public Task(String itemId, int quantity, Item myItem){
 		this.itemId = itemId;
 		this.quantity = quantity;
+		this.myItem = myItem;
+		setReward(myItem);
+	}
+	/*
+	 * Calculates reward for completing this task
+	 */
+	public void setReward(Item myItem){
+		//How much reward per weight
+		this.reward = myItem.getReward()*quantity; 
+	}
+	
+	public void setComplete(boolean b){
+		this.completed = b;
 	}
 	
 	public String getId(){
-		return itemId;
+		return this.itemId;
 	}
 	
 	public int getQuantity(){
-		return quantity;
+		return this.quantity;
+	}
+	
+	public Float getReward(){
+		return this.reward;
 	}
 	
 }

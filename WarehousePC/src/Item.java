@@ -1,5 +1,8 @@
 package Files;
 
+/*
+ * Created by Minhal - Job Selection
+ */
 public class Item {
 	
 	/**
@@ -28,6 +31,12 @@ public class Item {
 		this.weight = weight;
 	}
 	
+	public Float getReward(){
+		return reward;
+	}
 	
+	public Float getWeight(){
+		return weight;
+	}
 	
 }
