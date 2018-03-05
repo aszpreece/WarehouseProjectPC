@@ -6,8 +6,7 @@ import java.util.HashMap;
 /*
  * Created by Minhal - Job Selection
  */
-public class ItemTable {
-	
+public class ItemTable { 
 	/*
 	 * Stores all items into a hash map, where the key is item ID which maps to its item class
 	 */

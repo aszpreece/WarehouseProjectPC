@@ -9,7 +9,8 @@ public class FileTest {
 
 	public static void main(String[] args) throws IOException {
 		JobTable table = new JobTable();
-		//System.out.println(table.jobTable.get("1001").itemList.get(1).quantity);
+		//System.out.println(table.queue.peek().getTotalReward());
+		//System.out.println(table.getReward("1001"));
 		//table.itemTable.get("a");
 	}
 
