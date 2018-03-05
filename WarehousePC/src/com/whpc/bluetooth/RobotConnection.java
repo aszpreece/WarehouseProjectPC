@@ -4,6 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import com.whshared.network.NetworkMessage;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
@@ -35,14 +38,33 @@ public class RobotConnection implements Runnable {
 
 	@Override
 	public void run() {
+		Scanner scanner = new Scanner(System.in);
 
 		try {
 			while (true) {
-				output.writeInt(1);
+				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
+					System.out.println(m_nxt.name + " is requesting a move");
+					byte choice;
+					switch (scanner.next()) {
+					case "N" :
+						choice = NetworkMessage.MOVE_NORTH;
+						break;
+					case "S" :
+						choice = NetworkMessage.MOVE_SOUTH;
+						break;
+					case "E" :
+						choice = NetworkMessage.MOVE_EAST;
+						break;
+					case "W" :
+						choice = NetworkMessage.MOVE_WEST;
+						break;
+					}
+					output.writeByte(NetworkMessage.MOVE_EAST);
+				}
 				output.flush();
 
-				int answer = input.readInt();
-				System.out.println(m_nxt.name + " returned " + answer);
+				//int answer = input.readInt();
+				//System.out.println(m_nxt.name + " returned " + answer);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -58,8 +80,8 @@ public class RobotConnection implements Runnable {
 
 			NXTInfo[] nxts = {
 
-					new NXTInfo(NXTCommFactory.BLUETOOTH, "Anakin",
-							"0016531B5A19")};
+					new NXTInfo(NXTCommFactory.BLUETOOTH, "NXTL",
+							"001653089B0D")};
 
 			ArrayList<RobotConnection> connections = new ArrayList<>(
 					nxts.length);
