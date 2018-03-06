@@ -38,13 +38,16 @@ public class RobotConnection implements Runnable {
 
 	@Override
 	public void run() {
-		Scanner scanner = new Scanner(System.in);
-
-		try {
+		
+		byte msg = 0;
+		try(Scanner scanner = new Scanner(System.in)) {
 			while (true) {
-				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
+				System.out.println("Waiting for robot mesage");
+				msg = input.readByte();
+				System.out.println("Message recieved");
+				if (msg == NetworkMessage.REQUEST_MOVE) {
 					System.out.println(m_nxt.name + " is requesting a move");
-					byte choice;
+					byte choice = 0;
 					switch (scanner.next()) {
 					case "N" :
 						choice = NetworkMessage.MOVE_NORTH;
@@ -59,12 +62,9 @@ public class RobotConnection implements Runnable {
 						choice = NetworkMessage.MOVE_WEST;
 						break;
 					}
-					output.writeByte(NetworkMessage.MOVE_EAST);
+					output.writeByte(choice);
 				}
 				output.flush();
-
-				//int answer = input.readInt();
-				//System.out.println(m_nxt.name + " returned " + answer);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -80,8 +80,10 @@ public class RobotConnection implements Runnable {
 
 			NXTInfo[] nxts = {
 
+					new NXTInfo(NXTCommFactory.BLUETOOTH, "Poppy",
+							"001653089A83"),
 					new NXTInfo(NXTCommFactory.BLUETOOTH, "NXTL",
-							"001653089B0D")};
+					"001653089B0D")};
 
 			ArrayList<RobotConnection> connections = new ArrayList<>(
 					nxts.length);
