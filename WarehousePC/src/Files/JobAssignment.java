@@ -14,14 +14,37 @@ public class JobAssignment {
 		this.items = items;
 	}
 	
-	public void getNextTask() {
+	public void getNextPlan() {
 		Job nextJob = queue.pop();
-		
+		float robotWeight = 0;
+		float maxWeight = robot.getWeight();
 		ArrayList<Task> tasks = nextJob.getItemList();
-		
-		Float minDistance; 
-		for(Task t: tasks) {
-			
+		Task nextTask;
+		int x = robot.getX();
+		int y = robot.getY();
+		ArrayList<String> plan;
+		while((nextTask = getClosestTask(tasks, x, y)) != null) {
+			int quantity = nextTask.getQuantity();
+			Item currentItem = items.getItem(nextTask.getId());
+			if(currentItem.getWeight() * quantity + robotWeight > maxWeight) {
+				for(int i = 1; i <= quantity; i++) {
+					if(currentItem.getWeight() * i + robotWeight > maxWeight) {
+						if(i != 1) {
+							int itemsToTake = i - 1;
+							plan.add("pick" + nextTask.getId() + itemsToTake);
+							nextTask.changeQuantity(-itemsToTake);
+						}
+						plan.add("drop");
+						x = 0; // DROP LOCATION
+						y = 0; //DROP LOCATION
+						break;
+					}
+				}
+			}
+			else {
+				plan.add(nextTask.getId() + quantity);
+				nextTask.setComplete(true);;
+			}
 		}
 	}
 	
@@ -36,6 +59,15 @@ public class JobAssignment {
 			int itemX = currentItem.getX();
 			int itemY = currentItem.getY();
 			Float distance = (float) Math.sqrt(Math.pow(x - itemX, 2) + Math.pow(y - itemY, 2));
+			if (!t.getComplete() && distance < shortestDistance) {
+				closestTask = t;
+			}
+		}
+		if (shortestDistance == Float.MAX_VALUE){
+			return closestTask;
+		}
+		else {
+			return null;
 		}
 	}
 }
