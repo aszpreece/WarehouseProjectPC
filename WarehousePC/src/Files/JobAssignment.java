@@ -43,7 +43,9 @@ public class JobAssignment {
 			}
 			else {
 				plan.add(nextTask.getId() + quantity);
-				nextTask.setComplete(true);;
+				nextTask.setComplete(true);
+				x = currentItem.getX();
+				y = currentItem.getY();
 			}
 		}
 	}
