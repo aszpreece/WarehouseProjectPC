@@ -20,7 +20,6 @@ public class Job{
 	public Job(ArrayList<Task> itemList) {
 		this.itemList = itemList;
 		this.TOTAL_REWARD = getReward();
-		System.out.println(this.TOTAL_REWARD);
 	}
 	/*
 	 * Getter for attribute itemList

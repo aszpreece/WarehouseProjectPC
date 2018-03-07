@@ -34,7 +34,7 @@ public class Task {
 	 */
 	public void setReward(Item myItem){
 		//How much reward per weight
-		this.reward = myItem.getReward()*quantity; 
+		this.reward = (myItem.getReward()*quantity)/myItem.getWeight(); 
 	}
 	public boolean getComplete() {
 		return completed;

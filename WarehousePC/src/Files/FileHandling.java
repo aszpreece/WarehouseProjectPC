@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class FileHandling {
 	
-	public final static String ITEM_FILE_NAME = "Items";
-	public final static String JOBS_FILE_NAME = "Jobs";
-	public final static String ITEM_LOCATION_FILE_NAME = "ItemLocation";
+	public final static String ITEM_FILE_NAME = "items";
+	public final static String JOBS_FILE_NAME = "jobs";
+	public final static String ITEM_LOCATION_FILE_NAME = "locations";
 	private final static String FOLDER_PATH = "/src/csv/";
 	private final static String DOT_CSV = ".csv";
 	public final static String cvsSplitBy = ","; //split by a comma

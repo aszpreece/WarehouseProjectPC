@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.Queue;
 /*
  * Created by Minhal - Job Selection
  */
@@ -11,9 +13,15 @@ public class JobTable {
 	/*
 	 * Stores all items into a hash map, where the key is job ID which maps to its job class
 	 */
-	HashMap<String, Job> jobTable;
-	private static JobQueue queue = new JobQueue();
-	private static ItemTable itemTable;
+	private HashMap<String, Job> jobTable;
+	/*
+	 * Priorities all jobs into a queue based on the sum of rewards of each task
+	 */
+	private Queue<Job> queue = new PriorityQueue<Job>(new JobComparator());
+	/*
+	 * Creates item table, to pass item to each task
+	 */
+	private ItemTable itemTable = new ItemTable();;
 	
 	public JobTable() throws IOException {
 		this.jobTable = createTable();
@@ -32,21 +40,20 @@ public class JobTable {
 	}
 	/*
 	 * Pops top job from queue and returns it
+	 * returns null if queue is empty
 	 */
 	public Job popQueue(){
-		return queue.pop();
+		return queue.poll();
 	}
 	/*
 	 * Creates table based on CSV files
 	 */
-	public static HashMap<String, Job> createTable() throws IOException{
+	public HashMap<String, Job> createTable() throws IOException{
 		HashMap<String, Job> jobTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader jobs = new BufferedReader(FileHandling.getFileReader(FileHandling.JOBS_FILE_NAME));
 		//current lines we are looping
 		String jobLine = ""; 
-		//Creating itemTable
-		itemTable = new ItemTable();
 		//Loop through each line
 		while ((jobLine = jobs.readLine()) != null) {
 			//[JobID, <itemID, quantity>] <> = more than one pair
@@ -66,7 +73,7 @@ public class JobTable {
 			//Adding job onto table
             jobTable.put(key, currentJob);
             //Adding job into queue
-            queue.push(currentJob);
+            queue.add(currentJob);
 		}
 		return jobTable;
 	}
