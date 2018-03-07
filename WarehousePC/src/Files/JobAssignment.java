@@ -12,24 +12,24 @@ public class JobAssignment {
 	/**
 	 * jobs ordered in priority of utility
 	 */
-	private JobQueue queue;
-	/**
-	 * the list of robots
-	 */
-	private ArrayList<Robot> robots;
+	private JobTable queue;
 	/**
 	 * items in the warehouse
 	 */
 	private ItemTable items;
+	/**
+	 * the robot to find a plan for
+	 */
+	Robot robot;
 
 	/**
 	 * @param queue
 	 * @param robots
 	 * @param items
 	 */
-	public JobAssignment(JobQueue queue, ArrayList<Robot> robots, ItemTable items) {
+	public JobAssignment(JobTable table, Robot robot, ItemTable items) {
 		this.queue = queue;
-		this.robots = robots;
+		this.robot = robot;
 		this.items = items;
 	}
 
@@ -38,8 +38,7 @@ public class JobAssignment {
 	 */
 	public ArrayList<String> getNextPlan() {
 		// get the next highest priority job
-		Job nextJob = queue.pop();
-		Robot robot = robots.get(0);
+		Job nextJob = queue.popQueue();
 
 		float robotWeight = robot.getWeight();
 		float maxWeight = robot.maxWeight();
