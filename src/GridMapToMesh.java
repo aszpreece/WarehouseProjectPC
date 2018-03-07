@@ -25,7 +25,7 @@ public class GridMapToMesh {
 				Node node = new Node(coord.x, coord.y);// create the node for the point
 
 				// check how many neighbours the point will - check points around are valid
-				//if the neighbours are valid, connect them
+				// if the neighbours are valid, connect them
 				int noOfNeighbours = 0;// the number of neighbours
 				if (checkPointValidity(xpos - 1, ypos)) {
 					Point leftNeighbour = map.getCoordinatesOfGridPosition(xpos - 1, ypos);
@@ -54,11 +54,11 @@ public class GridMapToMesh {
 				mesh.addNode(node, noOfNeighbours);
 			}
 		}
-		//when it reaches the end of the row, call on next y value
+		// when it reaches the end of the row, call on next y value
 		ypos++;
-		if (ypos > GRID_HEIGHT  == false) {
+		if (ypos > GRID_HEIGHT == false) {
 			createCompleteMesh(ypos);
-		} 
+		}
 		return mesh;
 	}
 
