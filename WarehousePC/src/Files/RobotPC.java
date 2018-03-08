@@ -32,7 +32,7 @@ public class RobotPC implements Runnable, ButtonListener{
 	private Integer currentY;
 	
 	private Float currentWeight;
-	private Float maxWeight; // Maybe finalise
+	private Float maxWeight = 50f; // Maybe finalise
 	
 	
 	/** 
@@ -46,14 +46,6 @@ public class RobotPC implements Runnable, ButtonListener{
 	private Integer currentDirection;
 	
 	private String robotName;
-	
-	/**
-	 * Takes in the blocking queue from the 
-	 * @param movementQueue
-	 */
-	public RobotPC(BlockingQueue<Movement> movementQueue) {
-		this.movementQueue = movementQueue;
-	}
 	
 	@Override
 	public void run() {

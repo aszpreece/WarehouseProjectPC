@@ -9,39 +9,27 @@ import java.util.ArrayList;
  */
 public class JobAssignment {
 
-	/**
-	 * jobs ordered in priority of utility
-	 */
-	private JobTable queue;
+
 	/**
 	 * items in the warehouse
 	 */
 	private ItemTable items;
-	/**
-	 * the robot to find a plan for
-	 */
-	RobotPC robot;
 
 	/**
 	 * @param queue
 	 * @param robots
 	 * @param items
 	 */
-	public JobAssignment(JobTable table, RobotPC robot, ItemTable items) {
-		this.queue = table;
-		this.robot = robot;
+	public JobAssignment( ItemTable items) {
 		this.items = items;
 	}
 
 	/**
 	 * @return a string of steps the robot should take
 	 */
-	public ArrayList<String> getNextPlan() {
-		// get the next highest priority job
-		Job nextJob = queue.popQueue();
+	public ArrayList<String> getNextPlan(ArrayList<Task> tasks, RobotPC robot) {
 		float robotWeight = robot.getCurrentWeight();
 		float maxWeight = robot.getMaxWeight();
-		ArrayList<Task> tasks = nextJob.getItemList();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
@@ -62,7 +50,7 @@ public class JobAssignment {
 						// just head to the drop point
 						if (i != 1) {
 							int itemsToTake = i - 1;
-							plan.add("pick" + nextTask.getId() + itemsToTake);
+							plan.add(nextTask.getId() + itemsToTake);
 							nextTask.changeQuantity(-itemsToTake);
 						}
 						// the robot is now full so it needs to head towards the drop point
@@ -81,6 +69,7 @@ public class JobAssignment {
 				y = currentItem.getY();
 			}
 		}
+		plan.add("drop");
 		return plan;
 	}
 
@@ -90,7 +79,7 @@ public class JobAssignment {
 	 * @param x
 	 *            current simulated x position of robot
 	 * @param y
-	 *            current simulated y poisition of robt
+	 *            current simulated y position of robot
 	 * @return the closest task to the robot at the given position
 	 */
 	private Task getClosestTask(ArrayList<Task> tasks, int x, int y) {

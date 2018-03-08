@@ -43,7 +43,7 @@ public class JobTable {
 	 * returns null if queue is empty
 	 */
 	public Job popQueue(){
-		return queue.poll();
+		return queue.poll(); 
 	}
 	/*
 	 * Creates table based on CSV files
