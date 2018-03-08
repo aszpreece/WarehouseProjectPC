@@ -20,15 +20,15 @@ public class JobAssignment {
 	/**
 	 * the robot to find a plan for
 	 */
-	Robot robot;
+	RobotPC robot;
 
 	/**
 	 * @param queue
 	 * @param robots
 	 * @param items
 	 */
-	public JobAssignment(JobTable table, Robot robot, ItemTable items) {
-		this.queue = queue;
+	public JobAssignment(JobTable table, RobotPC robot, ItemTable items) {
+		this.queue = table;
 		this.robot = robot;
 		this.items = items;
 	}
@@ -39,14 +39,13 @@ public class JobAssignment {
 	public ArrayList<String> getNextPlan() {
 		// get the next highest priority job
 		Job nextJob = queue.popQueue();
-
-		float robotWeight = robot.getWeight();
-		float maxWeight = robot.maxWeight();
+		float robotWeight = robot.getCurrentWeight();
+		float maxWeight = robot.getMaxWeight();
 		ArrayList<Task> tasks = nextJob.getItemList();
 		Task nextTask;
-		int x = robot.getX();
-		int y = robot.getY();
-		ArrayList<String> plan;
+		int x = robot.getCurrentX();
+		int y = robot.getCurrentY();
+		ArrayList<String> plan = new ArrayList<String>();
 
 		// try to create a plan that includes all tasks within a job
 		while ((nextTask = getClosestTask(tasks, x, y)) != null) {
