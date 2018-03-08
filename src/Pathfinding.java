@@ -36,5 +36,6 @@ public class Pathfinding {
 
 	public static void main(String[] args) {
 		Pathfinding pathfind = new Pathfinding();
+		pathfind.pathFind();
 	}
 }

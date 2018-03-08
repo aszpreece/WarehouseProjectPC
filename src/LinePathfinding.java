@@ -16,25 +16,34 @@ public class LinePathfinding {
 	public LinePathfinding() {
 		startPos = new Pose();
 		goalPos = new Waypoint(startPos);
-		//map = //get linemap code from maputils in a new class
+		map = MapUtils.createRealWarehouse();
 		pathfinder = new ShortestPathFinder(map);
 		
 	}
 	
-	private void setStartPos(float x, float y) {
+	public void setStartPos(float x, float y) {
 		startPos.setLocation(x, y);
 	}
 	
-	private void setGoalPos(float x, float y) {
+	public void setGoalPos(float x, float y) {
 		goalPos.setLocation(x, y);
 	}
 	
-	private void pathFind() {
+	public void pathFind(/*float a, float b, float x, float y*/) {
+		/* setStartPos(a, b);
+		 * setGoalPos(x, y);
+		 */
 		try {
 			Path path = pathfinder.findRoute(startPos, goalPos, map);
+			System.out.println(path);
 		} catch (DestinationUnreachableException e) {
 			System.out.println("Unreachable Destination");
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		LinePathfinding pathfind = new LinePathfinding();
+		pathfind.pathFind();
 	}
 }
