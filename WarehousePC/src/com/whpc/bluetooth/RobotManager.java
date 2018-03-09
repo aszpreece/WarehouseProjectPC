@@ -18,36 +18,6 @@ import lejos.pc.comm.NXTInfo;
  */
 public class RobotManager implements Runnable {
 
-	public static void main(String[] args) {
-		RobotManager manager = new RobotManager();
-		//manager.addNXT("Poppy", "001653089A83");
-		manager.addNXT("LilBish", "00165317B895");
-		manager.connect();
-
-		Thread m = new Thread(manager);
-		m.start();
-
-		Queue<Byte> q = new LinkedBlockingQueue<Byte>();
-		Queue<Byte> l = new LinkedBlockingQueue<Byte>();
-
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_SOUTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_SOUTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-
-		//manager.setMovementQueue("NXTL", q);
-		manager.setMovementQueue("LilBish", l);
-	}
-
 
 	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
@@ -55,7 +25,7 @@ public class RobotManager implements Runnable {
 	/**
 	 * connects to nxts. Should be called before starting the thread.
 	 */
-	private void connect() {
+	public void connect() {
 		for (Robot connection : connections) {
 			NXTComm nxtComm;
 			try {
