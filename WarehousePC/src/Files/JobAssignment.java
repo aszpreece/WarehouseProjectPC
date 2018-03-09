@@ -1,6 +1,8 @@
 package Files;
 
+import java.awt.Point;
 import java.awt.Robot;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +16,11 @@ public class JobAssignment {
 	 * items in the warehouse
 	 */
 	private ItemTable items;
+	
+	/**
+	 * the drop location
+	 */
+	private Point DROP_LOCATION = new Point(4,4); 
 
 	/**
 	 * @param queue
@@ -27,13 +34,13 @@ public class JobAssignment {
 	/**
 	 * @return a string of steps the robot should take
 	 */
-	public ArrayList<String> getNextPlan(ArrayList<Task> tasks, RobotPC robot) {
+	public ArrayList<Step> getNextPlan(ArrayList<Task> tasks, RobotPC robot) {
 		float robotWeight = robot.getCurrentWeight();
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
-		ArrayList<String> plan = new ArrayList<String>();
+		ArrayList<Step> plan = new ArrayList<Step>();
 
 		// try to create a plan that includes all tasks within a job
 		while ((nextTask = getClosestTask(tasks, x, y)) != null) {
@@ -50,11 +57,12 @@ public class JobAssignment {
 						// just head to the drop point
 						if (i != 1) {
 							int itemsToTake = i - 1;
-							plan.add(nextTask.getId() + itemsToTake);
+							Step step = new Step(nextTask.getId(), itemsToTake, new Point(currentItem.getX(),currentItem.getY()));
+							plan.add(step);
 							nextTask.changeQuantity(-itemsToTake);
 						}
 						// the robot is now full so it needs to head towards the drop point
-						plan.add("drop");
+						plan.add(new Step("DROP", DROP_LOCATION));
 						x = 0; // DROP LOCATION
 						y = 0; // DROP LOCATION
 						break;
@@ -63,13 +71,14 @@ public class JobAssignment {
 			}
 			// all items of that task can be loaded onto the robot so that task is complete
 			else {
-				plan.add(nextTask.getId() + quantity);
+				Step step = new Step(nextTask.getId(), quantity,new Point(currentItem.getX(),currentItem.getY()));
+				plan.add(step);
 				nextTask.setComplete(true);
 				x = currentItem.getX();
 				y = currentItem.getY();
 			}
 		}
-		plan.add("drop");
+		plan.add(new Step("DROP", DROP_LOCATION));
 		return plan;
 	}
 

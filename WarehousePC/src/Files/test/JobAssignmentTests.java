@@ -1,5 +1,6 @@
 package Files.test;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +17,22 @@ import Files.ItemTable;
 import Files.JobAssignment;
 import Files.RobotPC;
 import Files.Task;
+import Files.Step;
 
 public class JobAssignmentTests {
+	
+	private final Point DROP_LOCATION = new Point(4,4);
+	
+	private final ItemTable items;
+	
+	public JobAssignmentTests() throws IOException {
+		this.items = new ItemTable();
+	}
 
 	@Test
 	public void simpleOneTaskTest() {
-		Item item = new Item(1, 1, 1.0f, 1.0f);
-		Task task = new Task("aa", 1, item);
+		Item item = items.getItem("aa");
+		Task task = new Task("aa", 1, item );
 		ArrayList<Task> tasks = new ArrayList<Task>() {
 			{
 				add(task);
@@ -30,9 +40,9 @@ public class JobAssignmentTests {
 		};
 
 		// what the plan should be:
-		ArrayList<String> percievedPlan = new ArrayList<String>();
-		percievedPlan.add("aa1");
-		percievedPlan.add("drop");
+		ArrayList<Step> percievedPlan = new ArrayList<Step>();
+		percievedPlan.add(new Step("aa", 1, new Point(item.getX(),item.getY())));
+		percievedPlan.add(new Step("DROP", DROP_LOCATION));
 		ItemTable itemTable;
 		try {
 			itemTable = new ItemTable();
@@ -43,7 +53,8 @@ public class JobAssignmentTests {
 			robot.setCurrentY(0);
 
 			JobAssignment jobAllocator = new JobAssignment(itemTable);
-			ArrayList<String> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+			ArrayList<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+			
 			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -54,8 +65,8 @@ public class JobAssignmentTests {
 
 	@Test
 	public void TwoTaskTest() {
-		Item item1 = new Item(1, 1, 1.0f, 1.0f);
-		Item item2 = new Item(2, 2, 1.0f, 1.0f);
+		Item item1 = items.getItem("aa");
+		Item item2 = items.getItem("ab");
 		Task task1 = new Task("aa", 1, item1);
 		Task task2 = new Task("ab", 1, item2);
 		ArrayList<Task> tasks = new ArrayList<Task>() {
@@ -66,10 +77,11 @@ public class JobAssignmentTests {
 		};
 
 		// what the plan should be:
-		ArrayList<String> percievedPlan = new ArrayList<String>();
-		percievedPlan.add("ab1");
-		percievedPlan.add("aa1");
-		percievedPlan.add("drop");
+		ArrayList<Step> percievedPlan = new ArrayList<Step>();
+		percievedPlan.add(new Step("ab", 1, new Point(item2.getX(),item2.getY())));
+		percievedPlan.add(new Step("aa", 1, new Point(item1.getX(),item1.getY())));
+		percievedPlan.add(new Step("DROP", DROP_LOCATION));
+		
 		ItemTable itemTable;
 		try {
 			itemTable = new ItemTable();
@@ -80,7 +92,7 @@ public class JobAssignmentTests {
 			robot.setCurrentY(3);
 
 			JobAssignment jobAllocator = new JobAssignment(itemTable);
-			ArrayList<String> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+			ArrayList<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
 			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
