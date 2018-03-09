@@ -23,16 +23,18 @@ public class Robot  {
 	private DataOutputStream output;
 	private final NXTInfo m_nxt;
 	private String name;
-	private boolean canMakeMove = false;
-	private boolean isMoving = false;
+	private volatile boolean canMakeMove = false;
+	private volatile boolean isMoving = false;
 	
 	private RobotReciever reciever;
 	private RobotSender sender;
-	private boolean requestingMove = false;
+	private volatile boolean requestingMove = false;
+	private RobotManager manager;
 
-	public Robot(NXTInfo nxt) {
+	public Robot(NXTInfo nxt, RobotManager m) {
 		m_nxt = nxt;
 		name = nxt.name;
+		manager = m;
 	}
 
 	public boolean connect(NXTComm comm) throws NXTCommException {
@@ -67,7 +69,7 @@ public class Robot  {
 		return requestingMove;
 	}
 	
-	public void setRequestingMove(boolean v) {
+	public synchronized void setRequestingMove(boolean v) {
 		requestingMove = v;
 	}
 	
@@ -79,39 +81,9 @@ public class Robot  {
 		sender.setMoveMentQueue(queue);
 	}
 
-//	@Override
-//	public void run() {
-//		byte msg = 0;
-//		try {
-//			while (!Thread.currentThread().isInterrupted()) {
-//				msg = input.readByte();
-//				if (msg == NetworkMessage.REQUEST_MOVE) {
-//					isMoving = true;
-//					canMakeMove = false;
-//					System.out.println(m_nxt.name + " is requesting a move");
-//				}
-//				output.flush();
-//			}
-//		} catch (IOException e) {
-//			//only print stack trace if the thread was not interrupted
-//			if (!Thread.currentThread().isInterrupted())
-//				e.printStackTrace();
-//		}
-//
-//	}
-	
-//	public void stop() {
-//		try {
-//			Thread.currentThread().interrupt();
-//			input.close();
-//			output.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
-	public void setMakeNextMove() {
-		canMakeMove = true;	
+	public void setMakeNextMove(boolean v) {
+		canMakeMove = v;	
 	}
 	
 	public boolean getCanMakeMove() {

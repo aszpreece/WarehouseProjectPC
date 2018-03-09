@@ -23,7 +23,6 @@ public class RobotReciever implements Runnable {
 				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
 					System.out.println(robot.getName() + " is requesting a move.");
 					robot.setRequestingMove(true);
-					System.out.println(robot.requestingMove());
 				} 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

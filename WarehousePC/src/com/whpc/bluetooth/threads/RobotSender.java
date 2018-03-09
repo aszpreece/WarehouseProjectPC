@@ -27,21 +27,33 @@ public class RobotSender implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
-			System.out.println(robot.requestingMove());
-			if (robot.requestingMove()) {
+			//System.out.println(robot.getCanMakeMove());
+			if (robot.getCanMakeMove()) {
 				try {
-					System.out.println("Sending");
+					System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
-					Byte message = NetworkMessage.MOVE_NORTH;
+					robot.setMakeNextMove(false);
+					Byte message = messageQueue.poll();
+					if (message == null) {
+						message = NetworkMessage.NO_MOVE;
+						System.out.println("Out of instructions");
+					}
 					output.writeByte(message);
 					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
 							|| message == NetworkMessage.MOVE_NORTH || message == NetworkMessage.MOVE_SOUTH) {
 						robot.setMoving(true);
 					}
+					output.flush();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//				return;
+//			}
 		}
 
 	}
