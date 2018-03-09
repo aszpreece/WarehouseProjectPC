@@ -21,7 +21,7 @@ public class LinePathfinding {
 		goalPos = new Waypoint(startPos);
 		map = createLineMap.create();
 		pathfinder = new ShortestPathFinder(map);
-		pathfinder.lengthenLines(0.1f);
+		pathfinder.lengthenLines(0.15f);
 
 	}
 
