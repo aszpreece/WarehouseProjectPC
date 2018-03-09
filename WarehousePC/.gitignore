@@ -1,0 +1,6 @@
+/bin/
+*.class
+*.nxj
+*.nxd
+*.classpath
+*.project
