@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/rp-pc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rp-shared"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/rp-utils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/WarehouseShared"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
