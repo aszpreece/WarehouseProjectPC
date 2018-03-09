@@ -1,4 +1,4 @@
-package Files;
+package types;
 
 /*
  * Created by Minhal - Job Selection

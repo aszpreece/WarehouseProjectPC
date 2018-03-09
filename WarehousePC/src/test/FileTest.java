@@ -1,8 +1,11 @@
-package Files;
+package test;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import filehandling.ItemTable;
+import filehandling.JobTable;
 
 
 public class FileTest {

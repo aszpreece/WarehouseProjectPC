@@ -1,4 +1,4 @@
-package Files;
+package filehandling;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+
+import jobmanagement.JobComparator;
+import types.Item;
+import types.Job;
+import types.Task;
 /*
  * Created by Minhal - Job Selection
  */

@@ -1,4 +1,4 @@
-package Files;
+package types;
 
 import java.awt.geom.Point2D;
 

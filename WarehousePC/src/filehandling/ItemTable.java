@@ -1,8 +1,10 @@
-package Files;
+package filehandling;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
+
+import types.Item;
 /*
  * Created by Minhal - Job Selection
  */

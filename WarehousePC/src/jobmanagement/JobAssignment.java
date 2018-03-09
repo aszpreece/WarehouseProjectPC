@@ -1,9 +1,15 @@
-package Files;
+package jobmanagement;
 
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import filehandling.ItemTable;
+import types.Item;
+import types.RobotPC;
+import types.Step;
+import types.Task;
 
 /**
  * @author timch

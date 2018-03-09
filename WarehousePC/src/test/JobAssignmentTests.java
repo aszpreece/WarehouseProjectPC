@@ -1,4 +1,4 @@
-package Files.test;
+package test;
 
 import java.awt.Point;
 import java.io.IOException;
@@ -12,12 +12,12 @@ import org.junit.Test;
 
 import com.sun.xml.internal.ws.policy.AssertionSet;
 
-import Files.Item;
-import Files.ItemTable;
-import Files.JobAssignment;
-import Files.RobotPC;
-import Files.Task;
-import Files.Step;
+import filehandling.ItemTable;
+import jobmanagement.JobAssignment;
+import types.Item;
+import types.RobotPC;
+import types.Step;
+import types.Task;
 
 public class JobAssignmentTests {
 	

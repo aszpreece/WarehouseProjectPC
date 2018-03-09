@@ -1,7 +1,10 @@
-package Files;
+package jobmanagement;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import filehandling.ItemTable;
+import filehandling.JobTable;
 
 public class JobManagerServer {
 	

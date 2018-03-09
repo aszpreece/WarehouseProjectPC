@@ -1,5 +1,7 @@
-package Files;
+package jobmanagement;
 import java.util.Comparator;
+
+import types.Job;
 
 /*
  * Created by Minhal - Job Selection
