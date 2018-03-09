@@ -4,8 +4,6 @@ import lejos.robotics.navigation.Pose;
 import lejos.robotics.navigation.Waypoint;
 import lejos.robotics.pathfinding.Path;
 import lejos.robotics.pathfinding.ShortestPathFinder;
-import rp.robotics.mapping.MapUtils;
-
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -21,7 +19,7 @@ public class LinePathfinding {
 	public LinePathfinding() {
 		startPos = new Pose();
 		goalPos = new Waypoint(startPos);
-		map = MapUtils.createRealWarehouse();
+		map = createLineMap.create();
 		pathfinder = new ShortestPathFinder(map);
 
 	}
@@ -46,7 +44,10 @@ public class LinePathfinding {
 		 * setStartPos(a, b); setGoalPos(x, y);
 		 */
 
-		setGoalPos(1,1);
+		//0,0 is 0.17, 0.155
+		
+		setStartPos(0, 0.3f);
+		setGoalPos(0.6f,0.3f);
 		
 		Path path = new Path();
 
