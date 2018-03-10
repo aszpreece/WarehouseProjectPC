@@ -17,7 +17,13 @@ public class Job{
 	 */
 	private Float TOTAL_REWARD;
 	
-	public Job(ArrayList<Task> itemList) {
+	private String jobID;
+	
+	public String getJobID() {
+		return jobID;
+	}
+	public Job(String jobID, ArrayList<Task> itemList) {
+		this.jobID = jobID;
 		this.itemList = itemList;
 		this.TOTAL_REWARD = getReward();
 	}

@@ -1,86 +1,116 @@
 package jobmanagement;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import com.whshared.network.NetworkMessage;
+
+import bluetooth.RobotManager;
 
 import filehandling.ItemTable;
 import filehandling.JobTable;
+import types.Job;
+import types.RobotPC;
+import types.Step;
+import types.Task;
 
 public class JobManagerServer {
-	
+
 	ItemTable itemTable;
 	JobTable jobTable;
-	
-	public JobManagerServer(){
-		
+
+	public JobManagerServer() {
+
 		try {
 			this.jobTable = new JobTable();
 			this.itemTable = new ItemTable();
-			
-			
-			
-			
-			
-			
-		} catch (FileNotFoundException i){
-			//File not found
+
+		} catch (FileNotFoundException i) {
+			// File not found
 			i.printStackTrace();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
 
 	public static void main(String[] args) {
 
-		/*
-		 * Make first actions threads so they can happen at the same time: 
-		 * 
-		 * Localisation takes the longest so start that first. 
-		 * 
-		 * Start reading and decoding files that takes less time.
-		 * 
-		 * Then once reading and decoding files start calculating job
-		 * selection (If it doesn't require information about robot locations).
-		 */
+		try {
+			ItemTable itemTable = new ItemTable();
+			JobTable jobTable = new JobTable();
 
-		
-		
-		/*
-		 * Starting with localisation (This only works if implementation is complete
-		 * before starting job allocation). (FOR A SINGLE ROBOT)
-		 */
-		//RobotLocalizer rl = new RobotLocalizer();
-		//rl.start();
+			RobotManager robotManager = new RobotManager();
+			robotManager.addNXT("LilBish", "00165317B895");
+			//robotManager.addNXT("Poppy", "001653089A83");
+			robotManager.connect();
+			
+			Thread m = new Thread(robotManager);
+			m.start();
+			
+			//robotManager.start();
+			
+			RobotPC r1 = new RobotPC();
+			r1.setCurrentX(0);
+			r1.setCurrentY(0);
+			r1.setCurrentWeight(0.0f);
 
-		// Run the JobSelector/Classifier if it doesn't require knowledge of robot location
-		//JobSelecter js = new JobSelecter();
-		// Or
-		//JobClassifier jc = new JobClassifier();
-		
-//		
-//		try {
-//			/*
-//			 * This will change in a model where the job selector keeps running
-//			 * for the duration of the system
-//			 */
-//			// Wait for the job selector to finish as it is necessary to continue
-//			js.join();
-//		
-//		
-//			// Once localisation is complete we can continue
-//			rl.join();
-//		} catch (InterruptedException e) {
-//			// Something went wrong abandon ship
-//			e.printStackTrace();
-//		}
-//		
-//		Integer currentX = rl.getCurrentX();
-//		Integer currentY = rl.getCurrentY();
-//		Integer currentDirection = rl.getCurrentDirection(); // Get current direction in degrees (0, 90, 180 or 270)
-//		
+			JobAssignment planner = new JobAssignment(itemTable);
+
+			Job currentJob = jobTable.popQueue();
+			
+			ArrayList<Task> tasks = currentJob.getItemList();
+
+			ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
+
+			Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
+			// Queue<NetworkMessage> messages = new Queue<NetworkMessage>();
+			Queue<Byte> messages = new LinkedBlockingQueue<Byte>();
+			//robotManager.setMovementQueue("LilBish", messages);
+			System.out.println("JobID: " + currentJob.getJobID());
+			for (Step s : steps) {
+				System.out.println("");
+				if (s.getCommand().length() == 2) {
+				System.out.println("GET: " + s.getQuantity() + " of " + s.getCommand() + "- LOCATE TO: " + s.getCoordinate());
+				}
+				else {
+					System.out.println("route to drop off point");
+				}
+				// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
+				spoofRoutePlanning(messages);
+				robotManager.setMovementQueue("LilBish", messages);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			// This is bad
+			System.exit(0);
+		}
+	}
+
+	public static void spoofRoutePlanning(Queue<Byte> messages) throws IOException {
+		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
+		String input;
+		System.out.println("Input a direction sequence (input '.' to finish):\n");
+		while (!(input = user.readLine()).equals(".")) {
+			if (input.equals("n")) {
+				messages.add(NetworkMessage.MOVE_NORTH);
+			} else if (input.equals("e")) {
+				messages.add(NetworkMessage.MOVE_EAST);
+			} else if (input.equals("s")) {
+				messages.add(NetworkMessage.MOVE_SOUTH);
+			} else if (input.equals("w")) {
+				messages.add(NetworkMessage.MOVE_WEST);
+			}
+		}
+
 	}
 
 }

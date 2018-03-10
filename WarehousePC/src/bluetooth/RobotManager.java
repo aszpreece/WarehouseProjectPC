@@ -1,4 +1,4 @@
-package com.whpc.bluetooth;
+package bluetooth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +16,11 @@ import lejos.pc.comm.NXTInfo;
 /**
  * @author tap747 May be merged or removed later.
  */
-public class RobotManager implements Runnable {
-
+public class RobotManager extends Thread {
 
 	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
-	
+
 	/**
 	 * connects to nxts. Should be called before starting the thread.
 	 */
@@ -38,23 +37,26 @@ public class RobotManager implements Runnable {
 		}
 	}
 
-
-	/** 
+	/**
 	 * Adds an nxt to the manager.
-	 * @param name Name of the nxt
-	 * @param address address of nxt
+	 * 
+	 * @param name
+	 *            Name of the nxt
+	 * @param address
+	 *            address of nxt
 	 * @return A robot object representing the robot.
 	 */
 	public Robot addNXT(String name, String address) {
 		NXTInfo nxt = new NXTInfo(NXTCommFactory.BLUETOOTH, name, address);
 		NXTS.add(nxt);
-		Robot r = new Robot(nxt, this) ;
+		Robot r = new Robot(nxt, this);
 		connections.add(r);
-		return(r);
+		return (r);
 	}
 
 	/**
 	 * sets a robot to do a particular task.
+	 * 
 	 * @param robotName
 	 * @param messages
 	 */
@@ -67,8 +69,7 @@ public class RobotManager implements Runnable {
 	}
 
 	/**
-	 * flags that all the robots are ready to move and the time step can
-	 * advance.
+	 * flags that all the robots are ready to move and the time step can advance.
 	 */
 	public void setReady(boolean v) {
 		for (Robot c : connections) {
@@ -91,7 +92,7 @@ public class RobotManager implements Runnable {
 	public void run() {
 		while (true) {
 			if (this.checkReady()) {
-				System.out.println("All ready for instructions!");
+				//System.out.println("All ready for instructions!");
 				this.setReady(true);
 			}
 			try {

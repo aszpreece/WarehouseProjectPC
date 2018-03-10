@@ -74,7 +74,7 @@ public class JobTable {
 				Task crntTask = new Task(itemId, quantity, crntItm);
 				taskList.add(crntTask);
 			}
-			Job currentJob = new Job(taskList);
+			Job currentJob = new Job(key, taskList);
 			//Adding job onto table
             jobTable.put(key, currentJob);
             //Adding job into queue

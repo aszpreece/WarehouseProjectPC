@@ -1,4 +1,4 @@
-package com.whpc.bluetooth.threads;
+package bluetooth.threads;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.whpc.bluetooth.Robot;
+import bluetooth.Robot;
 import com.whshared.network.NetworkMessage;
 
 public class RobotSender implements Runnable {
@@ -29,14 +29,20 @@ public class RobotSender implements Runnable {
 		while (true) {
 			//System.out.println(robot.getCanMakeMove());
 			if (robot.getCanMakeMove()) {
+				/*try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}*/
 				try {
-					System.out.println("Sending to " + robot.getName());
+					//System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
 					Byte message = messageQueue.poll();
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
-						System.out.println("Out of instructions");
+						//System.out.println("Out of instructions");
 					}
 					output.writeByte(message);
 					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST

@@ -3,14 +3,9 @@ package test;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.concurrent.BlockingQueue;
 import org.junit.Assert;
 
 import org.junit.Test;
-
-import com.sun.xml.internal.ws.policy.AssertionSet;
 
 import filehandling.ItemTable;
 import jobmanagement.JobAssignment;

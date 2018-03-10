@@ -1,9 +1,9 @@
-package com.whpc.bluetooth.threads;
+package bluetooth.threads;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import com.whpc.bluetooth.Robot;
+import bluetooth.Robot;
 import com.whshared.network.NetworkMessage;
 
 public class RobotReciever implements Runnable {
@@ -21,7 +21,7 @@ public class RobotReciever implements Runnable {
 		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
-					System.out.println(robot.getName() + " is requesting a move.");
+					//System.out.println(robot.getName() + " is requesting a move.");
 					robot.setRequestingMove(true);
 				} 
 			} catch (IOException e) {

@@ -1,10 +1,9 @@
-package com.whpc.main;
+package main;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.whpc.bluetooth.RobotManager;
-import com.whpc.pathfinding.LinePathfinding;
+import bluetooth.RobotManager;
 import com.whshared.network.NetworkMessage;
 
 import lejos.robotics.pathfinding.Path;
@@ -12,7 +11,7 @@ import lejos.robotics.pathfinding.Path;
 public class MainTest {
 
 	public static void main(String[] args) {
-		LinePathfinding pathfind = new LinePathfinding();
+		//LinePathfinding pathfind = new LinePathfinding();
 		
 		RobotManager manager = new RobotManager();		
 		//manager.addNXT("Poppy", "001653089A83");
@@ -39,11 +38,11 @@ public class MainTest {
 		l.add(NetworkMessage.MOVE_NORTH);
 		l.add(NetworkMessage.MOVE_NORTH);
 
-		//manager.setMovementQueue("NXTL", q);
+		manager.setMovementQueue("LilBish", q);
 		
 
 
-		Path path = pathfind.pathFind();
+		/*Path path = pathfind.pathFind();
 		Queue<Byte> directions = pathfind.pathToDirections(path);
 		
 		System.out.println(directions.toString());
@@ -54,5 +53,6 @@ public class MainTest {
 			e.printStackTrace();
 		}
 		manager.setMovementQueue("LilBish", directions);
+		*/
 	}
 }

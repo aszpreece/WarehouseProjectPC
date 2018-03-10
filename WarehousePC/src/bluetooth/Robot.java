@@ -1,23 +1,17 @@
-package com.whpc.bluetooth;
+package bluetooth;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Queue;
-import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
 
-import com.whpc.bluetooth.threads.RobotReciever;
-import com.whpc.bluetooth.threads.RobotSender;
-import com.whshared.network.NetworkMessage;
+import bluetooth.threads.*;
 
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
-import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 
-public class Robot  {
+public class Robot {
 
 	private DataInputStream input;
 	private DataOutputStream output;
@@ -34,6 +28,7 @@ public class Robot  {
 	public Robot(NXTInfo nxt, RobotManager m) {
 		m_nxt = nxt;
 		name = nxt.name;
+		// Why is the manager imported?
 		manager = m;
 	}
 

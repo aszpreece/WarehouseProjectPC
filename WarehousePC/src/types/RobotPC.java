@@ -1,17 +1,13 @@
 package types;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import lejos.nxt.Button;
-import lejos.nxt.ButtonListener;
 
 /**
  * Robot skeleton for other people to work with
  * @author b1999
  *
  */
-public class RobotPC implements Runnable, ButtonListener{
+public class RobotPC {
 	
 	public static final int NORTH = 0;
 	public static final int EAST = 90;
@@ -47,34 +43,6 @@ public class RobotPC implements Runnable, ButtonListener{
 	
 	private String robotName;
 	
-	@Override
-	public void run() {
-		
-		/*
-		 * Add A button listener thread that can listen for button presses
-		 */
-		
-		while(true) {
-			try {
-				Movement nextMovement = movementQueue.take();
-				
-				// Check direction isn't null
-				if(nextMovement == null) {
-					/*
-					 * Report Error
-					 */
-					// Go back to the beginning of the loop
-					continue; // or break
-				}
-				
-				/*
-				 * Code here for implementing movement
-				 */
-				
-			} catch (InterruptedException e) {}
-		}
-	}
-	
 	/**
 	 * Set to a value NORTH (0), EAST (90), SOUTH (180), WEST (270)
 	 * @param direction The direction to set
@@ -86,17 +54,6 @@ public class RobotPC implements Runnable, ButtonListener{
 	public boolean checkJobRunning() {
 		return !cancelJob;
 	}
-	
-	@Override
-	public void buttonPressed(Button b) {
-		if(Button.ESCAPE.isDown()) {
-			cancelJob = true;
-		}
-		
-	}
-
-	@Override
-	public void buttonReleased(Button b) {}
 
 	/** 
 	 * As a form a data storage the robot should know the current job its carrying out 
