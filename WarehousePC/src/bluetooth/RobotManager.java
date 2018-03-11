@@ -3,6 +3,7 @@ package bluetooth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -60,7 +61,7 @@ public class RobotManager extends Thread {
 	 * @param robotName
 	 * @param messages
 	 */
-	public void setMovementQueue(String robotName, Queue<Byte> messages) {
+	public void setMovementQueue(String robotName, BlockingQueue<Byte> messages) {
 		for (Robot r : connections) {
 			if (r.getName().equals(robotName)) {
 				r.setMoveQueue(messages);

@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 import bluetooth.threads.*;
 
@@ -72,7 +73,7 @@ public class Robot {
 		return name;
 	}
 	
-	public void setMoveQueue(Queue<Byte> queue) {
+	public void setMoveQueue(BlockingQueue<Byte> queue) {
 		sender.setMoveMentQueue(queue);
 	}
 

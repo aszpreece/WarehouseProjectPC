@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import bluetooth.RobotManager;
@@ -21,8 +22,8 @@ public class MainTest {
 		Thread m = new Thread(manager);
 		m.start();
 
-		Queue<Byte> q = new LinkedBlockingQueue<Byte>();
-		Queue<Byte> l = new LinkedBlockingQueue<Byte>();
+		BlockingQueue<Byte> q = new LinkedBlockingQueue<Byte>();
+		BlockingQueue<Byte> l = new LinkedBlockingQueue<Byte>();
 
 		q.add(NetworkMessage.MOVE_NORTH);
 		q.add(NetworkMessage.MOVE_NORTH);

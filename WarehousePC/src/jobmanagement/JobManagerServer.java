@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.whshared.network.NetworkMessage;
@@ -72,9 +73,10 @@ public class JobManagerServer {
 
 			Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
 			// Queue<NetworkMessage> messages = new Queue<NetworkMessage>();
-			Queue<Byte> messages = new LinkedBlockingQueue<Byte>();
+			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
 			//robotManager.setMovementQueue("LilBish", messages);
 			System.out.println("JobID: " + currentJob.getJobID());
+			robotManager.setMovementQueue("LilBish", messages);
 			for (Step s : steps) {
 				System.out.println("");
 				if (s.getCommand().length() == 2) {
@@ -85,7 +87,7 @@ public class JobManagerServer {
 				}
 				// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
 				spoofRoutePlanning(messages);
-				robotManager.setMovementQueue("LilBish", messages);
+				//robotManager.setMovementQueue("LilBish", messages);
 			}
 
 		} catch (IOException e) {
@@ -95,19 +97,22 @@ public class JobManagerServer {
 		}
 	}
 
-	public static void spoofRoutePlanning(Queue<Byte> messages) throws IOException {
+	public static void spoofRoutePlanning(BlockingQueue<Byte> messages) throws IOException {
 		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
 		String input;
 		System.out.println("Input a direction sequence (input '.' to finish):\n");
 		while (!(input = user.readLine()).equals(".")) {
 			if (input.equals("n")) {
-				messages.add(NetworkMessage.MOVE_NORTH);
+				messages.offer(NetworkMessage.MOVE_NORTH);
 			} else if (input.equals("e")) {
-				messages.add(NetworkMessage.MOVE_EAST);
+				messages.offer(NetworkMessage.MOVE_EAST);
 			} else if (input.equals("s")) {
-				messages.add(NetworkMessage.MOVE_SOUTH);
+				messages.offer(NetworkMessage.MOVE_SOUTH);
 			} else if (input.equals("w")) {
-				messages.add(NetworkMessage.MOVE_WEST);
+				messages.offer(NetworkMessage.MOVE_WEST);
+			} else if (input.equals("p")) {
+				messages.offer(NetworkMessage.AWAIT_PICKUP);
+				break;
 			}
 		}
 

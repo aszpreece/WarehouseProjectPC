@@ -13,14 +13,14 @@ public class RobotSender implements Runnable {
 
 	private DataOutputStream output;
 	private Robot robot;
-	Queue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
+	BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
 
 	public RobotSender(Robot robot, DataOutputStream output) {
 		this.robot = robot;
 		this.output = output;
 	}
 
-	public void setMoveMentQueue(Queue<Byte> m) {
+	public void setMoveMentQueue(BlockingQueue<Byte> m) {
 		messageQueue = m;
 	}
 
@@ -39,7 +39,7 @@ public class RobotSender implements Runnable {
 					//System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
-					Byte message = messageQueue.poll();
+					Byte message = messageQueue.take();
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
 						//System.out.println("Out of instructions");
@@ -51,6 +51,9 @@ public class RobotSender implements Runnable {
 					}
 					output.flush();
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
