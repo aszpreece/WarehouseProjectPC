@@ -68,27 +68,36 @@ public class JobAssignment {
 							int itemsToTake = i - 1;
 							Step step = new Step(nextTask.getId(), itemsToTake, new Point(currentItem.getX(),currentItem.getY()));
 							plan.add(step);
+							//robotWeight += currentItem.getWeight() * itemsToTake;
 							nextTask.changeQuantity(-itemsToTake);
 							logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
 						}
 						// the robot is now full so it needs to head towards the drop point
-						logger.debug("sending robot to drop off point with ");
+						logger.debug("sending robot to drop off point");
 						plan.add(new Step("DROP", DROP_LOCATION));
+						x = (int)Math.round(DROP_LOCATION.getX());
+						y = (int)Math.round(DROP_LOCATION.getY());
+						robot.setCurrentWeight(0f);
 						break;
 					}
 				}
 			}
 			// all items of that task can be loaded onto the robot so that task is complete
 			else {
-				logger.trace("all quantity of item" + nextTask.getId() + " can be loaded onto robot");
+				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
 				Step step = new Step(nextTask.getId(), quantity,new Point(currentItem.getX(),currentItem.getY()));
 				plan.add(step);
 				nextTask.setComplete(true);
 				x = currentItem.getX();
 				y = currentItem.getY();
+				robotWeight += currentItem.getWeight() * quantity;
 			}
 		}
 		plan.add(new Step("DROP", DROP_LOCATION));
+		logger.debug("sending robot to drop off point");
+		x = (int)Math.round(DROP_LOCATION.getX());
+		y = (int)Math.round(DROP_LOCATION.getY());
+		robot.setCurrentWeight(0f);
 		return plan;
 	}
 
@@ -103,7 +112,7 @@ public class JobAssignment {
 	 */
 	private Task getClosestTask(ArrayList<Task> tasks, int x, int y) {
 		Task closestTask = null;
-		Float shortestDistance = Float.MAX_VALUE;
+		float shortestDistance = Float.MAX_VALUE;
 
 		// look at all tasks and find the shortest distance from the item to a given
 		// position
@@ -112,13 +121,17 @@ public class JobAssignment {
 			int itemX = currentItem.getX();
 			int itemY = currentItem.getY();
 			// naive heuristic for distance away from item (doesn't consider walls)
-			Float distance = (float) Math.sqrt(Math.pow(x - itemX, 2) + Math.pow(y - itemY, 2));
+			float distance = (float) Math.sqrt(Math.pow(x - itemX, 2) + Math.pow(y - itemY, 2));
 			// only looks at tasks that haven't been completed
 			if (!t.getComplete() && distance < shortestDistance) {
 				closestTask = t;
+				shortestDistance = distance;
+				
 			}
 		}
+		if(closestTask != null) {
 		logger.trace("next item is: " + closestTask.getId());
+		}
 		return closestTask;
 	}
 
