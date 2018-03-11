@@ -6,15 +6,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import org.apache.log4j.Logger;
 
 import jobmanagement.JobComparator;
 import types.Item;
 import types.Job;
 import types.Task;
-/*
- * Created by Minhal - Job Selection
+
+
+/**
+ * @author Minhal - Job Selection
  */
 public class JobTable {
+	
+	//private static final Logger logger = Logger.getLogger(JobTable.class);
+
 	/*
 	 * Stores all items into a hash map, where the key is job ID which maps to its job class
 	 */
@@ -22,14 +28,19 @@ public class JobTable {
 	/*
 	 * Priorities all jobs into a queue based on the sum of rewards of each task
 	 */
-	private Queue<Job> queue = new PriorityQueue<Job>(new JobComparator());
+	Queue<Job> queue = new PriorityQueue<Job>(new JobComparator());
 	/*
 	 * Creates item table, to pass item to each task
 	 */
-	private ItemTable itemTable = new ItemTable();;
+	private ItemTable itemTable;
 	
-	public JobTable() throws IOException {
-		this.jobTable = createTable();
+	
+	public JobTable(){
+		try {
+			this.jobTable = createTable();
+		}catch (IOException e){
+			System.out.println(e.getMessage());
+		}
 	}
 	/*
 	 * Gets jobs tasks with id
@@ -48,15 +59,36 @@ public class JobTable {
 	 * returns null if queue is empty
 	 */
 	public Job popQueue(){
-		return queue.poll(); 
+		return queue.poll();
 	}
+	//----------------------------------------------------------------------------------------
+	/*
+	 * METHODS ONLY FOR JUNIT TESTING
+	 * Getter for priority queue, mainly used for JUnit testing
+	 * since the main program will only need to pop the queue than
+	 * need the whole queue at once
+	 */
+	public Queue<Job> getQueue(){
+		return queue;
+	}
+	
+	public HashMap<String, Job> getJobTable(){
+		return jobTable;
+	}
+	
+	public ItemTable getItemTable(){
+		return itemTable;
+	}
+	//----------------------------------------------------------------------------------------
 	/*
 	 * Creates table based on CSV files
 	 */
 	public HashMap<String, Job> createTable() throws IOException{
+		itemTable = new ItemTable();
 		HashMap<String, Job> jobTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader jobs = new BufferedReader(FileHandling.getFileReader(FileHandling.JOBS_FILE_NAME));
+		//logger.debug("");
 		//current lines we are looping
 		String jobLine = ""; 
 		//Loop through each line

@@ -4,10 +4,14 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-/*
- * Created by Minhal - Job Selection
+/**
+ * @author Minhal - Job Selection
  */
 public class Job{
+	/*
+	 * Job ID
+	 */
+	String jobID;
 	/**
 	 * Stores all the items that pertain to each job.
 	 */

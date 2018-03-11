@@ -1,18 +1,17 @@
 package jobmanagement;
+
 import java.util.Comparator;
-
 import types.Job;
-
-/*
- * Created by Minhal - Job Selection
+/**
+ * @author Minhal - Job Selection
  */
 public class JobComparator implements Comparator<Job> {
 	/*
-	 * Order based on highest reward (Greedy algorithm) 
+	 * Order based on highest reward (Greedy algorithm for now) 
 	 */
 	@Override
 	public int compare(Job jobOne, Job jobTwo) {
-		return Math.round(jobTwo.getTotalReward() - jobOne.getTotalReward());
+		return Double.compare(jobOne.getTotalReward(), jobTwo.getTotalReward());
 	}
 
 }

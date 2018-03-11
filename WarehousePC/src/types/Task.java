@@ -1,7 +1,6 @@
 package types;
-
-/*
- * Created by Minhal - Job Selection
+/**
+ * @author Minhal - Job Selection
  */
 public class Task {
 	

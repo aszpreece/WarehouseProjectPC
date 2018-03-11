@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import types.Item;
-/*
- * Created by Minhal - Job Selection
+
+/**
+ * @author Minhal - Job Selection
  */
 public class ItemTable { 
 	/*
 	 * Stores all items into a hash map, where the key is item ID which maps to its item class
 	 */
-	HashMap<String, Item> itemTable;
+	public HashMap<String, Item> itemTable;
 	
 	public ItemTable() throws IOException{
 		this.itemTable = createTable();
