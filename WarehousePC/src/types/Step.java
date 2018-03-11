@@ -36,7 +36,7 @@ public class Step {
 
 	@Override
 	public String toString() {
-		return coordinate.getX() + coordinate.getY() + command + quantity;
+		return "(" + coordinate.getX() +","+ coordinate.getY() + ")" + command + quantity;
 	}
 
 	@Override
