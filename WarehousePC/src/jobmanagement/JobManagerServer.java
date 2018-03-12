@@ -21,6 +21,7 @@ import types.Job;
 import types.RobotPC;
 import types.Step;
 import types.Task;
+import ui.PCGUI;
 
 public class JobManagerServer {
 
@@ -47,6 +48,7 @@ public class JobManagerServer {
 		try {
 			ItemTable itemTable = new ItemTable();
 			JobTable jobTable = new JobTable();
+			ArrayList<RobotPC> robotList  = new ArrayList<RobotPC>();
 
 			RobotManager robotManager = new RobotManager();
 			robotManager.addNXT("LilBish", "00165317B895");
@@ -62,10 +64,15 @@ public class JobManagerServer {
 			r1.setCurrentX(0);
 			r1.setCurrentY(0);
 			r1.setCurrentWeight(0.0f);
+			robotList.add(r1);
 
 			JobAssignment planner = new JobAssignment(itemTable);
 
 			Job currentJob = jobTable.popQueue();
+			
+			Thread display = new Thread(new PCGUI(jobTable, robotList));
+			
+			display.start();
 			
 			ArrayList<Task> tasks = currentJob.getItemList();
 
@@ -88,6 +95,8 @@ public class JobManagerServer {
 				// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
 				spoofRoutePlanning(messages);
 				//robotManager.setMovementQueue("LilBish", messages);
+				
+				currentJob.setActive(false);
 			}
 
 		} catch (IOException e) {

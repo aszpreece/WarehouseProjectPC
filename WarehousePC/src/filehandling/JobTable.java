@@ -38,6 +38,12 @@ public class JobTable {
 		return jobTable.get(id).getItemList();
 	}
 	/*
+	 * Get the table of jobs
+	 */
+	public HashMap<String, Job> getJobTable(){
+		return this.jobTable;
+	}
+	/*
 	 * Gets total reward for a job with given id
 	 */
 	public Float getReward(String id){
@@ -48,7 +54,16 @@ public class JobTable {
 	 * returns null if queue is empty
 	 */
 	public Job popQueue(){
-		return queue.poll(); 
+		Job j = queue.poll();
+		j.setActive(true);
+		return j; 
+	}
+	/*
+	 * Cancels a job by removing it according
+	 * to its JobID
+	 */
+	public void cancel(String id) {
+		jobTable.get(id).setActive(false);
 	}
 	/*
 	 * Creates table based on CSV files
@@ -82,5 +97,4 @@ public class JobTable {
 		}
 		return jobTable;
 	}
-
 }
