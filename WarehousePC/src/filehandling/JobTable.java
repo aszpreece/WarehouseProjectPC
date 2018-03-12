@@ -19,8 +19,7 @@ import types.Task;
  */
 public class JobTable {
 	
-	//private static final Logger logger = Logger.getLogger(JobTable.class);
-
+	private static final Logger logger = Logger.getLogger(JobTable.class);
 	/*
 	 * Stores all items into a hash map, where the key is job ID which maps to its job class
 	 */
@@ -39,7 +38,7 @@ public class JobTable {
 		try {
 			this.jobTable = createTable();
 		}catch (IOException e){
-			System.out.println(e.getMessage());
+			logger.debug(e.getMessage());
 		}
 	}
 	/*
@@ -85,6 +84,7 @@ public class JobTable {
 	 */
 	public HashMap<String, Job> createTable() throws IOException{
 		itemTable = new ItemTable();
+		logger.info("Creating Job Table");
 		HashMap<String, Job> jobTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader jobs = new BufferedReader(FileHandling.getFileReader(FileHandling.JOBS_FILE_NAME));

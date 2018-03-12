@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Queue;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,6 +19,7 @@ import types.Job;
  */
 public class JobSelectionTests {
 
+	private static final Logger logger = Logger.getLogger(JobTable.class);
 	JobTable jobTable = new JobTable();
 	/*
 	 * Tests priority ordering
@@ -39,6 +41,7 @@ public class JobSelectionTests {
 			}
 			tmpJob = crntJob;
 		}
+		logger.info("Priority queue test " + String.valueOf(valid));
 		Assert.assertTrue(valid);
 	}
 
@@ -49,6 +52,7 @@ public class JobSelectionTests {
 	@Test
 	public void checkJobTableReading() {
 		HashMap<String, Job> table = jobTable.getJobTable();
+		logger.info("Priority queue test " + String.valueOf(table.size() > 0));
 		Assert.assertTrue(table.size() > 0);
 	}
 
@@ -58,6 +62,7 @@ public class JobSelectionTests {
 	@Test
 	public void checkitemTableReading() {
 		ItemTable table = jobTable.getItemTable();
+		logger.info("Priority queue test " + String.valueOf(table.itemTable.size() > 0));
 		Assert.assertTrue(table.itemTable.size() > 0);
 	}
 
@@ -67,6 +72,7 @@ public class JobSelectionTests {
 		Item aaItem = table.getItem("aa");
 		int x = 2;
 		int y = 1;
+		logger.info("Priority queue test " + String.valueOf(aaItem.getX() == x && aaItem.getY() == y));
 		Assert.assertTrue(aaItem.getX() == x && aaItem.getY() == y);
 		
 	}

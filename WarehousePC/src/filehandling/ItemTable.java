@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import types.Item;
 
 /**
  * @author Minhal - Job Selection
  */
 public class ItemTable { 
+	
+	private static final Logger logger = Logger.getLogger(JobTable.class);
 	/*
 	 * Stores all items into a hash map, where the key is item ID which maps to its item class
 	 */
@@ -28,6 +32,7 @@ public class ItemTable {
 	 * Creates table based on CSV files
 	 */
 	public static HashMap<String, Item> createTable() throws IOException{
+		logger.info("Creating item table");
 		HashMap<String, Item> itemTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader items = new BufferedReader(FileHandling.getFileReader(FileHandling.ITEM_FILE_NAME));
