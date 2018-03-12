@@ -13,7 +13,7 @@ import types.Item;
  */
 public class ItemTable { 
 	
-	private static final Logger logger = Logger.getLogger(JobTable.class);
+	private static final Logger logger = Logger.getLogger(ItemTable.class);
 	/*
 	 * Stores all items into a hash map, where the key is item ID which maps to its item class
 	 */

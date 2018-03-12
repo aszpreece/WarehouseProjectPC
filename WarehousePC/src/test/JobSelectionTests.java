@@ -19,7 +19,7 @@ import types.Job;
  */
 public class JobSelectionTests {
 
-	private static final Logger logger = Logger.getLogger(JobTable.class);
+	private static final Logger logger = Logger.getLogger(JobSelectionTests.class);
 	JobTable jobTable = new JobTable();
 	/*
 	 * Tests priority ordering
