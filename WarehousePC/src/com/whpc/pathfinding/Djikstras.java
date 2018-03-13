@@ -18,12 +18,14 @@ public class Djikstras {
 
 	Node startingPosition;
 	Node goalPosition;
+	Node currentNode;
 
 	ArrayList<Byte> pathToFollow;// will contain the path the robot will follow
 
 	public Djikstras(int[][] grid) {
 		startingPosition = new Node(0, 0);
 		goalPosition = new Node(0, 0);
+		currentNode = new Node(0, 0);
 		pathToFollow = new ArrayList<Byte>();
 
 		this.grid = grid;
@@ -36,179 +38,42 @@ public class Djikstras {
 	public boolean pathfind(int startx, int starty, int goalx, int goaly) {
 		startingPosition.set(startx, starty);
 		goalPosition.set(goalx, goaly);
-		
-		if (starty < goaly) {
-			if (startx < goalx) {
-				return findAPathNE(startingPosition.x, startingPosition.y);
-			} else {
-				return findAPathNW(startingPosition.x, startingPosition.y);
-			}
-		} else if (starty < goaly){
-			if (startx < goalx) {
-				return findAPathSE(startingPosition.x, startingPosition.y);
-			} else {
-				return findAPathSW(startingPosition.x, startingPosition.y);
-			}
-		}else {
-			return false;
-		}
+
+		Boolean pathFound = findAPath(startingPosition.x, startingPosition.y);
+		findShortestPathToFollow(startx, starty);
+		return pathFound;
 	}
 
-	private boolean findAPathNE(int height, int width) {// if the goal pos. is NorthEast of the start pos.
+	private boolean findAPath(int height, int width) {// if the goal pos. is NorthEast of the start pos.
 		if (!isValid(height, width)) {// check if the start position is valid
 			return false;
 		}
 
 		if (isEnd(height, width)) {// check if you have reached the end
 			map[height][width] = PATH_NODE;// set the goal node to be on the path
-			pathToFollow.add(NetworkMessage.AWAIT_DROPOFF);// add the message to the list to await dropoff
 			return true;// end the pathfinding
 		} else {
 			map[height][width] = NODE_TRIED;// this node isnt on the path
 		}
 
 		// North checks
-		if (findAPathNE(height - 1, width)) {
+		if (findAPath(height - 1, width)) {
 			map[height - 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_NORTH);
 			return true;
 		}
 		// East checks
-		if (findAPathNE(height, width + 1)) {
+		if (findAPath(height, width + 1)) {
 			map[height][width + 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_EAST);
 			return true;
 		}
 		// South checks
-		if (findAPathNE(height + 1, width)) {
+		if (findAPath(height + 1, width)) {
 			map[height + 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 			return true;
 		}
 		// West checks
-		if (findAPathNE(height, width - 1)) {
+		if (findAPath(height, width - 1)) {
 			map[height][width - 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_WEST);
-			return true;
-		}
-		return false;
-	}
-
-	private boolean findAPathNW(int height, int width) {// if the goal pos. is NorthWest of the start pos.
-		if (!isValid(height, width)) {// check if the start position is valid
-			return false;
-		}
-
-		if (isEnd(height, width)) {// check if you have reached the end
-			map[height][width] = PATH_NODE;// set the goal node to be on the path
-			pathToFollow.add(NetworkMessage.AWAIT_DROPOFF);// add the message to the list to await dropoff
-			return true;// end the pathfinding
-		} else {
-			map[height][width] = NODE_TRIED;// this node isnt on the path
-		}
-
-		// North checks
-		if (findAPathNW(height - 1, width)) {
-			map[height - 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_NORTH);
-			return true;
-		}
-		// West checks
-		if (findAPathNW(height, width - 1)) {
-			map[height][width - 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_WEST);
-			return true;
-		}
-		// South checks
-		if (findAPathNW(height + 1, width)) {
-			map[height + 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-			return true;
-		}
-		// East checks
-		if (findAPathNW(height, width + 1)) {
-			map[height][width + 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_EAST);
-			return true;
-		}
-		return false;
-	}
-
-	private boolean findAPathSE(int height, int width) {// if the goal pos. is SouthEast of the start pos.
-		if (!isValid(height, width)) {// check if the start position is valid
-			return false;
-		}
-
-		if (isEnd(height, width)) {// check if you have reached the end
-			map[height][width] = PATH_NODE;// set the goal node to be on the path
-			pathToFollow.add(NetworkMessage.AWAIT_DROPOFF);// add the message to the list to await dropoff
-			return true;// end the pathfinding
-		} else {
-			map[height][width] = NODE_TRIED;// this node isnt on the path
-		}
-
-		// South checks
-		if (findAPathSE(height + 1, width)) {
-			map[height + 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-			return true;
-		}
-		// East checks
-		if (findAPathSE(height, width + 1)) {
-			map[height][width + 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_EAST);
-			return true;
-		}
-		// North checks
-		if (findAPathSE(height - 1, width)) {
-			map[height - 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_NORTH);
-			return true;
-		}
-		// West checks
-		if (findAPathSE(height, width - 1)) {
-			map[height][width - 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_WEST);
-			return true;
-		}
-		return false;
-	}
-
-	private boolean findAPathSW(int height, int width) {// if the goal pos. is SouthWest of the start pos.
-		if (!isValid(height, width)) {// check if the start position is valid
-			return false;
-		}
-
-		if (isEnd(height, width)) {// check if you have reached the end
-			map[height][width] = PATH_NODE;// set the goal node to be on the path
-			pathToFollow.add(NetworkMessage.AWAIT_DROPOFF);// add the message to the list to await dropoff
-			return true;// end the pathfinding
-		} else {
-			map[height][width] = NODE_TRIED;// this node isnt on the path
-		}
-
-		// South checks
-		if (findAPathSW(height + 1, width)) {
-			map[height + 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-			return true;
-		}
-		// West checks
-		if (findAPathSW(height, width - 1)) {
-			map[height][width - 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_WEST);
-			return true;
-		}
-		// North checks
-		if (findAPathSW(height - 1, width)) {
-			map[height - 1][width] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_NORTH);
-			return true;
-		}
-		// East checks
-		if (findAPathSW(height, width + 1)) {
-			map[height][width + 1] = PATH_NODE;
-			pathToFollow.add(NetworkMessage.MOVE_EAST);
 			return true;
 		}
 		return false;
@@ -261,7 +126,84 @@ public class Djikstras {
 		return s;
 	}
 
-	// returns the path that the robot ill have to follow
+	// finds the path that the robot will have to follow
+	void findShortestPathToFollow(int x, int y) {
+		currentNode.set(x, y);
+		
+		System.out.print(currentNode.x + " ");
+		System.out.print(currentNode.y);
+		System.out.println("\n");
+		System.out.print(goalPosition.x + " ");
+		System.out.print(goalPosition.y);
+		System.out.println("\n");
+		
+		
+		
+		if (currentNode == goalPosition) {// check if the goal has been reached
+			return;
+		}
+
+		if (goalPosition.y > currentNode.y) {// check if the goal is to the east
+			if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
+				pathToFollow.add(NetworkMessage.MOVE_EAST);
+				findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+			} else if (goalPosition.x > currentNode.x) {// check if the goal is north
+				if (map[currentNode.x + 1][currentNode.y] == 3) {
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+				} else {// must move south
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+				}
+			}
+			
+			//start here
+			
+		} else if (goalPosition.x < currentNode.x) {// check if the goal is to the west
+			if (map[currentNode.x][currentNode.y - 1] == 3) {// check if the right is on the path
+				pathToFollow.add(NetworkMessage.MOVE_WEST);
+				findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+			} else if (goalPosition.y > currentNode.y) {// check if the goal is north
+				if (map[currentNode.x + 1][currentNode.y] == 3) {
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+				} else {// must move south
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					findShortestPathToFollow(currentNode.x, currentNode.y - 1);
+				}
+			}
+		} else if (goalPosition.x == currentNode.x) {// if they are on the same x
+			if (goalPosition.y > currentNode.y) {// check if the goal is north
+				if (map[currentNode.x + 1][currentNode.y] == 3) {
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+				} else {// must move to either side to keep going
+					if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
+						pathToFollow.add(NetworkMessage.MOVE_EAST);
+						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+					} else {// must move west
+						pathToFollow.add(NetworkMessage.MOVE_WEST);
+						findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+					}
+				}
+			} else {// goal must be south
+				if (map[currentNode.x - 1][currentNode.y] == 3) {// check if south is available
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					findShortestPathToFollow(currentNode.x, currentNode.y - 1);
+				} else {// must move to either side to keep going
+					if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
+						pathToFollow.add(NetworkMessage.MOVE_EAST);
+						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+					} else {// must move west
+						pathToFollow.add(NetworkMessage.MOVE_WEST);
+						findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+					}
+				}
+			}
+		}
+	}
+
+	// returns the path that the robot will follow
 	ArrayList<Byte> getPathToFollow() {
 		return pathToFollow;
 	}

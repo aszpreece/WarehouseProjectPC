@@ -1,10 +1,7 @@
 package com.whpc.pathfinding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-
-import com.whshared.network.NetworkMessage;
 
 public class PathfindOnGraph {
 	
@@ -27,10 +24,10 @@ public class PathfindOnGraph {
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
         Djikstras djikstras = new Djikstras(graph);
+
+        boolean solved = djikstras.pathfind(7, 11, 0, 6);
         
-        boolean solved = djikstras.pathfind(0, 7, 7, 7);
-        
-        System.out.println("Solved: " + solved);
+        System.out.println("Path found: " + solved);
         System.out.println(djikstras.toString());
   
         pathfinder.pathToFollow = djikstras.getPathToFollow();
