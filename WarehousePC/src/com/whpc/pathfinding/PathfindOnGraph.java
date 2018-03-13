@@ -1,6 +1,10 @@
 package com.whpc.pathfinding;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+
+import com.whshared.network.NetworkMessage;
 
 public class PathfindOnGraph {
 	
@@ -27,17 +31,23 @@ public class PathfindOnGraph {
     private int MAX_Y;
     private int MAX_X;
 
+    private ArrayList<Byte> pathToFollow;
 
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
         Djikstras djikstras = new Djikstras(graph);
         
         boolean solved = pathfinder.solve();
+        
         System.out.println("Solved: " + solved);
         System.out.println(pathfinder.toString());
+        
+        Collections.reverse(pathfinder.pathToFollow);
+        System.out.println(pathfinder.pathToFollow);
     }
 
     public PathfindOnGraph(int[][] grid) {
+    	pathToFollow = new ArrayList<Byte>();
     	startingPosition = new Node(0, 0);
     	goalPosition = new Node(0, 0);
         this.grid = grid;
@@ -62,6 +72,7 @@ public class PathfindOnGraph {
 
         if (isEnd(height, width)) {
             map[height][width] = PATH_NODE;
+            pathToFollow.add(NetworkMessage.AWAIT_DROPOFF);
             return true;
         } else {
             map[height][width] = NODE_TRIED;
@@ -70,21 +81,25 @@ public class PathfindOnGraph {
         // North
         if (findAPath(height - 1, width)) {
             map[height-1][width] = PATH_NODE;
+            pathToFollow.add(NetworkMessage.MOVE_NORTH);
             return true;
         }
         // East
         if (findAPath(height, width + 1)) {
             map[height][width + 1] = PATH_NODE;
+            pathToFollow.add(NetworkMessage.MOVE_EAST);
             return true;
         }
         // South
         if (findAPath(height + 1, width)) {
             map[height + 1][width] = PATH_NODE;
+            pathToFollow.add(NetworkMessage.MOVE_SOUTH);
             return true;
         }
         // West
         if (findAPath(height, width - 1)) {
             map[height][width - 1] = PATH_NODE;
+            pathToFollow.add(NetworkMessage.MOVE_WEST);
             return true;
         }
 

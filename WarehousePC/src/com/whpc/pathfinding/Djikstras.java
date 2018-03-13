@@ -11,6 +11,8 @@ public class Djikstras {
 	private int MAX_Y;
 	private int MAX_X;
 	
+	private Node goalPosition;
+	
 	public Djikstras(int[][] grid) {
 		this.grid = grid;
         this.MAX_Y = grid.length;
@@ -19,7 +21,7 @@ public class Djikstras {
         this.map = new int[MAX_Y][MAX_X];
 	}
 	
-	 private boolean findAPathNE(int height, int width) {
+	 boolean findAPathNE(int height, int width) {
 	        if (!isValid(height,width)) {
 	            return false;
 	        }
@@ -84,5 +86,10 @@ public class Djikstras {
 
 	    private boolean inWidth(int width) {
 	        return width >= 0 && width < MAX_X;
+	    }
+	    
+	    public void setGoalPosition(int x, int y) {
+			goalPosition.x = x;
+			goalPosition.y = y;
 	    }
 }
