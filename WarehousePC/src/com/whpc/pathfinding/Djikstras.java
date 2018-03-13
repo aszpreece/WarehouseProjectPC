@@ -156,22 +156,22 @@ public class Djikstras {
 					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
 				}
 			}
+		} else if (goalPosition.y < currentNode.y) {// check if the goal is to the west
+			if (map[currentNode.x][currentNode.y - 1] == 3) {// check if the right is on the path
+				pathToFollow.add(NetworkMessage.MOVE_WEST);
+				findShortestPathToFollow(currentNode.x, currentNode.y - 1);
+			} else if (goalPosition.x > currentNode.x) {// check if the goal is north
+				if (map[currentNode.x + 1][currentNode.y] == 3) {
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+				} else {// must move south
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+				}
+			}
 			
 			//start here
 			
-		} else if (goalPosition.x < currentNode.x) {// check if the goal is to the west
-			if (map[currentNode.x][currentNode.y - 1] == 3) {// check if the right is on the path
-				pathToFollow.add(NetworkMessage.MOVE_WEST);
-				findShortestPathToFollow(currentNode.x - 1, currentNode.y);
-			} else if (goalPosition.y > currentNode.y) {// check if the goal is north
-				if (map[currentNode.x + 1][currentNode.y] == 3) {
-					pathToFollow.add(NetworkMessage.MOVE_NORTH);
-					findShortestPathToFollow(currentNode.x, currentNode.y + 1);
-				} else {// must move south
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-					findShortestPathToFollow(currentNode.x, currentNode.y - 1);
-				}
-			}
 		} else if (goalPosition.x == currentNode.x) {// if they are on the same x
 			if (goalPosition.y > currentNode.y) {// check if the goal is north
 				if (map[currentNode.x + 1][currentNode.y] == 3) {
