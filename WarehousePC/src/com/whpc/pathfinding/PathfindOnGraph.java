@@ -1,126 +1,141 @@
 package com.whpc.pathfinding;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PathfindOnGraph {
 	
-	final int NODE_TRIED = -1;
-	final int PATH_NODE = 2;
-	
-	final int [][] graph = {
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
-        };
-	
-	final int MAX_X = graph[0].length;
-	final int MAX_Y = graph.length;
-	
-	Node startPosition;
-	Node goalPosition;
-	ArrayList<String> path;
-	int [][] grid;
-	int [][] map;
-	
-	PathfindOnGraph(){
-		startPosition = new Node (0,0);
-		goalPosition = new Node (0,0);
-		path = new ArrayList<String>();
-		grid = graph;
-		map = new int[MAX_X][MAX_Y];
-	}
-	
-	public static void main(String[] args) {
-		PathfindOnGraph pathfinder = new PathfindOnGraph();
-		pathfinder.setGoalPosition(5, 5);
-		System.out.println(pathfinder.findAPath(pathfinder.startPosition.x, pathfinder.startPosition.y));
-	}
-	
-	public boolean findAPath(int i, int j) {
-        if (!isValid(i,j)) {
+    final static int NODE_TRIED = 2;
+    final static int PATH_NODE = 3;
+
+    private static int[][] graph = { 
+    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    };
+
+    private Node startingPosition;
+    private Node goalPosition;
+    
+    private int[][] grid;
+    private int[][] map;
+    
+    private int MAX_Y;
+    private int MAX_X;
+
+
+    public static void main(String[] args) {
+        PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
+        boolean solved = pathfinder.solve();
+        System.out.println("Solved: " + solved);
+        System.out.println(pathfinder.toString());
+    }
+
+    public PathfindOnGraph(int[][] grid) {
+    	startingPosition = new Node(0, 0);
+    	goalPosition = new Node(0, 0);
+        this.grid = grid;
+        this.MAX_Y = grid.length;
+        this.MAX_X = grid[0].length;
+
+        this.map = new int[MAX_Y][MAX_X];
+        
+        //set testing values
+        startingPosition.set(0, 7);
+        goalPosition = new Node(7, 11);
+    }
+
+    public boolean solve() {
+        return findAPath(0,7);
+    }
+
+    private boolean findAPath(int height, int width) {
+        if (!isValid(height,width)) {
             return false;
         }
 
-        if (isEnd(i, j) ) {
-            map[i][j] = PATH_NODE;
+        if ( isEnd(height, width) ) {
+            map[height][width] = PATH_NODE;
             return true;
         } else {
-            map[i][j] = NODE_TRIED;
+            map[height][width] = NODE_TRIED;
         }
 
         // North
-        if (findAPath(i - 1, j)) {
-            map[i-1][j] = PATH_NODE;
+        if (findAPath(height - 1, width)) {
+            map[height-1][width] = PATH_NODE;
             return true;
         }
         // East
-        if (findAPath(i, j + 1)) {
-            map[i][j + 1] = PATH_NODE;
+        if (findAPath(height, width + 1)) {
+            map[height][width + 1] = PATH_NODE;
             return true;
         }
         // South
-        if (findAPath(i + 1, j)) {
-            map[i + 1][j] = PATH_NODE;
+        if (findAPath(height + 1, width)) {
+            map[height + 1][width] = PATH_NODE;
             return true;
         }
         // West
-        if (findAPath(i, j - 1)) {
-            map[i][j - 1] = PATH_NODE;
+        if (findAPath(height, width - 1)) {
+            map[height][width - 1] = PATH_NODE;
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isEnd(int height, int width) {
+        return height == goalPosition.x && width == goalPosition.y;
+    }
+
+    private boolean isValid(int height, int width) {
+        if (inRange(height, width) && canTravel(height, width) && !isTried(height, width)) {
             return true;
         }
         return false;
     }
 
-    private boolean isEnd(int i, int j) {
-        return i == MAX_Y - 1 && j == MAX_X - 1;
+    private boolean canTravel(int height, int width) {
+        return grid[height][width] == 1;
     }
 
-    private boolean isValid(int i, int j) {
-        if (inRange(i, j) && isOpen(i, j) && !isTried(i, j)) {
-            return true;
+    private boolean isTried(int height, int width) {
+        return map[height][width] == NODE_TRIED;
+    }
+
+    private boolean inRange(int height, int width) {
+        return inHeight(height) && inWidth(width);
+    }
+
+    private boolean inHeight(int height) {
+        return height >= 0 && height < MAX_Y;
+    }
+
+    private boolean inWidth(int width) {
+        return width >= 0 && width < MAX_X;
+    }
+
+    public String toString() {
+        String s = "";
+        for (int[] row : map) {
+            s += Arrays.toString(row) + "\n";
         }
-        return false;
-    }
-
-    private boolean isOpen(int i, int j) {
-        return grid[i][j] == 1;
-    }
-
-    private boolean isTried(int i, int j) {
-        return map[i][j] == NODE_TRIED;
-    }
-
-    private boolean inRange(int i, int j) {
-        return inHeight(i) && inWidth(j);
-    }
-
-    private boolean inHeight(int i) {
-        return i >= 0 && i < MAX_Y;
-    }
-
-    private boolean inWidth(int j) {
-        return j >= 0 && j < MAX_X;
+        return s;
     }
 	
 	public void setStartPosition(int x, int y) {
-		startPosition.x = x;
-		startPosition.y = y;
+		startingPosition.x = x;
+		startingPosition.y = y;
 		
 	}
 	
 	public void setGoalPosition(int x, int y) {
-		if (graph[x][y] != 0) {
-			startPosition.x = x;
-			startPosition.y = y;
-		}
+			goalPosition.x = x;
+			goalPosition.y = y;
 	}
 }
