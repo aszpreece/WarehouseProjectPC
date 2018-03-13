@@ -31,8 +31,6 @@ public class PathfindOnGraph {
         System.out.println(djikstras.toString());
   
         pathfinder.pathToFollow = djikstras.getPathToFollow();
-        
-        Collections.reverse(pathfinder.pathToFollow);
         System.out.println(pathfinder.pathToFollow);
     }
 

@@ -130,73 +130,102 @@ public class Djikstras {
 	void findShortestPathToFollow(int x, int y) {
 		currentNode.set(x, y);
 		
-		System.out.print(currentNode.x + " ");
-		System.out.print(currentNode.y);
-		System.out.println("\n");
-		System.out.print(goalPosition.x + " ");
-		System.out.print(goalPosition.y);
-		System.out.println("\n");
-		
-		
-		
-		if (currentNode == goalPosition) {// check if the goal has been reached
+		if (isEnd(x, y)) {// initial check to see whether the start is equal to the goal
 			return;
 		}
 
 		if (goalPosition.y > currentNode.y) {// check if the goal is to the east
 			if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
 				pathToFollow.add(NetworkMessage.MOVE_EAST);
-				findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
+					findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+				}
 			} else if (goalPosition.x > currentNode.x) {// check if the goal is north
 				if (map[currentNode.x + 1][currentNode.y] == 3) {
 					pathToFollow.add(NetworkMessage.MOVE_NORTH);
-					findShortestPathToFollow(currentNode.x + 1, currentNode.y);
-				} else {// must move south
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+					}
+				}
+			} else {// must move south
+				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
 					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
 				}
 			}
 		} else if (goalPosition.y < currentNode.y) {// check if the goal is to the west
 			if (map[currentNode.x][currentNode.y - 1] == 3) {// check if the right is on the path
 				pathToFollow.add(NetworkMessage.MOVE_WEST);
-				findShortestPathToFollow(currentNode.x, currentNode.y - 1);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
+					findShortestPathToFollow(currentNode.x, currentNode.y - 1);
+				}
 			} else if (goalPosition.x > currentNode.x) {// check if the goal is north
 				if (map[currentNode.x + 1][currentNode.y] == 3) {
 					pathToFollow.add(NetworkMessage.MOVE_NORTH);
-					findShortestPathToFollow(currentNode.x + 1, currentNode.y);
-				} else {// must move south
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+					}
+				}
+			} else {// must move south
+				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
 					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
 				}
 			}
-			
-			//start here
-			
-		} else if (goalPosition.x == currentNode.x) {// if they are on the same x
-			if (goalPosition.y > currentNode.y) {// check if the goal is north
-				if (map[currentNode.x + 1][currentNode.y] == 3) {
-					pathToFollow.add(NetworkMessage.MOVE_NORTH);
-					findShortestPathToFollow(currentNode.x, currentNode.y + 1);
-				} else {// must move to either side to keep going
-					if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
-						pathToFollow.add(NetworkMessage.MOVE_EAST);
-						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
-					} else {// must move west
-						pathToFollow.add(NetworkMessage.MOVE_WEST);
-						findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+
+		} else if (goalPosition.x > currentNode.x) {// check if the goal is north
+
+			System.out.println("Checking North");
+
+			if (map[currentNode.x + 1][currentNode.y] == 3) {// check if north is on the path
+				pathToFollow.add(NetworkMessage.MOVE_NORTH);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
+					findShortestPathToFollow(currentNode.x + 1, currentNode.y);
+				}
+			} else {// must move to either side to keep going
+				if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
+					pathToFollow.add(NetworkMessage.MOVE_EAST);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+					}
+				} else {// must move west
+					pathToFollow.add(NetworkMessage.MOVE_WEST);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x, currentNode.y - 1);
 					}
 				}
-			} else {// goal must be south
-				if (map[currentNode.x - 1][currentNode.y] == 3) {// check if south is available
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-					findShortestPathToFollow(currentNode.x, currentNode.y - 1);
-				} else {// must move to either side to keep going
-					if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
-						pathToFollow.add(NetworkMessage.MOVE_EAST);
-						findShortestPathToFollow(currentNode.x + 1, currentNode.y);
-					} else {// must move west
-						pathToFollow.add(NetworkMessage.MOVE_WEST);
-						findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+			}
+		} else {// goal must be south
+
+			System.out.println("Checking South");
+
+			if (map[currentNode.x - 1][currentNode.y] == 3) {// check if south is available
+				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+				map[currentNode.x][currentNode.y] = 2;
+				if (!isEnd(x, y)) {
+					findShortestPathToFollow(currentNode.x - 1, currentNode.y);
+				}
+			} else {// must move to either side to keep going
+				if (map[currentNode.x][currentNode.y + 1] == 3) {// check if the left is on the path
+					pathToFollow.add(NetworkMessage.MOVE_EAST);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x, currentNode.y + 1);
+					}
+				} else {// must move west
+					pathToFollow.add(NetworkMessage.MOVE_WEST);
+					map[currentNode.x][currentNode.y] = 2;
+					if (!isEnd(x, y)) {
+						findShortestPathToFollow(currentNode.x, currentNode.y - 1);
 					}
 				}
 			}
