@@ -8,4 +8,9 @@ public class Node {
 		x = _x;
 		y = _y;
 	}
+	 
+	 void set(int _x, int _y) {
+		 x = _x;
+		 y = _y;
+	 }
 }
