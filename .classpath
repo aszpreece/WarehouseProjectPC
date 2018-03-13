@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="WarehousePC/src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/rp-pc"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/rp-shared"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/rp-utils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/WarehouseShared"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
