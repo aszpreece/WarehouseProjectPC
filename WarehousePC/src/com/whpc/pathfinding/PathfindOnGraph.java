@@ -30,6 +30,8 @@ public class PathfindOnGraph {
 
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
+        Djikstras djikstras = new Djikstras(graph);
+        
         boolean solved = pathfinder.solve();
         System.out.println("Solved: " + solved);
         System.out.println(pathfinder.toString());
@@ -50,7 +52,7 @@ public class PathfindOnGraph {
     }
 
     public boolean solve() {
-        return findAPath(0,7);
+        return findAPath(startingPosition.x,startingPosition.y);
     }
 
     private boolean findAPath(int height, int width) {
@@ -58,7 +60,7 @@ public class PathfindOnGraph {
             return false;
         }
 
-        if ( isEnd(height, width) ) {
+        if (isEnd(height, width)) {
             map[height][width] = PATH_NODE;
             return true;
         } else {
