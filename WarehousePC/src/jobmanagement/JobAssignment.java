@@ -77,7 +77,7 @@ public class JobAssignment {
 						plan.add(new Step("DROP", DROP_LOCATION));
 						x = (int)Math.round(DROP_LOCATION.getX());
 						y = (int)Math.round(DROP_LOCATION.getY());
-						robot.setCurrentWeight(0f);
+						robotWeight = 0;
 						break;
 					}
 				}
@@ -98,6 +98,10 @@ public class JobAssignment {
 		x = (int)Math.round(DROP_LOCATION.getX());
 		y = (int)Math.round(DROP_LOCATION.getY());
 		robot.setCurrentWeight(0f);
+		
+		for(Task t: tasks) {
+			t.setComplete(false);
+		}
 		return plan;
 	}
 
