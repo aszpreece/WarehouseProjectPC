@@ -180,9 +180,6 @@ public class Djikstras {
 			}
 
 		} else if (goalPosition.x > currentNode.x) {// check if the goal is north
-
-			System.out.println("Checking North");
-
 			if (map[currentNode.x + 1][currentNode.y] == 3) {// check if north is on the path
 				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				map[currentNode.x][currentNode.y] = 2;

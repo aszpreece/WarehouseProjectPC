@@ -25,7 +25,7 @@ public class PathfindOnGraph {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
         Djikstras djikstras = new Djikstras(graph);
 
-        boolean solved = djikstras.pathfind(7, 11, 0, 6);
+        boolean solved = djikstras.pathfind(0, 1, 5, 5);
         
         System.out.println("Path found: " + solved);
         System.out.println(djikstras.toString());
