@@ -1,4 +1,4 @@
-package jobmanagement;
+package filehandling;
 import java.util.Comparator;
 
 import types.Job;
