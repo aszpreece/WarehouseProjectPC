@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 import com.whshared.network.NetworkMessage;
 
+import lejos.geom.Point;
+
 public class Djikstras {
 
 	final static int NODE_TRIED = 2;// what to set the map pos. to if a node has been tried and is not on the path
@@ -202,9 +204,6 @@ public class Djikstras {
 				}
 			}
 		} else {// goal must be south
-
-			System.out.println("Checking South");
-
 			if (map[currentNode.x - 1][currentNode.y] == 3) {// check if south is available
 				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 				map[currentNode.x][currentNode.y] = 2;

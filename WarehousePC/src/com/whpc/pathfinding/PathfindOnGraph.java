@@ -20,15 +20,14 @@ public class PathfindOnGraph {
     };
 
     private ArrayList<Byte> pathToFollow;
+    PathfindOnGraph pathfinder;
+    Djikstras djikstras;
 
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
         Djikstras djikstras = new Djikstras(graph);
 
-        boolean solved = djikstras.pathfind(0, 1, 5, 5);
-        
-        System.out.println("Path found: " + solved);
-        System.out.println(djikstras.toString());
+        djikstras.pathfind(0, 1, 5, 5);
   
         pathfinder.pathToFollow = djikstras.getPathToFollow();
         System.out.println(pathfinder.pathToFollow);
