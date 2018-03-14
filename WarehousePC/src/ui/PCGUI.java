@@ -119,11 +119,18 @@ public class PCGUI extends JFrame implements Runnable {
 	}
 	
 	public void updateUI() {
+		System.out.println("Update UI");
+		activeJobsInnerPanel.removeAll();
+		inactiveJobsInnerPanel.removeAll();
 		for(String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
 			
+			//System.out.println("JobID: " + jobID);
+			
 			if(j.getActive()) {
+				System.out.println("Active");
+				//activeJobsInnerPanel.removeAll();
 				activeJobsInnerPanel.add(new JobPanel(jobID,percentageComplete));
 			} else {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
@@ -131,6 +138,7 @@ public class PCGUI extends JFrame implements Runnable {
 			
 			
 		}
+		revalidate();
 	}
 
 	@Override

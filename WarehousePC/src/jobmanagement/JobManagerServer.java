@@ -67,25 +67,28 @@ public class JobManagerServer {
 			r1.setCurrentWeight(0.0f);
 			robotList.add(r1);
 			
-			Thread display = new Thread(new PCGUI(jobTable, robotList));
+			PCGUI pcGUI = new PCGUI(jobTable, robotList);
+			Thread display = new Thread(pcGUI);
 			
 			display.start();
 
 			JobAssignment planner = new JobAssignment(itemTable);
 
 			while (true) {
+				
 				Job currentJob = jobTable.popQueue();
-
+				
 				ArrayList<Task> tasks = currentJob.getItemList();
 
 				ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
 
 				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
-				// Queue<NetworkMessage> messages = new Queue<NetworkMessage>();
+
 				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
-				// robotManager.setMovementQueue("LilBish", messages);
-				System.out.println("JobID: " + currentJob.getJobID());
 				robotManager.setMovementQueue("LilBish", messages);
+		
+				System.out.println("JobID: " + currentJob.getJobID());
+				
 				for (Step s : steps) {
 					System.out.println("");
 					if (s.getCommand().length() == 2) {
@@ -96,7 +99,7 @@ public class JobManagerServer {
 					}
 					// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
 					spoofRoutePlanning(messages);
-					// robotManager.setMovementQueue("LilBish", messages);
+			
 				}
 				currentJob.setActive(false);
 			}
