@@ -113,7 +113,7 @@ public class JobAssignmentTests {
 		// what the plan should be:
 		ArrayList<Step> percievedPlan = new ArrayList<Step>();
 		percievedPlan.add(new Step("aa", 1, new Node(item1.getX(),item1.getY())));
-		percievedPlan.add(new Step("fb", 49, new Node(item2.getX(),item2.getY())));
+		percievedPlan.add(new Step("fb", 9, new Node(item2.getX(),item2.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));
 		percievedPlan.add(new Step("fb", 1, new Node(item2.getX(),item2.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));

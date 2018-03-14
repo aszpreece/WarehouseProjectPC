@@ -21,4 +21,9 @@ public class Node {
 	 public int getY() {
 		 return y;
 	 }
+	 
+	 public boolean equals(Object n) {
+		 Node node = (Node)n;
+		 return this.getX() == node.getX() && this.getY() == node.getY();
+	 }
 }

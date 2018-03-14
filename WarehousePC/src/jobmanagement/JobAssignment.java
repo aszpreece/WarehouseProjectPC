@@ -69,7 +69,6 @@ public class JobAssignment {
 							int itemsToTake = i - 1;
 							Step step = new Step(nextTask.getId(), itemsToTake, new Node(currentItem.getX(),currentItem.getY()));
 							plan.add(step);
-							//robotWeight += currentItem.getWeight() * itemsToTake;
 							nextTask.changeQuantity(-itemsToTake);
 							logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
 						}
