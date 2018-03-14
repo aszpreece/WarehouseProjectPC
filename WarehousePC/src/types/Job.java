@@ -8,6 +8,10 @@ import java.util.Map.Entry;
  * Created by Minhal - Job Selection
  */
 public class Job{
+	/*
+	 * Indicates whether a job is active
+	 */
+	private boolean active = false;
 	/**
 	 * Stores all the items that pertain to each job.
 	 */
@@ -37,6 +41,19 @@ public class Job{
 	public Float getTotalReward(){
 		return TOTAL_REWARD;
 	}
+	
+	/*
+	 * Determines whether the job is active
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	/*
+	 * Ascertains whether the job is active
+	 */
+	public boolean getActive() {
+		return this.active;
+	}
 	/*
 	 * Calculation to get reward for this job
 	 */
@@ -50,5 +67,19 @@ public class Job{
 		}
 		
 		return sumReward;
+	}
+	/*
+	 * Gives the percentage completion of this job
+	 */
+	public Float getPercentageComplete() { 
+		int numTasksCompleted=0;
+		
+		for(int i=0; i<itemList.size(); i++) {
+			if(itemList.get(i).completed = true) {
+				numTasksCompleted++;
+			}
+		}
+		
+		return new Float((numTasksCompleted/itemList.size())*100);
 	}
 }

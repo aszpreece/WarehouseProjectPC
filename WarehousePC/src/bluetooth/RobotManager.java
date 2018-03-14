@@ -21,6 +21,7 @@ public class RobotManager extends Thread {
 
 	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
+	ArrayList<String> names = new ArrayList<String>();
 
 	/**
 	 * connects to nxts. Should be called before starting the thread.
