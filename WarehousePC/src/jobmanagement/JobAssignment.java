@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import filehandling.ItemTable;
 import types.Item;
+import types.Node;
 import types.RobotPC;
 import types.Step;
 import types.Task;
@@ -29,7 +30,7 @@ public class JobAssignment {
 	/**
 	 * the drop location
 	 */
-	private Point DROP_LOCATION = new Point(4,4); 
+	private Node DROP_LOCATION = new Node(4,4); 
 
 	/**
 	 * @param queue
@@ -66,7 +67,7 @@ public class JobAssignment {
 						// just head to the drop point
 						if (i != 1) {
 							int itemsToTake = i - 1;
-							Step step = new Step(nextTask.getId(), itemsToTake, new Point(currentItem.getX(),currentItem.getY()));
+							Step step = new Step(nextTask.getId(), itemsToTake, new Node(currentItem.getX(),currentItem.getY()));
 							plan.add(step);
 							//robotWeight += currentItem.getWeight() * itemsToTake;
 							nextTask.changeQuantity(-itemsToTake);
@@ -85,7 +86,7 @@ public class JobAssignment {
 			// all items of that task can be loaded onto the robot so that task is complete
 			else {
 				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
-				Step step = new Step(nextTask.getId(), quantity,new Point(currentItem.getX(),currentItem.getY()));
+				Step step = new Step(nextTask.getId(), quantity,new Node(currentItem.getX(),currentItem.getY()));
 				plan.add(step);
 				nextTask.setComplete(true);
 				x = currentItem.getX();

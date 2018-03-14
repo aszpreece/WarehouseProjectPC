@@ -1,24 +1,24 @@
-package com.whpc.pathfinding;
+package types;
 
 public class Node {
 	int x;
 	int y;
 	
-	 Node(int _x, int _y) {
+	 public Node(int _x, int _y) {
 		x = _x;
 		y = _y;
 	}
 	 
-	 void set(int _x, int _y) {
+	 public void set(int _x, int _y) {
 		 x = _x;
 		 y = _y;
 	 }
 	 
-	 int getX() {
+	 public int getX() {
 		 return x;
 	 }
 	 
-	 int getY() {
+	 public int getY() {
 		 return y;
 	 }
 }
