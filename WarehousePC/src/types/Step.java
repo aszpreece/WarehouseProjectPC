@@ -19,7 +19,6 @@ public class Step {
 		this.command = command;
 		this.coordinate = coordinate;
 		this.quantity = quantity;
-		this.quantity = 0;
 	}
 
 	public Point2D getCoordinate() {

@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -50,52 +49,55 @@ public class JobManagerServer {
 			JobTable jobTable = new JobTable();
 			ArrayList<RobotPC> robotList  = new ArrayList<RobotPC>();
 
+			
+			
 			RobotManager robotManager = new RobotManager();
 			robotManager.addNXT("LilBish", "00165317B895");
-			//robotManager.addNXT("Poppy", "001653089A83");
+			// robotManager.addNXT("Poppy", "001653089A83");
 			robotManager.connect();
-			
+
 			Thread m = new Thread(robotManager);
 			m.start();
-			
-			//robotManager.start();
-			
+
+			// robotManager.start();
+
 			RobotPC r1 = new RobotPC();
 			r1.setCurrentX(0);
 			r1.setCurrentY(0);
 			r1.setCurrentWeight(0.0f);
 			robotList.add(r1);
-
-			JobAssignment planner = new JobAssignment(itemTable);
-
-			Job currentJob = jobTable.popQueue();
 			
 			Thread display = new Thread(new PCGUI(jobTable, robotList));
 			
 			display.start();
-			
-			ArrayList<Task> tasks = currentJob.getItemList();
 
-			ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
+			JobAssignment planner = new JobAssignment(itemTable);
 
-			Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
-			// Queue<NetworkMessage> messages = new Queue<NetworkMessage>();
-			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
-			//robotManager.setMovementQueue("LilBish", messages);
-			System.out.println("JobID: " + currentJob.getJobID());
-			robotManager.setMovementQueue("LilBish", messages);
-			for (Step s : steps) {
-				System.out.println("");
-				if (s.getCommand().length() == 2) {
-				System.out.println("GET: " + s.getQuantity() + " of " + s.getCommand() + "- LOCATE TO: " + s.getCoordinate());
+			while (true) {
+				Job currentJob = jobTable.popQueue();
+
+				ArrayList<Task> tasks = currentJob.getItemList();
+
+				ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
+
+				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
+				// Queue<NetworkMessage> messages = new Queue<NetworkMessage>();
+				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+				// robotManager.setMovementQueue("LilBish", messages);
+				System.out.println("JobID: " + currentJob.getJobID());
+				robotManager.setMovementQueue("LilBish", messages);
+				for (Step s : steps) {
+					System.out.println("");
+					if (s.getCommand().length() == 2) {
+						System.out.println("GET: " + s.getQuantity() + " of " + s.getCommand() + "- LOCATE TO: "
+								+ s.getCoordinate());
+					} else {
+						System.out.println("route to drop off point");
+					}
+					// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
+					spoofRoutePlanning(messages);
+					// robotManager.setMovementQueue("LilBish", messages);
 				}
-				else {
-					System.out.println("route to drop off point");
-				}
-				// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
-				spoofRoutePlanning(messages);
-				//robotManager.setMovementQueue("LilBish", messages);
-				
 				currentJob.setActive(false);
 			}
 
