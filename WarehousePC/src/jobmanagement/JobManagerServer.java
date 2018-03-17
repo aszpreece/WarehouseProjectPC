@@ -16,6 +16,8 @@ import bluetooth.RobotManager;
 
 import filehandling.ItemTable;
 import filehandling.JobTable;
+import pathfinding.Dijkstras;
+import pathfinding.PathfindOnGraph;
 import types.Job;
 import types.RobotPC;
 import types.Step;
@@ -74,10 +76,16 @@ public class JobManagerServer {
 
 			JobAssignment planner = new JobAssignment(itemTable);
 
+			Dijkstras dijk = new Dijkstras(PathfindOnGraph.graph);
+			
+			
 			while (true) {
-				
-				Job currentJob = jobTable.popQueue();
-				
+				Job currentJob;
+				try {
+					currentJob = jobTable.popQueue();
+				}catch(Exception e) {
+					break;
+				}
 				ArrayList<Task> tasks = currentJob.getItemList();
 
 				ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
@@ -85,11 +93,30 @@ public class JobManagerServer {
 				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
 
 				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+				//BlockingQueue<>
+				// We may need a instruction type which is a queue of actions, so that when cancelations occur, whole instructions are cancelled, in stead pf just the current action
 				robotManager.setMovementQueue("LilBish", messages);
 		
 				System.out.println("JobID: " + currentJob.getJobID());
 				
-				for (Step s : steps) {
+				for(Step s : steps) {
+					System.out.println("Robot Current X: " + r1.getCurrentX() + "\nRobot Current Y: " + r1.getCurrentY() + "\nDestination X: " + s.getCoordinate().x + "\nDestination Y: " + s.getCoordinate().y);
+					dijk.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().y, s.getCoordinate().x);
+					//messages.offer(dijk.getPathToFollow().);
+					//dijk.getPathToFollow()
+					
+					System.out.println(dijk.getPathToFollow());
+					
+					messages.addAll(dijk.getPathToFollow());
+					
+					r1.setCurrentX(s.getCoordinate().x);
+					r1.setCurrentY(s.getCoordinate().y);
+					
+					dijk.refreshMap();
+					//(new BufferedReader(new InputStreamReader(System.in))).readLine();
+				}
+				
+				/*for (Step s : steps) {
 					System.out.println("");
 					if (s.getCommand().length() == 2) {
 						System.out.println("GET: " + s.getQuantity() + " of " + s.getCommand() + "- LOCATE TO: "
@@ -100,9 +127,11 @@ public class JobManagerServer {
 					// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
 					spoofRoutePlanning(messages);
 			
-				}
+				}*/
 				currentJob.setActive(false);
 			}
+			
+			System.out.println("All processed");
 
 		} catch (IOException e) {
 			e.printStackTrace();
