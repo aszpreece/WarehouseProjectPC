@@ -1,7 +1,6 @@
 package com.whpc.pathfinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class PathfindOnGraph {
 	
@@ -20,16 +19,15 @@ public class PathfindOnGraph {
     };
 
     private ArrayList<Byte> pathToFollow;
-    PathfindOnGraph pathfinder;
-    Djikstras djikstras;
 
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
-        Djikstras djikstras = new Djikstras(graph);
+        ShortestPathFinder shortest = new ShortestPathFinder(graph);
 
-        djikstras.pathfind(0, 1, 5, 5);
+        shortest.pathfind(0, 11, 7, 0);
   
-        pathfinder.pathToFollow = djikstras.getPathToFollow();
+        System.out.println(shortest.toString());
+        pathfinder.pathToFollow = shortest.getPathToFollow();
         System.out.println(pathfinder.pathToFollow);
     }
 
