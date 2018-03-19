@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import com.whshared.network.NetworkMessage;
 
+import rp.util.Collections;
 import types.Node;
 
 public class ShortestPathFinder {
@@ -32,12 +33,16 @@ public class ShortestPathFinder {
 	Node currentNode;
 
 	ArrayList<Byte> pathToFollow;// will contain the path the robot will follow
+	ArrayList<Byte> firstPath;
+	ArrayList<Byte> secondPath;
 
 	public ShortestPathFinder() {
 		startingPosition = new Node(0, 0);
 		goalPosition = new Node(0, 0);
 		currentNode = new Node(0, 0);
 		pathToFollow = new ArrayList<Byte>();
+		firstPath = new ArrayList<Byte>();
+		secondPath = new ArrayList<Byte>();
 
 		this.MAX_Y = graph.length;
 		this.MAX_X = graph[0].length;
@@ -47,13 +52,50 @@ public class ShortestPathFinder {
 
 	public ArrayList<Byte> pathfind(int starty, int startx, int goaly, int goalx) {
 
-		resetMap();
-		pathToFollow.clear();
+		firstPath.clear();
+		secondPath.clear();
 
+		// get path from start to goal
+		reset();
 		map[startx][starty] = PATH_NODE;
 		startingPosition.set(startx, starty);
 		goalPosition.set(goalx, goaly);
 		pathFind(startingPosition.x, startingPosition.y);
+		firstPath.addAll(pathToFollow);
+		if (pathToFollow
+				.size() > (Math.abs(goalPosition.x - currentNode.x) + Math.abs(goalPosition.y - currentNode.y))) {
+			// get path from goal to start
+			reset();
+			map[goalx][goaly] = PATH_NODE;
+			startingPosition.set(goalx, goaly);
+			goalPosition.set(startx, starty);
+			pathFind(startingPosition.x, startingPosition.y);
+			secondPath = new ArrayList<Byte>();
+			secondPath.addAll(pathToFollow);
+			if (secondPath.size() < firstPath.size()) {
+				Collections.reverse(secondPath);
+				for (int i = 0; i < secondPath.size(); i++) {// get a correct path					
+					if (secondPath.get(i) == NetworkMessage.MOVE_NORTH) {
+						secondPath.remove(i);
+						secondPath.add(i, NetworkMessage.MOVE_SOUTH);
+					} else if (secondPath.get(i) == NetworkMessage.MOVE_EAST) {
+						secondPath.remove(i);
+						secondPath.add(i, NetworkMessage.MOVE_WEST);
+					} else if (secondPath.get(i) == NetworkMessage.MOVE_SOUTH) {
+						secondPath.remove(i);
+						secondPath.add(i, NetworkMessage.MOVE_NORTH);
+					} else if (secondPath.get(i) == NetworkMessage.MOVE_WEST) {
+						secondPath.remove(i);
+						secondPath.add(i, NetworkMessage.MOVE_EAST);
+					}
+				}
+				pathToFollow.clear();
+				pathToFollow.addAll(secondPath);
+			} else {
+				pathToFollow.clear();
+				pathToFollow.addAll(firstPath);
+			}
+		}
 		return pathToFollow;
 	}
 
@@ -73,10 +115,6 @@ public class ShortestPathFinder {
 
 	public void pathFind(int startX, int startY) {
 		currentNode.set(startX, startY);
-
-		System.out.println(currentNode.x + " " + goalPosition.x);
-		System.out.print(currentNode.y + " " + goalPosition.y);
-		System.out.println("\n");
 
 		if (isEnd(startX, startY)) {// initial check to see whether the start is equal to the goal
 			return;
@@ -229,8 +267,9 @@ public class ShortestPathFinder {
 		return pathToFollow;
 	}
 
-	// resets the map
-	void resetMap() {
+	// resets the map and the path
+	void reset() {
+		pathToFollow.clear();
 		for (int x = 0; x < MAX_Y; x++) {
 			for (int y = 0; y < MAX_X; y++) {
 				map[x][y] = graph[x][y];
