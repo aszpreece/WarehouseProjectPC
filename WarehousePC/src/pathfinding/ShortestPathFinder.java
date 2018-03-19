@@ -62,11 +62,6 @@ public class ShortestPathFinder {
 		goalPosition.set(goalx, goaly);
 		pathFind(startingPosition.x, startingPosition.y);
 		firstPath.addAll(pathToFollow);
-
-		System.out.println("Found first path");
-		System.out.println(firstPath.toString());
-		System.out.println("\n");
-		
 		if (pathToFollow
 				.size() > (Math.abs(goalPosition.x - currentNode.x) + Math.abs(goalPosition.y - currentNode.y))) {
 			// get path from goal to start
@@ -77,53 +72,26 @@ public class ShortestPathFinder {
 			pathFind(startingPosition.x, startingPosition.y);
 			secondPath = new ArrayList<Byte>();
 			secondPath.addAll(pathToFollow);
-			
-			System.out.println("Found second path");
-			System.out.println(secondPath.toString());
-			System.out.println("\n");
-
 			if (secondPath.size() < firstPath.size()) {
 				Collections.reverse(secondPath);
-				
-				System.out.println("Reversing path");
-				System.out.println("Size " + secondPath.size());
-				
 				for (int i = 0; i < secondPath.size(); i++) {// get a correct path					
 					if (secondPath.get(i) == NetworkMessage.MOVE_NORTH) {
-											
-						System.out.println("North --> South");
-						
 						secondPath.remove(i);
 						secondPath.add(i, NetworkMessage.MOVE_SOUTH);
 					} else if (secondPath.get(i) == NetworkMessage.MOVE_EAST) {
-						
-						System.out.println("East --> West");
-						
 						secondPath.remove(i);
 						secondPath.add(i, NetworkMessage.MOVE_WEST);
 					} else if (secondPath.get(i) == NetworkMessage.MOVE_SOUTH) {
-						
-						System.out.println("South--> North");
-						
 						secondPath.remove(i);
 						secondPath.add(i, NetworkMessage.MOVE_NORTH);
 					} else if (secondPath.get(i) == NetworkMessage.MOVE_WEST) {
-						
-						System.out.println("West --> East");
-						
 						secondPath.remove(i);
 						secondPath.add(i, NetworkMessage.MOVE_EAST);
 					}
 				}
-				
-				System.out.println("Second path is shorter");
-				
 				pathToFollow.clear();
 				pathToFollow.addAll(secondPath);
 			} else {
-				
-				System.out.println("First path is shorter");
-				
 				pathToFollow.clear();
 				pathToFollow.addAll(firstPath);
 			}
