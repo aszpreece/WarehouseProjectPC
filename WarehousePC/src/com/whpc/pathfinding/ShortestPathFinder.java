@@ -35,16 +35,16 @@ public class ShortestPathFinder {
 		this.map = grid;
 	}
 
-	public boolean pathfind(int startx, int starty, int goalx, int goaly) {
+	public ArrayList<Byte> pathfind(int startx, int starty, int goalx, int goaly) {
+		map = grid;
+		pathToFollow.clear();
+		
 		startingPosition.set(goalx, goaly);
-
 		map[startx][starty] = PATH_NODE;
-
 		startingPosition.set(startx, starty);
 		goalPosition.set(goalx, goaly);
-		crudePathFind(startingPosition.x, startingPosition.y);
-		return true;
-
+		pathFind(startingPosition.x, startingPosition.y);
+		return pathToFollow;
 	}
 
 	// helper function to check whether the current node is the end node
@@ -61,7 +61,7 @@ public class ShortestPathFinder {
 		return s;
 	}
 
-	public void crudePathFind(int startX, int startY) {
+	public void pathFind(int startX, int startY) {
 		currentNode.set(startX, startY);
 
 		if (isEnd(startX, startY)) {// initial check to see whether the start is equal to the goal
@@ -73,44 +73,44 @@ public class ShortestPathFinder {
 				map[currentNode.x][currentNode.y + 1] = PATH_NODE;
 				pathToFollow.add(NetworkMessage.MOVE_WEST);
 				if (!isEnd(currentNode.x, currentNode.y + 1)) {// check node isn't the end
-					crudePathFind(currentNode.x, currentNode.y + 1);
+					pathFind(currentNode.x, currentNode.y + 1);
 				}
 			} else {// obstacle in the way
 				goAroundObstacle(currentNode.x, currentNode.y, true);
-				crudePathFind(currentNode.x, currentNode.y);
+				pathFind(currentNode.x, currentNode.y);
 			}
 		} else if (goalPosition.y < currentNode.y) {// if we need to go east
 			if (map[currentNode.x][currentNode.y - 1] != 0) {// if we can go east
 				map[currentNode.x][currentNode.y - 1] = PATH_NODE;
 				pathToFollow.add(NetworkMessage.MOVE_EAST);
 				if (!isEnd(currentNode.x, currentNode.y - 1)) {// check node isn't the end
-					crudePathFind(currentNode.x, currentNode.y - 1);
+					pathFind(currentNode.x, currentNode.y - 1);
 				}
 			} else {// obstacle in the way
 				goAroundObstacle(currentNode.x, currentNode.y, true);
-				crudePathFind(currentNode.x, currentNode.y);
+				pathFind(currentNode.x, currentNode.y);
 			}
 		} else if (goalPosition.x > currentNode.x) {// we need to go north
 			if (map[currentNode.x + 1][currentNode.y] != 0) {// if we can go north
 				map[currentNode.x + 1][currentNode.y] = PATH_NODE;
 				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				if (!isEnd(currentNode.x + 1, currentNode.y)) {// check node isn't the end
-					crudePathFind(currentNode.x + 1, currentNode.y);
+					pathFind(currentNode.x + 1, currentNode.y);
 				}
 			} else {// obstacle in the way
 				goAroundObstacle(currentNode.x, currentNode.y, false);
-				crudePathFind(currentNode.x, currentNode.y);
+				pathFind(currentNode.x, currentNode.y);
 			}
 		} else {// we need to go south
 			if (map[currentNode.x - 1][currentNode.y] != 0) {// if we can go north
 				map[currentNode.x - 1][currentNode.y] = PATH_NODE;
 				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 				if (!isEnd(currentNode.x - 1, currentNode.y)) {// check node isn't the end
-					crudePathFind(currentNode.x - 1, currentNode.y);
+					pathFind(currentNode.x - 1, currentNode.y);
 				}
 			} else {// obstacle in the way
 				goAroundObstacle(currentNode.x, currentNode.y, false);
-				crudePathFind(currentNode.x, currentNode.y);
+				pathFind(currentNode.x, currentNode.y);
 			}
 		}
 		return;

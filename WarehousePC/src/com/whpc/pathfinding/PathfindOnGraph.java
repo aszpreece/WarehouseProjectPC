@@ -7,7 +7,7 @@ public class PathfindOnGraph {
     final static int NODE_TRIED = 2;
     final static int PATH_NODE = 3;
 
-    private static int[][] graph = { 
+    public static int[][] graph = { 
     		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
             {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
             {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
