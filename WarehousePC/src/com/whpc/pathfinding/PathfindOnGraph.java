@@ -24,7 +24,8 @@ public class PathfindOnGraph {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
         ShortestPathFinder shortest = new ShortestPathFinder(graph);
 
-        shortest.pathfind(0, 11, 7, 0);
+        shortest.pathfind(2, 5, 0, 3);
+        
   
         System.out.println(shortest.toString());
         pathfinder.pathToFollow = shortest.getPathToFollow();
