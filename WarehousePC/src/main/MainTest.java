@@ -41,7 +41,6 @@ public class MainTest {
 
 		manager.setMovementQueue("LilBish", q);
 		
-		System.out.println("Connected and stuff");
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {

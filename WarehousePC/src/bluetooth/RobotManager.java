@@ -27,7 +27,9 @@ public class RobotManager extends Thread {
 	 * connects to nxts. Should be called before starting the thread.
 	 */
 	public void connect() {
-		for (Robot connection : connections) {
+		
+		while (connections.size() > 0) {
+			Robot connection = connections.get(0);
 			NXTComm nxtComm;
 			try {
 				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -110,8 +112,7 @@ public class RobotManager extends Thread {
 
 	public void removeRobot(Robot robot) {
 		connections.remove(robot);
-		System.out.println("Robot: " + robot.getName() + " has disconnected");
-		
+		System.out.println("Robot: " + robot.getName() + " has disconnected");	
 	}
 
 	public void halt() {

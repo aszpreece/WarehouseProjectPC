@@ -8,6 +8,17 @@ import java.util.Map.Entry;
  * Created by Minhal - Job Selection
  */
 public class Job{
+	
+	private boolean cancelled = false;
+	
+
+	
+	public boolean isCancelled() {
+		return cancelled;
+	}
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
 	/*
 	 * Indicates whether a job is active
 	 */

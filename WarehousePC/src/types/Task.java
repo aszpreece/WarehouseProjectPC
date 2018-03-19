@@ -5,6 +5,16 @@ package types;
  */
 public class Task {
 	
+	private Job myJob;
+	
+	boolean isCancelled() {
+		return myJob.isCancelled();
+	}
+	
+	public void cancelJob() {
+		myJob.setCancelled(true);
+	}
+	
 	boolean completed = false;
 	/*
 	 * ID of the task from 'a-z' (Use this to get item from item table)
