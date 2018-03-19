@@ -121,7 +121,7 @@ public class ShortestPathFinder {
 	public void goAroundObstacle(int startX, int startY, Boolean toSide) {
 		currentNode.set(startX, startY);
 		if (toSide) {// we need to go west or east but can't
-			if (goalPosition.x > currentNode.x) {// check if we want to go north
+			if (goalPosition.x > currentNode.x || currentNode.x >= 4) {// check if we want to go north
 				map[currentNode.x + 1][currentNode.y] = PATH_NODE;// if so, go north
 				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				currentNode.set(currentNode.x + 1, currentNode.y);
