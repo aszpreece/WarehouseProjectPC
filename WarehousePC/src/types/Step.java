@@ -4,25 +4,24 @@ import java.awt.geom.Point2D;
 
 public class Step {
 
-	private Point2D coordinate;
+	private Node coordinate;
 
 	private String command;
 
 	private int quantity;
 
-	public Step(String command, Point2D coordinate) {
+	public Step(String command, Node coordinate) {
 		this.command = command;
 		this.coordinate = coordinate;
 	}
 
-	public Step(String command, int quantity, Point2D coordinate) {
+	public Step(String command, int quantity, Node coordinate) {
 		this.command = command;
 		this.coordinate = coordinate;
 		this.quantity = quantity;
-		this.quantity = 0;
 	}
 
-	public Point2D getCoordinate() {
+	public Node getCoordinate() {
 		return coordinate;
 	}
 

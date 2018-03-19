@@ -75,7 +75,7 @@ public class Job{
 		int numTasksCompleted=0;
 		
 		for(int i=0; i<itemList.size(); i++) {
-			if(itemList.get(i).completed = true) {
+			if(itemList.get(i).getComplete() == true) {
 				numTasksCompleted++;
 			}
 		}

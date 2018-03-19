@@ -119,10 +119,12 @@ public class PCGUI extends JFrame implements Runnable {
 	}
 	
 	public void updateUI() {
+		activeJobsInnerPanel.removeAll();
+		inactiveJobsInnerPanel.removeAll();
 		for(String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
-			
+				
 			if(j.getActive()) {
 				activeJobsInnerPanel.add(new JobPanel(jobID,percentageComplete));
 			} else {
@@ -131,6 +133,7 @@ public class PCGUI extends JFrame implements Runnable {
 			
 			
 		}
+		revalidate();
 	}
 
 	@Override

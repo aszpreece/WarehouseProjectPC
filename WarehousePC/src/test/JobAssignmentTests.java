@@ -10,13 +10,14 @@ import org.junit.Test;
 import filehandling.ItemTable;
 import jobmanagement.JobAssignment;
 import types.Item;
+import types.Node;
 import types.RobotPC;
 import types.Step;
 import types.Task;
 
 public class JobAssignmentTests {
 	
-	private final Point DROP_LOCATION = new Point(4,4);
+	private final Node DROP_LOCATION = new Node(4,4);
 	
 	private final ItemTable items;
 	
@@ -36,7 +37,7 @@ public class JobAssignmentTests {
 
 		// what the plan should be:
 		ArrayList<Step> percievedPlan = new ArrayList<Step>();
-		percievedPlan.add(new Step("aa", 1, new Point(item.getX(),item.getY())));
+		percievedPlan.add(new Step("aa", 1, new Node(item.getX(),item.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));
 		ItemTable itemTable;
 		try {
@@ -73,8 +74,8 @@ public class JobAssignmentTests {
 
 		// what the plan should be:
 		ArrayList<Step> percievedPlan = new ArrayList<Step>();
-		percievedPlan.add(new Step("ab", 1, new Point(item2.getX(),item2.getY())));
-		percievedPlan.add(new Step("aa", 1, new Point(item1.getX(),item1.getY())));
+		percievedPlan.add(new Step("ab", 1, new Node(item2.getX(),item2.getY())));
+		percievedPlan.add(new Step("aa", 1, new Node(item1.getX(),item1.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));
 		
 		ItemTable itemTable;
@@ -111,10 +112,10 @@ public class JobAssignmentTests {
 
 		// what the plan should be:
 		ArrayList<Step> percievedPlan = new ArrayList<Step>();
-		percievedPlan.add(new Step("aa", 1, new Point(item1.getX(),item1.getY())));
-		percievedPlan.add(new Step("fb", 49, new Point(item2.getX(),item2.getY())));
+		percievedPlan.add(new Step("aa", 1, new Node(item1.getX(),item1.getY())));
+		percievedPlan.add(new Step("fb", 9, new Node(item2.getX(),item2.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));
-		percievedPlan.add(new Step("fb", 1, new Point(item2.getX(),item2.getY())));
+		percievedPlan.add(new Step("fb", 1, new Node(item2.getX(),item2.getY())));
 		percievedPlan.add(new Step("DROP", DROP_LOCATION));
 		
 		ItemTable itemTable;
