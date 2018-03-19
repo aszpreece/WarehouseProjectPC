@@ -10,7 +10,7 @@ public class PathfindOnGraph {
         PathfindOnGraph pathfinder = new PathfindOnGraph();
         ShortestPathFinder shortest = new ShortestPathFinder();
 
-        shortest.pathfind(1, 6, 1, 0);
+        shortest.pathfind(6, 5, 8, 3);
               
         System.out.println(shortest.toString());
         pathfinder.pathToFollow = shortest.getPathToFollow();

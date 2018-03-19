@@ -96,4 +96,23 @@ public class TestPathfinding {
 			expectedPath.add(NetworkMessage.MOVE_EAST);
 			assertEquals(expectedPath, path);
 	}
+	
+	@Test
+	public void checkAsWeGo() {
+		ShortestPathFinder shortest = new ShortestPathFinder();
+		ArrayList<Byte> path = new ArrayList<Byte>();
+		ArrayList<Byte> expectedPath = new ArrayList<Byte>();
+		
+		path = shortest.pathfind(6, 5, 8, 3);
+		expectedPath.add(NetworkMessage.MOVE_NORTH);
+		expectedPath.add(NetworkMessage.MOVE_WEST);
+		expectedPath.add(NetworkMessage.MOVE_WEST);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		
+		System.out.println(shortest.toString());
+		
+		assertEquals(expectedPath, path);
+	}
 }

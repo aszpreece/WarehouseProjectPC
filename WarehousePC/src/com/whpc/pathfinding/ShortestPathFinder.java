@@ -6,17 +6,16 @@ import java.util.Arrays;
 import com.whshared.network.NetworkMessage;
 
 public class ShortestPathFinder {
-	
+
 	final static int[][] graph = { 
-    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    };
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
+			{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+			{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 }, 
+			{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+			{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 }, 
+			{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, };
 
 	final static int NODE_TRIED = 2;// what to set the map pos. to if a node has been tried and is not on the path
 	final static int PATH_NODE = 3;// what to set the map pos. to if a node has been tried and is on the path
@@ -40,15 +39,15 @@ public class ShortestPathFinder {
 
 		this.MAX_Y = graph.length;
 		this.MAX_X = graph[0].length;
-		
+
 		map = new int[MAX_Y][MAX_X];
 	}
 
 	public ArrayList<Byte> pathfind(int starty, int startx, int goaly, int goalx) {
-		
+
 		resetMap();
 		pathToFollow.clear();
-		
+
 		map[startx][starty] = PATH_NODE;
 		startingPosition.set(startx, starty);
 		goalPosition.set(goalx, goaly);
@@ -72,7 +71,11 @@ public class ShortestPathFinder {
 
 	public void pathFind(int startX, int startY) {
 		currentNode.set(startX, startY);
-		
+
+		System.out.println(currentNode.x + " " + goalPosition.x);
+		System.out.print(currentNode.y + " " + goalPosition.y);
+		System.out.println("\n");
+
 		if (isEnd(startX, startY)) {// initial check to see whether the start is equal to the goal
 			return;
 		}
@@ -127,34 +130,59 @@ public class ShortestPathFinder {
 
 	public void goAroundObstacle(int startX, int startY, Boolean toSide) {
 		currentNode.set(startX, startY);
-		
+
 		if (toSide) {// we need to go west or east but can't
-			if (goalPosition.x > currentNode.x ) {// check if we want to go north
+			if (goalPosition.x > currentNode.x) {// check if we want to go north
 				map[currentNode.x + 1][currentNode.y] = PATH_NODE;// if so, go north
 				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				currentNode.set(currentNode.x + 1, currentNode.y);
-			} else if(goalPosition.x < currentNode.x){// we want to go south
+			} else if (goalPosition.x < currentNode.x) {// we want to go south
 				map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go south
 				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 				currentNode.set(currentNode.x - 1, currentNode.y);
-			}else if(currentNode.x >= 4){
-				map[currentNode.x + 1][currentNode.y] = PATH_NODE;// if so, go north
-				pathToFollow.add(NetworkMessage.MOVE_NORTH);
-				currentNode.set(currentNode.x + 1, currentNode.y);
-			}else {
-				map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go south
-				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
-				currentNode.set(currentNode.x - 1, currentNode.y);
+			} else {// on the correct north / south
+				if (currentNode.y > goalPosition.y) {// if we want to go east
+					if (currentNode.x >= 4) {// check if we want to go north
+						while (map[currentNode.x][currentNode.y - 1] == 0) {// until we pass the barrier
+							map[currentNode.x + 1][currentNode.y] = PATH_NODE;// go north
+							pathToFollow.add(NetworkMessage.MOVE_NORTH);
+							currentNode.set(currentNode.x + 1, currentNode.y);
+						}
+					} else {// we to go south
+						while (map[currentNode.x][currentNode.y - 1] == 0) {// until we pass the barrier
+							map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go north
+							pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+							currentNode.set(currentNode.x - 1, currentNode.y);
+						}
+					}
+				} else {// we want to go west
+					if (currentNode.x >= 4) {// check if we want to go north
+						while (map[currentNode.x][currentNode.y + 1] == 0) {// until we pass the barrier
+							map[currentNode.x + 1][currentNode.y] = PATH_NODE;// go north
+							pathToFollow.add(NetworkMessage.MOVE_NORTH);
+							currentNode.set(currentNode.x + 1, currentNode.y);
+						}
+					} else {// we to go south
+						while (map[currentNode.x][currentNode.y + 1] == 0) {// until we pass the barrier
+							map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go north
+							pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+							currentNode.set(currentNode.x - 1, currentNode.y);
+						}
+					}
+				}
 			}
 		} else {// we need to go north or south but can't
 			if (currentNode.x < goalPosition.x) {// if we want to go north
-				if (currentNode.y != 0 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came the east
+				if (currentNode.y != 0 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came the
+																								// east
 					map[currentNode.x][currentNode.y - 1] = 1;
 					map[currentNode.x + 1][currentNode.y - 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
 					pathToFollow.add(NetworkMessage.MOVE_NORTH);
 					currentNode.set(currentNode.x + 1, currentNode.y - 1);
-				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we came from the west
+				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we
+																										// came from the
+																										// west
 					map[currentNode.x][currentNode.y + 1] = 1;
 					map[currentNode.x + 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
@@ -168,13 +196,16 @@ public class ShortestPathFinder {
 					currentNode.set(currentNode.x + 1, currentNode.y + 1);
 				}
 			} else {// we want to go south
-				if (currentNode.y != 11 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came the east
+				if (currentNode.y != 11 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came the
+																								// east
 					map[currentNode.x][currentNode.y - 1] = 1;
 					map[currentNode.x - 1][currentNode.y - 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
 					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 					currentNode.set(currentNode.x - 1, currentNode.y - 1);
-				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we came from the west
+				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we
+																										// came from the
+																										// west
 					map[currentNode.x][currentNode.y + 1] = 1;
 					map[currentNode.x - 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
@@ -195,7 +226,7 @@ public class ShortestPathFinder {
 	ArrayList<Byte> getPathToFollow() {
 		return pathToFollow;
 	}
-	
+
 	// resets the map
 	void resetMap() {
 		for (int x = 0; x < MAX_Y; x++) {
