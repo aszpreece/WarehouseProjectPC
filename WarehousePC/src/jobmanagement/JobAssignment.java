@@ -2,7 +2,9 @@ package jobmanagement;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.AbstractQueue;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 import org.apache.log4j.Logger;
 
@@ -43,13 +45,13 @@ public class JobAssignment {
 	/**
 	 * @return a string of steps the robot should take
 	 */
-	public ArrayList<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
+	public PriorityQueue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
 		float robotWeight = robot.getCurrentWeight();
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
-		ArrayList<Step> plan = new ArrayList<Step>();
+		PriorityQueue<Step> plan = new PriorityQueue<Step>();
 
 		// try to create a plan that includes all tasks within a job
 		while ((nextTask = getClosestTask(tasks, x, y)) != null) {
