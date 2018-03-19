@@ -66,6 +66,8 @@ public class PathfinderTest {
 
 					messages.addAll(pathFinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x,
 							s.getCoordinate().y));
+					
+					System.out.println(pathFinder.toString());
 
 					r1.setCurrentX(s.getCoordinate().x);
 					r1.setCurrentY(s.getCoordinate().y);

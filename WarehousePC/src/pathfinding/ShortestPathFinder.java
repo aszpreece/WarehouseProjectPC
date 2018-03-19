@@ -58,7 +58,7 @@ public class ShortestPathFinder {
 	public String toString() {
 		String s = "";
 		for (int[] row : map) {
-			s += Arrays.toString(row) + "\n";
+			s += Arrays.toString(row).replaceAll("3", "@").replaceAll("0", "#").replaceAll(", ", " ").replaceAll("1", " ") + "\n";
 		}
 		return s;
 	}
