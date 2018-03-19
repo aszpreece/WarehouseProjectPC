@@ -39,6 +39,7 @@ public class ShortestPathFinder {
 		map = grid;
 		pathToFollow.clear();
 		
+		startingPosition.set(goalx, goaly);
 		map[startx][starty] = PATH_NODE;
 		startingPosition.set(startx, starty);
 		goalPosition.set(goalx, goaly);
@@ -117,19 +118,12 @@ public class ShortestPathFinder {
 
 	public void goAroundObstacle(int startX, int startY, Boolean toSide) {
 		currentNode.set(startX, startY);
-		
-		System.out.println(currentNode.x);
-		System.out.println(goalPosition.x);
-		
-		
-		System.out.println("Going around obstacle");
-		
 		if (toSide) {// we need to go west or east but can't
 			if (goalPosition.x > currentNode.x || currentNode.x >= 4) {// check if we want to go north
 				map[currentNode.x + 1][currentNode.y] = PATH_NODE;// if so, go north
 				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				currentNode.set(currentNode.x + 1, currentNode.y);
-			} else {// check if we want to go south
+			} else {// we want to go south
 				map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go south
 				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 				currentNode.set(currentNode.x - 1, currentNode.y);
