@@ -16,17 +16,6 @@ import types.Task;
 
 public class PathfinderTest {
 
-	public static int[][] graph = { 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-		{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-		{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 }, 
-		{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-		{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 }, 
-		{ 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-		{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-	};
-
 	public static void main(String[] args) {
 
 		try {
@@ -40,7 +29,7 @@ public class PathfinderTest {
 
 			JobAssignment planner = new JobAssignment(itemTable);
 
-			ShortestPathFinder pathFinder = new ShortestPathFinder(graph);
+			ShortestPathFinder pathFinder = new ShortestPathFinder();
 
 			while (true) {
 				Job currentJob;
