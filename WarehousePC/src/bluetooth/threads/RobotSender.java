@@ -26,6 +26,10 @@ public class RobotSender extends Thread {
 		messageQueue.clear();
 		messageQueue.addAll(queue);
 	}
+	
+	public boolean hasCommands() {
+		return !messageQueue.isEmpty();
+	}
 
 	@Override
 	public void run() {
@@ -43,7 +47,7 @@ public class RobotSender extends Thread {
 					output.writeByte(message);
 					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
 							|| message == NetworkMessage.MOVE_NORTH || message == NetworkMessage.MOVE_SOUTH) {
-						robot.setMoving(true);
+	
 					}
 					output.flush();
 				} catch (IOException e) {

@@ -30,7 +30,6 @@ public class Robot {
 	private final NXTInfo m_nxt;
 	private String name;
 	private volatile boolean canMakeMove = false;
-	private volatile boolean isMoving = false;
 	
 	private RobotReciever reciever;
 	private RobotSender sender;
@@ -39,19 +38,12 @@ public class Robot {
 	private Server manager;
 	private int x = 0, y = 0;
 	private Task task;
-
 	
 	private Integer currentX;
 	private Integer currentY;
 	
 	private Float currentWeight;
-	private Float maxWeight = 50f; // Maybe finalise
-	
-	
-	/** 
-	 * Set to true to cancel the current job in progress.
-	 */
-	private boolean cancelJob = false;
+	private Float maxWeight = 50f; // Maybe finalis
 	
 	/**
 	 * Current direction is degrees.
@@ -66,18 +58,6 @@ public class Robot {
 	 */
 	public void setDirectionCurrent(Integer direction) {
 		currentDirection = direction;
-	}
-	
-	public boolean checkJobRunning() {
-		return !cancelJob;
-	}
-
-	/** 
-	 * As a form a data storage the robot should know the current job its carrying out 
-	 * */
-	public Integer getCurrentJob() {
-		// TODO Auto-generated method stub
-		return 1000;
 	}
 
 	public Integer getCurrentX() {
@@ -163,17 +143,6 @@ public class Robot {
 		return connected;
 	}
 	
-	/**
-	 * @return If the robot is ready to move. I.e, it is stationary at a junction or drop off point.
-	 */
-	public boolean isMoving() {
-		return isMoving;
-	}
-	
-	public void setMoving(boolean v) {
-		isMoving = v;
-	}
-	
 	public boolean requestingMove() {
 		return requestingMove;
 	}
@@ -194,12 +163,12 @@ public class Robot {
 		return canMakeMove;
 	}
 
-	public Task getTask() {
-		return task;
+	public void cancelJob() {
+		// TODO Auto-generated method stub
 	}
-	
-	public void setTask(Task t) {
-		task = t;
-		sender.setMovementQueue(t.getMovementQueue());
+
+	public boolean hasInstructions() {
+		return sender.hasCommands();
 	}
+
 }
