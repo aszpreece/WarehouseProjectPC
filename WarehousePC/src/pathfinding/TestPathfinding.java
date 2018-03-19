@@ -6,75 +6,112 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import com.whshared.network.NetworkMessage;
 import types.Node;
 
 public class TestPathfinding {
 
+//	@Test
+//	public void testNode() {
+//		try {
+//			Node node = new Node(2, 4);
+//		      
+//			assertEquals(2, node.getX());
+//			assertEquals(4, node.getY());
+//			
+//			node.set(6, 9);
+//			assertEquals(6, node.getX());
+//			assertEquals(9, node.getY());
+//			
+//		} catch (Exception e) {
+//		      fail(e.getMessage());
+//		}
+//	}
+//	
+//	@Test
+//	public void testPathfindingEastandWest() {
+//			ShortestPathFinder shortest = new ShortestPathFinder();
+//			ArrayList<Byte> path = new ArrayList<Byte>();
+//			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
+//		
+//			//basic east test
+//			path = shortest.pathfind(5, 0, 0, 0);
+//			for (int i = 0; i < 5; i++) {
+//				expectedPath.add(NetworkMessage.MOVE_EAST);
+//			}
+//			assertEquals(expectedPath, path);
+//			
+//			//east around obstacle
+//			path = shortest.pathfind(5, 1, 0, 1);
+//			expectedPath.add(0, NetworkMessage.MOVE_SOUTH);
+//			expectedPath.add(NetworkMessage.MOVE_NORTH);
+//			assertEquals(expectedPath, path);
+//			
+//			expectedPath.clear();
+//			
+//			//basic west test
+//			path = shortest.pathfind(0, 0, 5, 0);
+//			for (int i = 0; i < 5; i++) {
+//				expectedPath.add(NetworkMessage.MOVE_WEST);
+//			}
+//			assertEquals(expectedPath, path);
+//			
+//			//west around obstacle
+//			path = shortest.pathfind(0, 1, 5, 1);
+//			expectedPath.add(0, NetworkMessage.MOVE_SOUTH);
+//			expectedPath.add(NetworkMessage.MOVE_NORTH);
+//			assertEquals(expectedPath, path);
+//	}
+//	
+//	@Test
+//	public void testPathfindingNorthandSouth() {
+//			ShortestPathFinder shortest = new ShortestPathFinder();
+//			ArrayList<Byte> path = new ArrayList<Byte>();
+//			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
+//			
+//			//basic north test
+//			path = shortest.pathfind(0, 0, 0, 6);
+//			for (int i = 0; i < 6; i++) {
+//				expectedPath.add(NetworkMessage.MOVE_NORTH);
+//			}
+//			assertEquals(expectedPath, path);		
+//			
+//			//north around obstacle
+//			path = shortest.pathfind(1, 0, 1, 6);
+//			expectedPath.add(0, NetworkMessage.MOVE_WEST);
+//			expectedPath.add(NetworkMessage.MOVE_EAST);
+//			assertEquals(expectedPath, path);
+//			
+//			expectedPath.clear();
+//			
+//			//basic south test
+//			path = shortest.pathfind(0, 6, 0, 0);
+//			for (int i = 0; i < 6; i++) {
+//				expectedPath.add(NetworkMessage.MOVE_SOUTH);
+//			}
+//			assertEquals(expectedPath, path);
+//			
+//			//south around obstacle
+//			path = shortest.pathfind(1, 6, 1, 0);
+//			expectedPath.add(0, NetworkMessage.MOVE_WEST);
+//			expectedPath.add(NetworkMessage.MOVE_EAST);
+//			assertEquals(expectedPath, path);
+//	}
+//	
 	@Test
-	public void testNode() {
-		try {
-			Node node = new Node(2, 4);
-		      
-			assertEquals(2, node.getX());
-			assertEquals(4, node.getY());
-			
-			node.set(6, 9);
-			assertEquals(6, node.getX());
-			assertEquals(9, node.getY());
-			
-		} catch (Exception e) {
-		      fail(e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testDjikstras() {
-		int[][] graph = { 
-    		{1, 1},
-    		{0, 1}
-		};
+	public void checkAsWeGo() {
+		ShortestPathFinder shortest = new ShortestPathFinder();
+		ArrayList<Byte> path = new ArrayList<Byte>();
+		ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 		
-		try {
-			Dijkstras djik = new Dijkstras(graph);
-			
-			int startx = 1, starty = 1, goalx = 0, goaly = 0;
-			
-			boolean result = djik.pathfind(startx, starty, goalx, goaly);
-			boolean expected = true;
-			assertEquals(expected, result);
-			
-			String expectedToString = ""; //needs the expected tostring
-			String resultToString = djik.toString();
-			assertEquals(expectedToString, resultToString);
-			
-			Byte expectedPathToFollow = null;//needs the expected path
-			ArrayList<Byte> resultGetPathToFollow = djik.getPathToFollow();
-			assertEquals(expectedPathToFollow, resultGetPathToFollow);
-		} catch (Exception e) {
-		      fail(e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testPathfindOnGraph() {
-		int[][] graph = { 
-    		{1, 1, 1},
-    		{1, 0, 1},
-    		{1, 1, 1}
-		};
-		try {
-			PathfindOnGraph paths = new PathfindOnGraph(graph);
-		} catch (Exception e) {
-		      fail(e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testPathfindOnGraphMain() {
-		try {
-			PathfindOnGraph.main(new String[] {});
-		} catch (Exception e) {
-		      fail(e.getMessage());
-		}
+		path = shortest.pathfind(6, 5, 8, 3);
+		expectedPath.add(NetworkMessage.MOVE_NORTH); 
+		expectedPath.add(NetworkMessage.MOVE_WEST);
+		expectedPath.add(NetworkMessage.MOVE_WEST);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		System.out.println(shortest.toString());
+		assertEquals(expectedPath, path);
 	}
 }

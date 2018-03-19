@@ -25,9 +25,9 @@ public class PathfindOnGraph {
 
     public static void main(String[] args) {
         PathfindOnGraph pathfinder = new PathfindOnGraph(graph);
-        Dijkstras djikstras = new Dijkstras(graph);
+        Dijkstras djikstras = new Dijkstras(graph); 
 
-        djikstras.pathfind(0, 1, 5, 5);
+        djikstras.pathfind(6, 5, 8, 3);
   
         pathfinder.pathToFollow = djikstras.getPathToFollow();
         System.out.println(pathfinder.pathToFollow);
