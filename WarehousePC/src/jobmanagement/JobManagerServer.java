@@ -18,6 +18,8 @@ import filehandling.ItemTable;
 import filehandling.JobTable;
 import pathfinding.Dijkstras;
 import pathfinding.PathfindOnGraph;
+import pathfinding.ShortestPathFinder;
+import pathfinding.WarehouseGraph;
 import types.Job;
 import types.RobotPC;
 import types.Step;
@@ -61,7 +63,7 @@ public class JobManagerServer {
 			Thread m = new Thread(robotManager);
 			m.start();
 
-			// robotManager.start();
+			//  robotManager.start();
 
 			RobotPC r1 = new RobotPC();
 			r1.setCurrentX(0);
@@ -78,6 +80,7 @@ public class JobManagerServer {
 
 			Dijkstras dijk = new Dijkstras(PathfindOnGraph.graph);
 			
+			ShortestPathFinder pathFinder = new ShortestPathFinder(WarehouseGraph.graph);
 			
 			while (true) {
 				Job currentJob;
@@ -94,25 +97,25 @@ public class JobManagerServer {
 
 				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
 				//BlockingQueue<>
-				// We may need a instruction type which is a queue of actions, so that when cancelations occur, whole instructions are cancelled, in stead pf just the current action
-				robotManager.setMovementQueue("LilBish", messages);
+				// We may need a instruction type which is a queue of actions, so that when cancellations occur, whole instructions are cancelled, in stead pf just the current action
+				//robotManager.setMovementQueue("LilBish", messages);
 		
 				System.out.println("JobID: " + currentJob.getJobID());
 				
 				for(Step s : steps) {
 					System.out.println("Robot Current X: " + r1.getCurrentX() + "\nRobot Current Y: " + r1.getCurrentY() + "\nDestination X: " + s.getCoordinate().x + "\nDestination Y: " + s.getCoordinate().y);
-					dijk.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().y, s.getCoordinate().x);
+					//dijk.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().y, s.getCoordinate().x);
 					//messages.offer(dijk.getPathToFollow().);
 					//dijk.getPathToFollow()
 					
-					System.out.println(dijk.getPathToFollow());
+					System.out.println(pathFinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x, s.getCoordinate().y));
 					
-					messages.addAll(dijk.getPathToFollow());
+					messages.addAll(pathFinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x, s.getCoordinate().y));
 					
 					r1.setCurrentX(s.getCoordinate().x);
 					r1.setCurrentY(s.getCoordinate().y);
 					
-					dijk.refreshMap();
+					//dijk.refreshMap();
 					//(new BufferedReader(new InputStreamReader(System.in))).readLine();
 				}
 				
@@ -128,7 +131,10 @@ public class JobManagerServer {
 					spoofRoutePlanning(messages);
 			
 				}*/
-				currentJob.setActive(false);
+				
+			
+				
+				//currentJob.setActive(false);
 			}
 			
 			System.out.println("All processed");

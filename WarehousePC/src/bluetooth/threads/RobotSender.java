@@ -13,17 +13,26 @@ public class RobotSender implements Runnable {
 
 	private DataOutputStream output;
 	private Robot robot;
-	BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
-
+	//BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
+	BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+	
 	public RobotSender(Robot robot, DataOutputStream output) {
 		this.robot = robot;
 		this.output = output;
 	}
 
-	public void setMoveMentQueue(BlockingQueue<Byte> m) {
+	public void setMoveMentQueue(BlockingQueue<Message> m) {
 		messageQueue = m;
 	}
 
+	public void cancelJob(String jobID) {
+		for(Message m : messageQueue) {
+			if(m.getInfo().equals(jobID)){
+				messageQueue.remove(m);
+			}
+		}
+	}
+	
 	@Override
 	public void run() {
 		while (true) {
@@ -39,16 +48,21 @@ public class RobotSender implements Runnable {
 					//System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
-					Byte message = messageQueue.take();
+					Message message = messageQueue.take();
+					Byte command;
 					if (message == null) {
-						message = NetworkMessage.NO_MOVE;
+						command = NetworkMessage.NO_MOVE;
 						//System.out.println("Out of instructions");
+					}else {
+						command = message.getCommand();
 					}
-					output.writeByte(message);
-					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
-							|| message == NetworkMessage.MOVE_NORTH || message == NetworkMessage.MOVE_SOUTH) {
+					output.writeByte(command);
+					if (command == NetworkMessage.MOVE_EAST || command == NetworkMessage.MOVE_WEST
+							|| command == NetworkMessage.MOVE_NORTH || command == NetworkMessage.MOVE_SOUTH) {
 						robot.setMoving(true);
 					}
+					
+					
 					output.flush();
 				} catch (IOException e) {
 					e.printStackTrace();

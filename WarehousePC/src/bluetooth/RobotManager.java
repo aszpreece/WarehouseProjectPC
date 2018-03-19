@@ -2,13 +2,9 @@ package bluetooth;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
-import com.whshared.network.NetworkMessage;
-
+import bluetooth.threads.Message;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
@@ -62,7 +58,7 @@ public class RobotManager extends Thread {
 	 * @param robotName
 	 * @param messages
 	 */
-	public void setMovementQueue(String robotName, BlockingQueue<Byte> messages) {
+	public void setMovementQueue(String robotName, BlockingQueue<Message> messages) {
 		for (Robot r : connections) {
 			if (r.getName().equals(robotName)) {
 				r.setMoveQueue(messages);
@@ -88,6 +84,10 @@ public class RobotManager extends Thread {
 				return false;
 		}
 		return true;
+	}
+	
+	public void cancelJob(String job) {
+		
 	}
 
 	@Override

@@ -4,8 +4,10 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import bluetooth.RobotManager;
 import com.whshared.network.NetworkMessage;
+
+import bluetooth.RobotManager;
+import bluetooth.threads.Message;
 
 import lejos.robotics.pathfinding.Path;
 
@@ -22,22 +24,22 @@ public class MainTest {
 		Thread m = new Thread(manager);
 		m.start();
 
-		BlockingQueue<Byte> q = new LinkedBlockingQueue<Byte>();
-		BlockingQueue<Byte> l = new LinkedBlockingQueue<Byte>();
+		BlockingQueue<Message> q = new LinkedBlockingQueue<Message>();
+		BlockingQueue<Message> l = new LinkedBlockingQueue<Message>();
 
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_SOUTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
-		q.add(NetworkMessage.MOVE_NORTH);
+		q.add(new Message(NetworkMessage.MOVE_NORTH));
+		q.add(new Message(NetworkMessage.MOVE_NORTH));
+		q.add(new Message(NetworkMessage.MOVE_SOUTH));
+		q.add(new Message(NetworkMessage.MOVE_NORTH));
+		q.add(new Message(NetworkMessage.MOVE_NORTH));
+		q.add(new Message(NetworkMessage.MOVE_NORTH));
 
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_SOUTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
-		l.add(NetworkMessage.MOVE_NORTH);
+		l.add(new Message(NetworkMessage.MOVE_NORTH));
+		l.add(new Message(NetworkMessage.MOVE_NORTH));
+		l.add(new Message(NetworkMessage.MOVE_SOUTH));
+		l.add(new Message(NetworkMessage.MOVE_NORTH));
+		l.add(new Message(NetworkMessage.MOVE_NORTH));
+		l.add(new Message(NetworkMessage.MOVE_NORTH));
 
 		manager.setMovementQueue("LilBish", q);
 		

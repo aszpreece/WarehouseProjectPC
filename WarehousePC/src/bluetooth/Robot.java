@@ -73,7 +73,7 @@ public class Robot {
 		return name;
 	}
 	
-	public void setMoveQueue(BlockingQueue<Byte> queue) {
+	public void setMoveQueue(BlockingQueue<Message> queue) {
 		sender.setMoveMentQueue(queue);
 	}
 
