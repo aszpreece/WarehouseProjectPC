@@ -96,9 +96,12 @@ public class JobManagerServer {
 				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
 
 				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+
 				//BlockingQueue<>
 				// We may need a instruction type which is a queue of actions, so that when cancellations occur, whole instructions are cancelled, in stead pf just the current action
 				//robotManager.setMovementQueue("LilBish", messages);
+
+				//robotManager.setTask("LilBish", ); figure this out
 		
 				System.out.println("JobID: " + currentJob.getJobID());
 				

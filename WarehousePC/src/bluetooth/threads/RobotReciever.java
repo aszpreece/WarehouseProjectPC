@@ -6,10 +6,11 @@ import java.io.IOException;
 import bluetooth.Robot;
 import com.whshared.network.NetworkMessage;
 
-public class RobotReciever implements Runnable {
+public class RobotReciever extends Thread {
 
 	private DataInputStream input;
 	private Robot robot;
+	private volatile boolean stop = false;
 	
 	public RobotReciever(Robot robot, DataInputStream input) {
 		this.input = input;
@@ -23,11 +24,26 @@ public class RobotReciever implements Runnable {
 				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
 					//System.out.println(robot.getName() + " is requesting a move.");
 					robot.setRequestingMove(true);
-				} 
+				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
+					robot.getTask().cancelJob();
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (!stop) {
+					e.printStackTrace();
+					robot.disconnect();
+				}
+				break;
 			}
+		}
+		
+	}
+
+	public void halt() {
+		try {
+			stop = true;
+			input.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 	}

@@ -1,9 +1,15 @@
 package types;
 
+import java.util.Queue;
+
 /*
  * Created by Minhal - Job Selection
  */
 public class Task {
+	
+	private Queue movementQueue;
+	
+	private Job myJob;
 	
 	boolean completed = false;
 	/*
@@ -29,6 +35,23 @@ public class Task {
 		this.myItem = myItem;
 		setReward(myItem);
 	}
+	
+	public Queue getMovementQueue() {
+		return movementQueue;
+	}
+
+	public void setMovementQueue(Queue movementQueue) {
+		this.movementQueue = movementQueue;
+	}
+
+	boolean isCancelled() {
+		return myJob.isCancelled();
+	}
+	
+	public void cancelJob() {
+		myJob.setCancelled(true);
+	}
+	
 	/*
 	 * Calculates reward for completing this task
 	 */

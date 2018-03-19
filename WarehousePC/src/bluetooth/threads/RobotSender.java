@@ -4,81 +4,67 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import bluetooth.Robot;
 import com.whshared.network.NetworkMessage;
 
-public class RobotSender implements Runnable {
+public class RobotSender extends Thread {
 
 	private DataOutputStream output;
 	private Robot robot;
-	//BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
-	BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
-	
+
+	private volatile boolean stop = false;
+	Queue<Byte> messageQueue = new ConcurrentLinkedQueue<Byte>();
+
 	public RobotSender(Robot robot, DataOutputStream output) {
 		this.robot = robot;
 		this.output = output;
 	}
 
-	public void setMoveMentQueue(BlockingQueue<Message> m) {
-		messageQueue = m;
-	}
 
-	public void cancelJob(String jobID) {
-		for(Message m : messageQueue) {
-			if(m.getInfo().equals(jobID)){
-				messageQueue.remove(m);
-			}
-		}
+	public void setMovementQueue(BlockingQueue<Byte> m) {
+		messageQueue.clear();
+		messageQueue.addAll(m);
 	}
 	
 	@Override
 	public void run() {
-		while (true) {
-			//System.out.println(robot.getCanMakeMove());
+		while (!stop && !Thread.currentThread().isInterrupted()) {
+
 			if (robot.getCanMakeMove()) {
-				/*try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}*/
+
 				try {
-					//System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
-					Message message = messageQueue.take();
-					Byte command;
+
+					Byte message = messageQueue.poll();
 					if (message == null) {
-						command = NetworkMessage.NO_MOVE;
-						//System.out.println("Out of instructions");
-					}else {
-						command = message.getCommand();
+						message = NetworkMessage.NO_MOVE;
 					}
-					output.writeByte(command);
-					if (command == NetworkMessage.MOVE_EAST || command == NetworkMessage.MOVE_WEST
-							|| command == NetworkMessage.MOVE_NORTH || command == NetworkMessage.MOVE_SOUTH) {
+					output.writeByte(message);
+					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
+							|| message == NetworkMessage.MOVE_NORTH || message == NetworkMessage.MOVE_SOUTH) {
 						robot.setMoving(true);
 					}
 					
 					
 					output.flush();
 				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if (!stop) {
+						e.printStackTrace();
+						robot.disconnect();
+					}
+					break;
 				}
 			}
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//				return;
-//			}
 		}
 
 	}
+
+	public void halt() {
+		stop = true;
+	}
+
 
 }

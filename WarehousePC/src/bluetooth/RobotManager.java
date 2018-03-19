@@ -2,19 +2,20 @@ package bluetooth;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 
-import bluetooth.threads.Message;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+import types.Task;
 
 /**
  * @author tap747 May be merged or removed later.
  */
 public class RobotManager extends Thread {
 
+	int TimeStep = 0;
+	
 	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
 	ArrayList<String> names = new ArrayList<String>();
@@ -23,7 +24,9 @@ public class RobotManager extends Thread {
 	 * connects to nxts. Should be called before starting the thread.
 	 */
 	public void connect() {
-		for (Robot connection : connections) {
+		
+		while (connections.size() > 0) {
+			Robot connection = connections.get(0);
 			NXTComm nxtComm;
 			try {
 				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
@@ -31,8 +34,13 @@ public class RobotManager extends Thread {
 			} catch (NXTCommException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				connections.remove(connection);
 			}
 		}
+	}
+
+	public int getTimeStep() {
+		return TimeStep;
 	}
 
 	/**
@@ -58,10 +66,11 @@ public class RobotManager extends Thread {
 	 * @param robotName
 	 * @param messages
 	 */
-	public void setMovementQueue(String robotName, BlockingQueue<Message> messages) {
+
+	public void setTask(String robotName, Task t) {
 		for (Robot r : connections) {
 			if (r.getName().equals(robotName)) {
-				r.setMoveQueue(messages);
+				r.setTask(t);
 			}
 		}
 	}
@@ -73,6 +82,7 @@ public class RobotManager extends Thread {
 		for (Robot c : connections) {
 			c.setMakeNextMove(v);
 		}
+		TimeStep++;
 	}
 
 	/**
@@ -105,5 +115,15 @@ public class RobotManager extends Thread {
 			}
 		}
 
+	}
+
+	public void removeRobot(Robot robot) {
+		connections.remove(robot);
+		System.out.println("Robot: " + robot.getName() + " has disconnected");	
+	}
+
+	public void halt() {
+		while(connections.size() > 0)
+			connections.get(0).disconnect();	
 	}
 }
