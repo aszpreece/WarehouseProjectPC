@@ -29,18 +29,7 @@ public class TestPathfinding {
 	
 	@Test
 	public void testPathfindingEastandWest() {
-		int[][] graph = { 
-	    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            };
-		
-			ShortestPathFinder shortest = new ShortestPathFinder(graph);
+			ShortestPathFinder shortest = new ShortestPathFinder();
 			ArrayList<Byte> path = new ArrayList<Byte>();
 			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 		
@@ -75,18 +64,7 @@ public class TestPathfinding {
 	
 	@Test
 	public void testPathfindingNorthandSouth() {
-		int[][] graph = { 
-	    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            };
-		
-			ShortestPathFinder shortest = new ShortestPathFinder(graph);
+			ShortestPathFinder shortest = new ShortestPathFinder();
 			ArrayList<Byte> path = new ArrayList<Byte>();
 			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 			
@@ -95,7 +73,7 @@ public class TestPathfinding {
 			for (int i = 0; i < 6; i++) {
 				expectedPath.add(NetworkMessage.MOVE_NORTH);
 			}
-			assertEquals(expectedPath, path);
+			assertEquals(expectedPath, path);		
 			
 			//north around obstacle
 			path = shortest.pathfind(1, 0, 1, 6);
@@ -103,19 +81,19 @@ public class TestPathfinding {
 			expectedPath.add(NetworkMessage.MOVE_EAST);
 			assertEquals(expectedPath, path);
 			
-//			expectedPath.clear();
-//			
-//			//basic south test
-//			path = shortest.pathfind(0, 0, 0, 6);
-//			for (int i = 0; i < 6; i++) {
-//				expectedPath.add(NetworkMessage.MOVE_SOUTH);
-//			}
-//			assertEquals(expectedPath, path);
-//			
-//			//south around obstacle
-//			path = shortest.pathfind(1, 0, 1, 6);
-//			expectedPath.add(0, NetworkMessage.MOVE_WEST);
-//			expectedPath.add(NetworkMessage.MOVE_EAST);
-//			assertEquals(expectedPath, path);
+			expectedPath.clear();
+			
+			//basic south test
+			path = shortest.pathfind(0, 6, 0, 0);
+			for (int i = 0; i < 6; i++) {
+				expectedPath.add(NetworkMessage.MOVE_SOUTH);
+			}
+			assertEquals(expectedPath, path);
+			
+			//south around obstacle
+			path = shortest.pathfind(1, 6, 1, 0);
+			expectedPath.add(0, NetworkMessage.MOVE_WEST);
+			expectedPath.add(NetworkMessage.MOVE_EAST);
+			assertEquals(expectedPath, path);
 	}
 }
