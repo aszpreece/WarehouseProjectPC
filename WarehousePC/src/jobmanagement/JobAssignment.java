@@ -27,23 +27,36 @@ public class JobAssignment {
 	 * items in the warehouse
 	 */
 	private ItemTable items;
-	
+
 	/**
 	 * the drop location
 	 */
-	private Node DROP_LOCATION = new Node(4,4); 
+	private Node DROP_LOCATION = new Node(4, 4);
 
 	/**
-	 * @param queue
-	 * @param robots
 	 * @param items
+	 *            an item table consisting of their locations and weights
 	 */
-	public JobAssignment( ItemTable items) {
+	public JobAssignment(ItemTable items) {
 		this.items = items;
 	}
 
 	/**
-	 * @return a string of steps the robot should take
+	 * Creates the Steps that the robot needs to carry out in order to complete
+	 * these list of tasks.
+	 * 
+	 * @return
+	 */
+	/**
+	 * @param tasks
+	 *            tasks that needs to be completed
+	 * @param robot
+	 *            the robot to that needs a plan
+	 * @return a queue of type steps specifying what location and in what order
+	 *         these items should be picked up (specifying quantity to stop robot
+	 *         from picking more items than its max weight) plus when it needs to
+	 *         drop items off. USAGE: pop next step off queue to get the item
+	 *         coordinates to go to and how much to pick up of it
 	 */
 	public PriorityQueue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
 		float robotWeight = robot.getCurrentWeight();
@@ -68,7 +81,8 @@ public class JobAssignment {
 						// just head to the drop point
 						if (i != 1) {
 							int itemsToTake = i - 1;
-							Step step = new Step(nextTask.getId(), itemsToTake, new Node(currentItem.getX(),currentItem.getY()));
+							Step step = new Step(nextTask.getId(), itemsToTake,
+									new Node(currentItem.getX(), currentItem.getY()));
 							plan.add(step);
 							nextTask.changeQuantity(-itemsToTake);
 							logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
@@ -76,8 +90,8 @@ public class JobAssignment {
 						// the robot is now full so it needs to head towards the drop point
 						logger.debug("sending robot to drop off point");
 						plan.add(new Step("DROP", DROP_LOCATION));
-						x = (int)Math.round(DROP_LOCATION.getX());
-						y = (int)Math.round(DROP_LOCATION.getY());
+						x = DROP_LOCATION.getX();
+						y = DROP_LOCATION.getY();
 						robotWeight = 0;
 						break;
 					}
@@ -86,7 +100,7 @@ public class JobAssignment {
 			// all items of that task can be loaded onto the robot so that task is complete
 			else {
 				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
-				Step step = new Step(nextTask.getId(), quantity,new Node(currentItem.getX(),currentItem.getY()));
+				Step step = new Step(nextTask.getId(), quantity, new Node(currentItem.getX(), currentItem.getY()));
 				plan.add(step);
 				nextTask.setComplete(true);
 				x = currentItem.getX();
@@ -96,11 +110,13 @@ public class JobAssignment {
 		}
 		plan.add(new Step("DROP", DROP_LOCATION));
 		logger.debug("sending robot to drop off point");
-		x = (int)Math.round(DROP_LOCATION.getX());
-		y = (int)Math.round(DROP_LOCATION.getY());
+		x = (int) Math.round(DROP_LOCATION.getX());
+		y = (int) Math.round(DROP_LOCATION.getY());
 		robot.setCurrentWeight(0f);
-		
-		for(Task t: tasks) {
+
+		// tasks were set to complete when trying to find out how to best complete
+		// tasks, therefore set them back to not complete.
+		for (Task t : tasks) {
 			t.setComplete(false);
 		}
 		return plan;
@@ -108,7 +124,7 @@ public class JobAssignment {
 
 	/**
 	 * @param tasks
-	 *            the lists of available tasks for the robot to complete
+	 *            the lists of tasks for the robot to complete
 	 * @param x
 	 *            current simulated x position of robot
 	 * @param y
@@ -131,11 +147,11 @@ public class JobAssignment {
 			if (!t.getComplete() && distance < shortestDistance) {
 				closestTask = t;
 				shortestDistance = distance;
-				
+
 			}
 		}
-		if(closestTask != null) {
-		logger.trace("next item is: " + closestTask.getId());
+		if (closestTask != null) {
+			logger.trace("next item is: " + closestTask.getId());
 		}
 		return closestTask;
 	}
