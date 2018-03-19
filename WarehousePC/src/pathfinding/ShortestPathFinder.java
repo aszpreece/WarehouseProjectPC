@@ -37,7 +37,7 @@ public class ShortestPathFinder {
 		this.map = grid;
 	}
 
-	public ArrayList<Byte> pathfind(int startx, int starty, int goalx, int goaly) {
+	public ArrayList<Byte> pathfind(int starty, int startx, int goaly, int goalx) {
 		map = grid;
 		pathToFollow.clear();
 		
