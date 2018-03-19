@@ -3,18 +3,28 @@ package bluetooth;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
-import bluetooth.threads.*;
-
+import bluetooth.threads.RobotReciever;
+import bluetooth.threads.RobotSender;
+import jobmanagement.Server;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTInfo;
 import types.Task;
 
+/**
+ * Robot skeleton for other people to work with
+ * @author b1999
+ *
+ */
 public class Robot {
-
+	
+	public static final int NORTH = 0;
+	public static final int EAST = 90;
+	public static final int SOUTH = 180;
+	public static final int WEST = 270;
+	
 	private DataInputStream input;
 	private DataOutputStream output;
 	private final NXTInfo m_nxt;
@@ -26,10 +36,82 @@ public class Robot {
 	private RobotSender sender;
 	private volatile boolean requestingMove = false;
 	private volatile boolean connected = false;
-	private RobotManager manager;
+	private Server manager;
 	private int x = 0, y = 0;
 	private Task task;
 
+	
+	private Integer currentX;
+	private Integer currentY;
+	
+	private Float currentWeight;
+	private Float maxWeight = 50f; // Maybe finalise
+	
+	
+	/** 
+	 * Set to true to cancel the current job in progress.
+	 */
+	private boolean cancelJob = false;
+	
+	/**
+	 * Current direction is degrees.
+	 */
+	private Integer currentDirection;
+	
+	private String robotName;
+	
+	/**
+	 * Set to a value NORTH (0), EAST (90), SOUTH (180), WEST (270)
+	 * @param direction The direction to set
+	 */
+	public void setDirectionCurrent(Integer direction) {
+		currentDirection = direction;
+	}
+	
+	public boolean checkJobRunning() {
+		return !cancelJob;
+	}
+
+	/** 
+	 * As a form a data storage the robot should know the current job its carrying out 
+	 * */
+	public Integer getCurrentJob() {
+		// TODO Auto-generated method stub
+		return 1000;
+	}
+
+	public Integer getCurrentX() {
+		return currentX;
+	}
+
+	public void setCurrentX(Integer currentX) {
+		this.currentX = currentX;
+	}
+
+	public Integer getCurrentY() {
+		return currentY;
+	}
+
+	public void setCurrentY(Integer currentY) {
+		this.currentY = currentY;
+	}
+
+	public Float getCurrentWeight() {
+		return currentWeight;
+	}
+
+	public void setCurrentWeight(Float currentWeight) {
+		this.currentWeight = currentWeight;
+	}
+
+	public Float getMaxWeight() {
+		return maxWeight;
+	}
+
+	public void setMaxWeight(Float maxWeight) {
+		this.maxWeight = maxWeight;
+	}
+	
 	public int getX() {
 		return x;
 	}
@@ -38,11 +120,11 @@ public class Robot {
 		return y;
 	}
 
-	public Robot(NXTInfo nxt, RobotManager m) {
+	public Robot(NXTInfo nxt, Server jobManagerServer) {
 		m_nxt = nxt;
 		name = nxt.name;
 		// Why is the manager imported?
-		manager = m;
+		manager = jobManagerServer;
 	}
 
 	public boolean connect(NXTComm comm) throws NXTCommException {
@@ -120,5 +202,4 @@ public class Robot {
 		task = t;
 		sender.setMovementQueue(t.getMovementQueue());
 	}
-
 }

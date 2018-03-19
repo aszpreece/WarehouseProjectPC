@@ -19,10 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import bluetooth.Robot;
 import filehandling.JobTable;
 import lejos.util.Delay;
 import types.Job;
-import types.RobotPC;
 
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
@@ -57,9 +57,9 @@ public class PCGUI extends JFrame implements Runnable {
 	// And will require certain methods to be added to the JobTable class
 	private JobTable jobDataStore;
 
-	private ArrayList<RobotPC> robots;
+	private ArrayList<Robot> robots;
 
-	public PCGUI(JobTable jobDataStore, ArrayList<RobotPC> robots) {
+	public PCGUI(JobTable jobDataStore, ArrayList<Robot> robots) {
 		this.jobDataStore = jobDataStore;
 		this.robots = robots;
 

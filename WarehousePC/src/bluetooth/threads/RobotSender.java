@@ -22,9 +22,9 @@ public class RobotSender extends Thread {
 		this.output = output;
 	}
 
-	public void setMovementQueue(BlockingQueue<Byte> m) {
+	public void setMovementQueue(Queue<Byte> queue) {
 		messageQueue.clear();
-		messageQueue.addAll(m);
+		messageQueue.addAll(queue);
 	}
 
 	@Override

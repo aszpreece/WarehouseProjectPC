@@ -1,16 +1,15 @@
 package jobmanagement;
 
 import java.awt.Point;
-import java.awt.Robot;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import bluetooth.Robot;
 import filehandling.ItemTable;
 import types.Item;
 import types.Node;
-import types.RobotPC;
 import types.Step;
 import types.Task;
 
@@ -44,7 +43,7 @@ public class JobAssignment {
 	/**
 	 * @return a string of steps the robot should take
 	 */
-	public ArrayList<Step> getNextPlan(ArrayList<Task> tasks, RobotPC robot) {
+	public ArrayList<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
 		float robotWeight = robot.getCurrentWeight();
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
