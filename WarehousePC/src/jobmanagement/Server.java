@@ -7,7 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,73 +32,9 @@ import ui.PCGUI;
 public class Server extends Thread {
 	
 	public static void main(String[] args) {
+		Server m = new Server();
+		m.start();
 
-		try {
-			ItemTable itemTable = new ItemTable();
-			JobTable jobTable = new JobTable();
-			ArrayList<Robot> robotList  = new ArrayList<Robot>();
-
-			
-			Server robotManager = new Server();
-			
-			Robot r1 = robotManager.addNXT("LilBish", "00165317B895");
-			
-			robotManager.connect();
-
-			Server m = new Server();
-			m.start();
-			
-			PCGUI pcGUI = new PCGUI(jobTable, robotList);
-			Thread display = new Thread(pcGUI);
-			
-			display.start();
-
-			JobAssignment assigner = new JobAssignment(itemTable);
-
-			
-			
-			while (true) {
-				Job currentJob;
-				try {
-					currentJob = jobTable.popQueue();
-				}catch(Exception e) {
-					break;
-				}
-				ArrayList<Task> tasks = currentJob.getItemList();
-
-				ArrayList<Step> steps = assigner.getNextPlan(tasks, r1);
-
-				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
-				
-				//robotManager.setTask("LilBish", ); figure this out
-		
-				System.out.println("JobID: " + currentJob.getJobID());
-				
-				for(Step s : steps) {
-//					System.out.println("Robot Current X: " + r1.getCurrentX() + "\nRobot Current Y: " + r1.getCurrentY() + "\nDestination X: " + s.getCoordinate().x + "\nDestination Y: " + s.getCoordinate().y);
-//					dijk.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().y, s.getCoordinate().x);
-//
-//					System.out.println(dijk.getPathToFollow());
-//					
-//					messages.addAll(dijk.getPathToFollow());
-//					
-//					r1.setCurrentX(s.getCoordinate().x);
-//					r1.setCurrentY(s.getCoordinate().y);
-//					
-//					dijk.refreshMap();
-				
-				}
-				
-				currentJob.setActive(false);
-			}
-			
-			System.out.println("All processed");
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			// This is bad
-			System.exit(0);
-		}
 	}
 	
 	int TimeStep = 0;
@@ -143,20 +83,6 @@ public class Server extends Thread {
 	}
 
 	/**
-	 * sets a robot to do a particular task.
-	 * 
-	 * @param robotName
-	 * @param messages
-	 */
-	public void setTask(String robotName, Task t) {
-		for (Robot r : connections) {
-			if (r.getName().equals(robotName)) {
-				r.setTask(t);
-			}
-		}
-	}
-
-	/**
 	 * flags that all the robots are ready to move and the time step can advance.
 	 */
 	public void setReady(boolean v) {
@@ -178,14 +104,49 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
+		ItemTable itemTable;
+		JobTable jobTable;
+		try {
+			itemTable = new ItemTable();
+			jobTable = new JobTable();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.out.println("Server failed to start");
+			return;
+		}
+	
+		ArrayList<Robot> robotList  = new ArrayList<Robot>();
+		robotList.add(addNXT("LilBish", "00165317B895"));
+		
+		
+		PCGUI pcGUI = new PCGUI(jobTable, robotList);
+		Thread display = new Thread(pcGUI);
+		display.start();
+
+		JobAssignment assigner = new JobAssignment(itemTable);
+		connect();
+		
+		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
+		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		while (true) {
+
+			for (Robot r : robotList) {
+				if (!jobMap.get(r).getActive()) {	
+					Job newJob = jobTable.popQueue();
+					jobMap.put(r, newJob);
+					Queue<Step> robotSteps = assigner.getNextPlan(newJob.getItemList(), r);
+				}
+				
+				if (!r.hasInstructions()) {
+					//give robot next set of moves.
+				}
+			}
+		
+			
 			if (this.checkReady()) {
 				this.setReady(true);
 				TimeStep++;
 			}
-			
-			
-			
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

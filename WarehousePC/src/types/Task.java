@@ -7,7 +7,6 @@ import java.util.Queue;
  */
 public class Task {
 	
-	private Queue movementQueue;
 	
 	private Job myJob;
 	
@@ -35,16 +34,8 @@ public class Task {
 		this.myItem = myItem;
 		setReward(myItem);
 	}
-	
-	public Queue getMovementQueue() {
-		return movementQueue;
-	}
 
-	public void setMovementQueue(Queue movementQueue) {
-		this.movementQueue = movementQueue;
-	}
-
-	boolean isCancelled() {
+	public boolean isCancelled() {
 		return myJob.isCancelled();
 	}
 	
