@@ -13,12 +13,15 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
+import types.Task;
 
 /**
  * @author tap747 May be merged or removed later.
  */
 public class RobotManager extends Thread {
 
+	int TimeStep = 0;
+	
 	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
 	ArrayList<String> names = new ArrayList<String>();
@@ -40,6 +43,10 @@ public class RobotManager extends Thread {
 				connections.remove(connection);
 			}
 		}
+	}
+
+	public int getTimeStep() {
+		return TimeStep;
 	}
 
 	/**
@@ -65,10 +72,10 @@ public class RobotManager extends Thread {
 	 * @param robotName
 	 * @param messages
 	 */
-	public void setMovementQueue(String robotName, BlockingQueue<Byte> messages) {
+	public void setTask(String robotName, Task t) {
 		for (Robot r : connections) {
 			if (r.getName().equals(robotName)) {
-				r.setMoveQueue(messages);
+				r.setTask(t);
 			}
 		}
 	}
@@ -80,6 +87,7 @@ public class RobotManager extends Thread {
 		for (Robot c : connections) {
 			c.setMakeNextMove(v);
 		}
+		TimeStep++;
 	}
 
 	/**

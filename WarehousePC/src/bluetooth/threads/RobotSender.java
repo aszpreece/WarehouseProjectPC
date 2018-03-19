@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import bluetooth.Robot;
@@ -14,15 +15,16 @@ public class RobotSender extends Thread {
 	private DataOutputStream output;
 	private Robot robot;
 	private volatile boolean stop = false;
-	BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
+	Queue<Byte> messageQueue = new ConcurrentLinkedQueue<Byte>();
 
 	public RobotSender(Robot robot, DataOutputStream output) {
 		this.robot = robot;
 		this.output = output;
 	}
 
-	public void setMoveMentQueue(BlockingQueue<Byte> m) {
-		messageQueue = m;
+	public void setMovementQueue(BlockingQueue<Byte> m) {
+		messageQueue.clear();
+		messageQueue.addAll(m);
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class RobotSender extends Thread {
 				try {
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
-					Byte message = messageQueue.take();
+					Byte message = messageQueue.poll();
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
 					}
@@ -45,12 +47,6 @@ public class RobotSender extends Thread {
 					}
 					output.flush();
 				} catch (IOException e) {
-					if (!stop) {
-						e.printStackTrace();
-						robot.disconnect();
-					}
-					break;
-				} catch (InterruptedException e) {
 					if (!stop) {
 						e.printStackTrace();
 						robot.disconnect();

@@ -8,6 +8,8 @@ import bluetooth.RobotManager;
 import com.whshared.network.NetworkMessage;
 
 import lejos.robotics.pathfinding.Path;
+import types.Item;
+import types.Task;
 
 public class MainTest {
 
@@ -19,11 +21,13 @@ public class MainTest {
 		manager.addNXT("LilBish", "00165317B895");
 		manager.connect();
 
+		Task t = new Task("A", 2, new Item(0, 0, 10f, 10f));
+		
 		Thread m = new Thread(manager);
 		m.start();
 
-		BlockingQueue<Byte> q = new LinkedBlockingQueue<Byte>();
-		BlockingQueue<Byte> l = new LinkedBlockingQueue<Byte>();
+		Queue<Byte> q = new LinkedBlockingQueue<Byte>();
+		Queue<Byte> l = new LinkedBlockingQueue<Byte>();
 
 		q.add(NetworkMessage.MOVE_NORTH);
 		q.add(NetworkMessage.MOVE_NORTH);
@@ -38,8 +42,9 @@ public class MainTest {
 		l.add(NetworkMessage.MOVE_NORTH);
 		l.add(NetworkMessage.MOVE_NORTH);
 		l.add(NetworkMessage.MOVE_NORTH);
-
-		manager.setMovementQueue("LilBish", q);
+		t.setMovementQueue(l);
+		
+		manager.setTask("LilBish", t);
 		
 		try {
 			Thread.sleep(4000);

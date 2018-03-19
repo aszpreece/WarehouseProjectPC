@@ -24,7 +24,9 @@ public class RobotReciever extends Thread {
 				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
 					//System.out.println(robot.getName() + " is requesting a move.");
 					robot.setRequestingMove(true);
-				} 
+				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
+					robot.getTask().cancelJob();
+				}
 			} catch (IOException e) {
 				if (!stop) {
 					e.printStackTrace();

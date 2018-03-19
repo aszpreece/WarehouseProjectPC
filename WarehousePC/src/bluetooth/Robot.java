@@ -11,6 +11,7 @@ import bluetooth.threads.*;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTInfo;
+import types.Task;
 
 public class Robot {
 
@@ -27,6 +28,7 @@ public class Robot {
 	private volatile boolean connected = false;
 	private RobotManager manager;
 	private int x = 0, y = 0;
+	private Task task;
 
 	public int getX() {
 		return x;
@@ -102,16 +104,21 @@ public class Robot {
 		return name;
 	}
 	
-	public void setMoveQueue(BlockingQueue<Byte> queue) {
-		sender.setMoveMentQueue(queue);
-	}
-
 	public void setMakeNextMove(boolean v) {
 		canMakeMove = v;	
 	}
 	
 	public boolean getCanMakeMove() {
 		return canMakeMove;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+	
+	public void setTask(Task t) {
+		task = t;
+		sender.setMovementQueue(t.getMovementQueue());
 	}
 
 }

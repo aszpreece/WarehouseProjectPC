@@ -9,7 +9,7 @@ import java.util.Map.Entry;
  */
 public class Job{
 	
-	private boolean cancelled = false;
+	private volatile boolean cancelled = false;
 	
 
 	
