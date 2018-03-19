@@ -41,18 +41,20 @@ public class MainTest {
 
 		manager.setMovementQueue("LilBish", q);
 		
-
-
-		/*Path path = pathfind.pathFind();
-		Queue<Byte> directions = pathfind.pathToDirections(path);
-		
-		System.out.println(directions.toString());
+		System.out.println("Connected and stuff");
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		manager.halt();
+		
+		/*Path path = pathfind.pathFind();
+		Queue<Byte> directions = pathfind.pathToDirections(path);
+		
+		System.out.println(directions.toString());
+	
 		manager.setMovementQueue("LilBish", directions);
 		*/
 	}

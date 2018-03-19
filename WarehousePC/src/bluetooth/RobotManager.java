@@ -35,6 +35,7 @@ public class RobotManager extends Thread {
 			} catch (NXTCommException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				connections.remove(connection);
 			}
 		}
 	}
@@ -105,5 +106,16 @@ public class RobotManager extends Thread {
 			}
 		}
 
+	}
+
+	public void removeRobot(Robot robot) {
+		connections.remove(robot);
+		System.out.println("Robot: " + robot.getName() + " has disconnected");
+		
+	}
+
+	public void halt() {
+		while(connections.size() > 0)
+			connections.get(0).disconnect();	
 	}
 }

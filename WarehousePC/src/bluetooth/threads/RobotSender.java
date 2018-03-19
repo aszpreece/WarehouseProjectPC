@@ -9,10 +9,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import bluetooth.Robot;
 import com.whshared.network.NetworkMessage;
 
-public class RobotSender implements Runnable {
+public class RobotSender extends Thread {
 
 	private DataOutputStream output;
 	private Robot robot;
+	private volatile boolean stop = false;
 	BlockingQueue<Byte> messageQueue = new LinkedBlockingQueue<Byte>();
 
 	public RobotSender(Robot robot, DataOutputStream output) {
@@ -26,23 +27,16 @@ public class RobotSender implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
-			//System.out.println(robot.getCanMakeMove());
+		while (!stop && !Thread.currentThread().isInterrupted()) {
+
 			if (robot.getCanMakeMove()) {
-				/*try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}*/
+
 				try {
-					//System.out.println("Sending to " + robot.getName());
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
 					Byte message = messageQueue.take();
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
-						//System.out.println("Out of instructions");
 					}
 					output.writeByte(message);
 					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
@@ -51,20 +45,26 @@ public class RobotSender implements Runnable {
 					}
 					output.flush();
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (!stop) {
+						e.printStackTrace();
+						robot.disconnect();
+					}
+					break;
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if (!stop) {
+						e.printStackTrace();
+						robot.disconnect();
+					}
+					break;
 				}
 			}
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//				return;
-//			}
 		}
 
 	}
+
+	public void halt() {
+		stop = true;
+	}
+
 
 }

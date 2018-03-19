@@ -24,7 +24,17 @@ public class Robot {
 	private RobotReciever reciever;
 	private RobotSender sender;
 	private volatile boolean requestingMove = false;
+	private volatile boolean connected = false;
 	private RobotManager manager;
+	private int x = 0, y = 0;
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
 
 	public Robot(NXTInfo nxt, RobotManager m) {
 		m_nxt = nxt;
@@ -39,15 +49,34 @@ public class Robot {
 			output = new DataOutputStream(comm.getOutputStream());
 			reciever = new RobotReciever(this, input);
 			sender = new RobotSender(this, output);
-			new Thread(reciever).start();
-			new Thread(sender).start();
-			System.out.println("sr threads created");
+			reciever.start();
+			sender.start();
+			connected = true;
 		}
-		return isConnected();
+		return connected;
+	}
+	
+	public void disconnect() {
+		try {
+			sender.halt();
+			sender.interrupt();
+			sender.join();
+			reciever.halt();
+			reciever.interrupt();
+			reciever.join();
+			input.close();
+			output.close();
+			connected = false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		manager.removeRobot(this);
 	}
 
 	public boolean isConnected() {
-		return output != null;
+		return connected;
 	}
 	
 	/**
@@ -76,7 +105,6 @@ public class Robot {
 	public void setMoveQueue(BlockingQueue<Byte> queue) {
 		sender.setMoveMentQueue(queue);
 	}
-
 
 	public void setMakeNextMove(boolean v) {
 		canMakeMove = v;	
