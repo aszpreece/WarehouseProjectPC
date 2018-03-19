@@ -5,7 +5,7 @@ import java.awt.Robot;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import filehandling.ItemTable;
 import types.Item;
@@ -20,7 +20,7 @@ import types.Task;
  */
 public class JobAssignment {
 
-	private static final Logger logger = Logger.getLogger(JobAssignment.class);
+	//private static final Logger logger = Logger.getLogger(JobAssignment.class);
 
 	/**
 	 * items in the warehouse
@@ -70,10 +70,10 @@ public class JobAssignment {
 							Step step = new Step(nextTask.getId(), itemsToTake, new Node(currentItem.getX(),currentItem.getY()));
 							plan.add(step);
 							nextTask.changeQuantity(-itemsToTake);
-							logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
+							//logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
 						}
 						// the robot is now full so it needs to head towards the drop point
-						logger.debug("sending robot to drop off point");
+						//logger.debug("sending robot to drop off point");
 						plan.add(new Step("DROP", DROP_LOCATION));
 						x = (int)Math.round(DROP_LOCATION.getX());
 						y = (int)Math.round(DROP_LOCATION.getY());
@@ -84,7 +84,7 @@ public class JobAssignment {
 			}
 			// all items of that task can be loaded onto the robot so that task is complete
 			else {
-				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
+				//logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
 				Step step = new Step(nextTask.getId(), quantity,new Node(currentItem.getX(),currentItem.getY()));
 				plan.add(step);
 				nextTask.setComplete(true);
@@ -94,7 +94,7 @@ public class JobAssignment {
 			}
 		}
 		plan.add(new Step("DROP", DROP_LOCATION));
-		logger.debug("sending robot to drop off point");
+		//logger.debug("sending robot to drop off point");
 		x = (int)Math.round(DROP_LOCATION.getX());
 		y = (int)Math.round(DROP_LOCATION.getY());
 		robot.setCurrentWeight(0f);
@@ -134,7 +134,7 @@ public class JobAssignment {
 			}
 		}
 		if(closestTask != null) {
-		logger.trace("next item is: " + closestTask.getId());
+		//logger.trace("next item is: " + closestTask.getId());
 		}
 		return closestTask;
 	}
