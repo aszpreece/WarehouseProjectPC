@@ -30,7 +30,7 @@ public class TestPathfinding {
 	
 	@Test
 	public void testPathfindingEastandWest() {
-			ShortestPathFinder shortest = new ShortestPathFinder();
+			ShortestPathFinder shortest = new ShortestPathFinder(0,0);
 			ArrayList<Byte> path = new ArrayList<Byte>();
 			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 		
@@ -65,7 +65,7 @@ public class TestPathfinding {
 	
 	@Test
 	public void testPathfindingNorthandSouth() {
-			ShortestPathFinder shortest = new ShortestPathFinder();
+			ShortestPathFinder shortest = new ShortestPathFinder(0,0);
 			ArrayList<Byte> path = new ArrayList<Byte>();
 			ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 			
@@ -100,7 +100,7 @@ public class TestPathfinding {
 	
 	@Test
 	public void checkAsWeGo() {
-		ShortestPathFinder shortest = new ShortestPathFinder();
+		ShortestPathFinder shortest = new ShortestPathFinder(0,0);
 		ArrayList<Byte> path = new ArrayList<Byte>();
 		ArrayList<Byte> expectedPath = new ArrayList<Byte>();
 		

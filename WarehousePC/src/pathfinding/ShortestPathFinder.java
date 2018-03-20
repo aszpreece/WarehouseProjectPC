@@ -38,8 +38,8 @@ public class ShortestPathFinder {
 	ArrayList<Byte> firstPath;
 	ArrayList<Byte> secondPath;
 
-	public ShortestPathFinder() {
-		startingPosition = new Node(0, 0);
+	public ShortestPathFinder(int startx, int starty) {
+		startingPosition = new Node(startx, starty);
 		goalPosition = new Node(0, 0);
 		currentNode = new Node(0, 0);
 		pathToFollow = new ArrayList<Byte>();

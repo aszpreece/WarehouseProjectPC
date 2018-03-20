@@ -29,7 +29,7 @@ public class PathfinderTest {
 
 			JobAssignment planner = new JobAssignment(itemTable);
 
-			ShortestPathFinder pathFinder = new ShortestPathFinder();
+			ShortestPathFinder pathFinder = new ShortestPathFinder(0,0);
 
 			while (true) {
 				Job currentJob;
