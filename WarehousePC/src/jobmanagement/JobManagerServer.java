@@ -16,8 +16,6 @@ import bluetooth.RobotManager;
 
 import filehandling.ItemTable;
 import filehandling.JobTable;
-import pathfinding.Dijkstras;
-import pathfinding.PathfindOnGraph;
 import pathfinding.ShortestPathFinder;
 import types.Job;
 import types.RobotPC;
@@ -76,10 +74,10 @@ public class JobManagerServer {
 			display.start();
 
 			JobAssignment planner = new JobAssignment(itemTable);
-
-			Dijkstras dijk = new Dijkstras(PathfindOnGraph.graph);
+			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+			robotManager.setMovementQueue("LilBish", messages);
 			
-			
+			// The loop that gets each of the jobs from the priority queue and pops them off path finding to be run on
 			while (true) {
 				Job currentJob;
 				try {
@@ -91,14 +89,13 @@ public class JobManagerServer {
 
 				ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
 
-				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
 
 				ShortestPathFinder pathfinder = new ShortestPathFinder();
 				
-				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+				
 				//BlockingQueue<>
-				// We may need a instruction type which is a queue of actions, so that when cancelations occur, whole instructions are cancelled, in stead pf just the current action
-				robotManager.setMovementQueue("LilBish", messages);
+				// We may need a instruction type which is a queue of actions, so that when cancellations occur, whole instructions are cancelled, in stead pf just the current action
+				
 				
 				System.out.println("JobID: " + currentJob.getJobID());
 				
@@ -130,6 +127,8 @@ public class JobManagerServer {
 				currentJob.setActive(false);
 			}
 			
+			(new BufferedReader(new InputStreamReader(System.in))).readLine();
+			
 			System.out.println("All processed");
 
 		} catch (IOException e) {
@@ -137,6 +136,9 @@ public class JobManagerServer {
 			// This is bad
 			System.exit(0);
 		}
+		
+		
+		
 	}
 
 	public static void spoofRoutePlanning(BlockingQueue<Byte> messages) throws IOException {
