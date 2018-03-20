@@ -18,6 +18,7 @@ import filehandling.ItemTable;
 import filehandling.JobTable;
 import pathfinding.Dijkstras;
 import pathfinding.PathfindOnGraph;
+import pathfinding.ShortestPathFinder;
 import types.Job;
 import types.RobotPC;
 import types.Step;
@@ -92,28 +93,26 @@ public class JobManagerServer {
 
 				Point2D point = new Point(r1.getCurrentX(), r1.getCurrentY());
 
+				ShortestPathFinder pathfinder = new ShortestPathFinder();
+				
 				BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
 				//BlockingQueue<>
 				// We may need a instruction type which is a queue of actions, so that when cancelations occur, whole instructions are cancelled, in stead pf just the current action
 				robotManager.setMovementQueue("LilBish", messages);
-		
+				
 				System.out.println("JobID: " + currentJob.getJobID());
 				
 				for(Step s : steps) {
-					System.out.println("Robot Current X: " + r1.getCurrentX() + "\nRobot Current Y: " + r1.getCurrentY() + "\nDestination X: " + s.getCoordinate().x + "\nDestination Y: " + s.getCoordinate().y);
-					dijk.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().y, s.getCoordinate().x);
-					//messages.offer(dijk.getPathToFollow().);
-					//dijk.getPathToFollow()
+					System.out.println("Robot Current X: " + r1.getCurrentX() + "\nRobot Current Y: " + r1.getCurrentY() + "\nDestination X: " + s.getCoordinate().x + "\nDestination Y: " + s.getCoordinate().y);	
 					
-					System.out.println(dijk.getPathToFollow());
+					System.out.println(pathfinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x, s.getCoordinate().y));
 					
-					messages.addAll(dijk.getPathToFollow());
+					messages.addAll(pathfinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x, s.getCoordinate().y));
 					
 					r1.setCurrentX(s.getCoordinate().x);
 					r1.setCurrentY(s.getCoordinate().y);
 					
-					dijk.refreshMap();
-					//(new BufferedReader(new InputStreamReader(System.in))).readLine();
+					
 				}
 				
 				/*for (Step s : steps) {
