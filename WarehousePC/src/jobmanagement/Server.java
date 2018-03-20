@@ -106,7 +106,7 @@ public class Server extends Thread {
 		robotList.add(addNXT("LilBish", "00165317B895"));
 		
 		
-		PCGUI pcGUI = new PCGUI(jobTable, robotList);
+		PCGUI pcGUI = new PCGUI(jobTable, this);
 		Thread display = new Thread(pcGUI);
 		display.start();
 

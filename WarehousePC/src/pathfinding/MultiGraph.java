@@ -24,7 +24,7 @@ public class MultiGraph {
 	public void refresh(int time) {
 		for (int i = 0; i < GRAPH_HEIGHT; i++) {
 			for (int j = 0; j < GRAPH_WIDTH; j++) {
-				if (multiGraph.get(time)[i][j] == POINT_OCCUPIED) {
+				if (multiGraph.get(time)[i][j] != POINT_PARKED) {
 					multiGraph.get(time)[i][j] = 1;
 				}
 			}
