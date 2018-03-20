@@ -45,10 +45,16 @@ public class RobotSender extends Thread {
 						message = NetworkMessage.NO_MOVE;
 					}
 					output.writeByte(message);
-					if (message == NetworkMessage.MOVE_EAST || message == NetworkMessage.MOVE_WEST
-							|| message == NetworkMessage.MOVE_NORTH || message == NetworkMessage.MOVE_SOUTH) {
-	
-					}
+					switch(message) {
+	    			case NetworkMessage.MOVE_NORTH:
+	    				robot.setCurrentY(robot.getCurrentY() + 1);
+	    			case NetworkMessage.MOVE_EAST:
+	    				robot.setCurrentX(robot.getCurrentX() + 1);
+	    			case NetworkMessage.MOVE_WEST:
+	    				robot.setCurrentX(robot.getCurrentX() - 1);
+	    			case NetworkMessage.MOVE_SOUTH:
+	    				robot.setCurrentY(robot.getCurrentY() - 1);
+	    			}
 					output.flush();
 				} catch (IOException e) {
 					if (!stop) {
@@ -64,6 +70,10 @@ public class RobotSender extends Thread {
 
 	public void halt() {
 		stop = true;
+	}
+
+	public void clearInstructions() {
+		messageQueue.clear();;	
 	}
 
 

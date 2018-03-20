@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
@@ -58,13 +60,13 @@ public class JobAssignment {
 	 *         drop items off. USAGE: pop next step off queue to get the item
 	 *         coordinates to go to and how much to pick up of it
 	 */
-	public PriorityQueue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
+	public Queue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
 		float robotWeight = robot.getCurrentWeight();
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
-		PriorityQueue<Step> plan = new PriorityQueue<Step>();
+		Queue<Step> plan = new LinkedBlockingQueue<Step>();
 
 		// try to create a plan that includes all tasks within a job
 		while ((nextTask = getClosestTask(tasks, x, y)) != null) {

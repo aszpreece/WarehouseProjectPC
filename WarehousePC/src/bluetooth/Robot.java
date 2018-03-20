@@ -39,11 +39,11 @@ public class Robot {
 	private int x = 0, y = 0;
 	private Task task;
 	
-	private Integer currentX;
-	private Integer currentY;
+	private int currentX;
+	private int currentY;
 	
-	private Float currentWeight;
-	private Float maxWeight = 50f; // Maybe finalis
+	private float currentWeight;
+	private float maxWeight = 50f; // Maybe finalis
 	
 	/**
 	 * Current direction is degrees.
@@ -64,7 +64,7 @@ public class Robot {
 		return currentX;
 	}
 
-	public void setCurrentX(Integer currentX) {
+	public void setCurrentX(int currentX) {
 		this.currentX = currentX;
 	}
 
@@ -72,7 +72,7 @@ public class Robot {
 		return currentY;
 	}
 
-	public void setCurrentY(Integer currentY) {
+	public void setCurrentY(int currentY) {
 		this.currentY = currentY;
 	}
 
@@ -80,7 +80,7 @@ public class Robot {
 		return currentWeight;
 	}
 
-	public void setCurrentWeight(Float currentWeight) {
+	public void setCurrentWeight(float currentWeight) {
 		this.currentWeight = currentWeight;
 	}
 
@@ -88,7 +88,7 @@ public class Robot {
 		return maxWeight;
 	}
 
-	public void setMaxWeight(Float maxWeight) {
+	public void setMaxWeight(float  maxWeight) {
 		this.maxWeight = maxWeight;
 	}
 	
@@ -169,6 +169,11 @@ public class Robot {
 
 	public boolean hasInstructions() {
 		return sender.hasCommands();
+	}
+
+	public void clearInstructions() {
+		sender.clearInstructions();
+		
 	}
 
 }
