@@ -1,21 +1,11 @@
 package jobmanagement;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import com.whshared.network.NetworkMessage;
 
 import bluetooth.Robot;
 import filehandling.ItemTable;
@@ -25,10 +15,8 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 import pathfinding.MultiPathfinder;
-import pathfinding.ShortestPathFinder;
 import types.Job;
 import types.Step;
-import types.Task;
 import ui.PCGUI;
 
 public class Server extends Thread {
@@ -41,26 +29,25 @@ public class Server extends Thread {
 	
 	int TimeStep = 0;
 	
-	List<NXTInfo> NXTS = new ArrayList<NXTInfo>();
 	List<Robot> connections = new ArrayList<Robot>();
-	ArrayList<String> names = new ArrayList<String>();
 
 	/**
 	 * connects to nxts. Should be called before starting the thread.
 	 */
 	public void connect() {
-		
+		List<Robot> failed = new ArrayList<Robot>();
 		for (Robot connection : connections) {
 			NXTComm nxtComm;
 			try {
 				nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
 				connection.connect(nxtComm);
 			} catch (NXTCommException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				connections.remove(connection);
+				System.out.println("Failed to connect to robot " + connection.getName());
+				failed.add(connection);
 			}
 		}
+		connections.removeAll(failed);
+		
 	}
 
 	public int getTimeStep() {
@@ -77,9 +64,7 @@ public class Server extends Thread {
 	 * @return A robot object representing the robot.
 	 */
 	public Robot addNXT(String name, String address) {
-		NXTInfo nxt = new NXTInfo(NXTCommFactory.BLUETOOTH, name, address);
-		NXTS.add(nxt);
-		Robot r = new Robot(nxt, this);
+		Robot r = new Robot(new NXTInfo(NXTCommFactory.BLUETOOTH, name, address), this);
 		connections.add(r);
 		return (r);
 	}
@@ -137,7 +122,7 @@ public class Server extends Thread {
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
 		while (true) {
 
-			for (Robot r : robotList) {
+			for (Robot r : connections) {
 				if (!jobMap.containsKey(r) || !jobMap.get(r).getActive()) {	
 					Job newJob = jobTable.popQueue();
 					jobMap.put(r, newJob);
@@ -181,25 +166,5 @@ public class Server extends Thread {
 			connections.get(0).disconnect();	
 	}
 	
-	public static void spoofRoutePlanning(BlockingQueue<Byte> messages) throws IOException {
-		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
-		String input;
-		System.out.println("Input a direction sequence (input '.' to finish):\n");
-		while (!(input = user.readLine()).equals(".")) {
-			if (input.equals("n")) {
-				messages.offer(NetworkMessage.MOVE_NORTH);
-			} else if (input.equals("e")) {
-				messages.offer(NetworkMessage.MOVE_EAST);
-			} else if (input.equals("s")) {
-				messages.offer(NetworkMessage.MOVE_SOUTH);
-			} else if (input.equals("w")) {
-				messages.offer(NetworkMessage.MOVE_WEST);
-			} else if (input.equals("p")) {
-				messages.offer(NetworkMessage.AWAIT_PICKUP);
-				break;
-			}
-		}
-
-	}
 
 }

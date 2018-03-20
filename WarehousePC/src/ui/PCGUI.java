@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 
 import bluetooth.Robot;
 import filehandling.JobTable;
+import jobmanagement.Server;
 import lejos.util.Delay;
 import types.Job;
 
@@ -38,6 +39,7 @@ public class PCGUI extends JFrame implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 902776736269552333L;
+	private Server server;
 
 	private static final String FRAME_TITLE = "Robot Control UI";
 
@@ -59,10 +61,9 @@ public class PCGUI extends JFrame implements Runnable {
 
 	private ArrayList<Robot> robots;
 
-	public PCGUI(JobTable jobDataStore, ArrayList<Robot> robots) {
+	public PCGUI(JobTable jobDataStore, Server server) {
 		this.jobDataStore = jobDataStore;
-		this.robots = robots;
-
+		this.server = server;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setPreferredSize(new Dimension(500, 500));
