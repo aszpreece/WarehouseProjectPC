@@ -15,6 +15,7 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 import pathfinding.Multiples;
+import pathfinding.ShortestPathFinder;
 import types.Job;
 import types.Step;
 import ui.PCGUI;
@@ -121,7 +122,7 @@ public class Server extends Thread {
 		bish.setCurrentY(1);
 		Robot poppy;
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
-		poppy.setCurrentX(11);
+		poppy.setCurrentX(0);
 		poppy.setCurrentY(1);
 		
 		PCGUI pcGUI = new PCGUI(jobTable, this);
@@ -132,7 +133,7 @@ public class Server extends Thread {
 		//ShortestPathFinder pathfinder = new ShortestPathFinder(null);
 		connect();
 		
-		Multiples pathfinder = new Multiples();
+		ShortestPathFinder pathfinder = new ShortestPathFinder(0, 1);
 		
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
@@ -152,7 +153,7 @@ public class Server extends Thread {
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
-						r.setInstructions(pathfinder.pathfinder(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
+						r.setInstructions(pathfinder.pathfind(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
 					} else {
 						jobMap.get(r).setActive(false);
 					}

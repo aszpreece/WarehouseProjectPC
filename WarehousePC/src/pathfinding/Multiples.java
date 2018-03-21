@@ -84,7 +84,7 @@ public class Multiples {
 	    		}
     		}
     		
-    		//multiGraph.getGraph(step)[list.get(counter).getX()][list.get(counter).getY()] = POINT_OCCUPIED;
+    		multiGraph.getGraph(step)[list.get(counter).getX()][list.get(counter).getY()] = POINT_OCCUPIED;
     		multiGraph.printGraph(step);
     		System.out.println();
     		
@@ -98,7 +98,7 @@ public class Multiples {
     	for (int i = 0; i < list.size(); i++) {
     	//System.out.print(list.get(i).getX());
     	//System.out.println(list.get(i).getY());
-    	}
+    	}    
     	return list;
     }
     
@@ -136,7 +136,7 @@ public class Multiples {
 			    	}
 			    }
 	    	}
-				 
+	        	 
 	    	currentStepPlus();
 	    	iterator--;
     	}

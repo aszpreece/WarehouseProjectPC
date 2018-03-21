@@ -33,7 +33,7 @@ public class JobAssignment {
 	/**
 	 * the drop location
 	 */
-	private Node DROP_LOCATION = new Node(1, 7);
+	private Node DROP_LOCATION = new Node(4, 4);
 
 	/**
 	 * @param items
