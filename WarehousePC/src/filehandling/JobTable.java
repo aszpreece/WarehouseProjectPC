@@ -62,7 +62,7 @@ public class JobTable {
 	 * to its JobID
 	 */
 	public void cancel(String id) {
-		jobTable.get(id).setActive(false);
+		jobTable.get(id).setCancelled(true);
 	}
 	/*
 	 * Creates table based on CSV files

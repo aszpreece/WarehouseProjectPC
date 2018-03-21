@@ -134,7 +134,7 @@ public class Server extends Thread {
 		
 		Multiples pathfinder = new Multiples();
 		
-		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
+		//once all the set up is complete we big the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
 		boolean onejob = false;
@@ -179,5 +179,8 @@ public class Server extends Thread {
 			connections.get(0).disconnect();	
 	}
 	
+	public List<Robot> getConnectedRobots(){
+		return connections;
+	}
 
 }
