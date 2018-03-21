@@ -24,7 +24,7 @@ public class MultiGraph {
     public void printGraph(int time) {
     	for (int  i = 0; i < GRAPH_HEIGHT; i++) {
     		for (int j = 0; j < GRAPH_WIDTH; j++) {
-    			System.out.print(multiGraph.get(time)[i][j] + "   ");
+    			System.out.print(multiGraph.get(time % 30)[i][j] + "   ");
     		}
     		System.out.println();
     	}
