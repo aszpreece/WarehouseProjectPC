@@ -2,6 +2,7 @@ package ui;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,8 +16,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import bluetooth.Robot;
@@ -66,6 +69,8 @@ public class PCGUI extends JFrame implements Runnable {
 	private JMenuBar menuBar;
 	private JMenu toolsMenu;
 	private JMenuItem addRobotMenuItem;
+	
+	private String direction = "";
 
 	private Server server;
 
@@ -142,49 +147,89 @@ public class PCGUI extends JFrame implements Runnable {
 			public void actionPerformed(ActionEvent arg0) {
 				JFrame addRobotFrame = new JFrame("Add Robot");
 				JPanel addRobotPanel = new JPanel();
+				JPanel addRobotCoordinatePanel = new JPanel();
+				JPanel addRobotDirectionPanel = new JPanel();
 				JLabel xLabel = new JLabel("X: ");
 				JLabel yLabel = new JLabel("Y: ");
+				JLabel dirLabel = new JLabel("Direction");
+				JButton okButton = new JButton("OK");
 				
 				JTextField xTextField = new JTextField();
+				xTextField.setPreferredSize(new Dimension(25,20));
 				JTextField yTextField = new JTextField();
+				yTextField.setPreferredSize(new Dimension(25,20));
 				
-				xTextField.addActionListener(new ActionListener() {
+				JRadioButton northButton = new JRadioButton("N");
+				northButton.addActionListener(new ActionListener() {
 
 					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						String xCoordinate = xTextField.getText();
-						String yCoordinate = yTextField.getText();
-						
-						if((xCoordinate.length()>0) && (yCoordinate.length()>0)) {
-							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate));
-							addRobotFrame.setVisible(false);
-						}
+					public void actionPerformed(ActionEvent e) {
+						direction = "N";
 					}
 					
 				});
 				
-				yTextField.addActionListener(new ActionListener() {
+				JRadioButton southButton = new JRadioButton("S");
+				southButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						direction = "S";						
+					}
+					
+				});
+				
+				JRadioButton eastButton = new JRadioButton("E");
+				eastButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						direction = "E";
+						
+					}
+					
+				});
+				
+				JRadioButton westButton = new JRadioButton("W");
+				
+				ButtonGroup buttonGroup = new ButtonGroup();
+				buttonGroup.add(northButton);
+				buttonGroup.add(southButton);
+				buttonGroup.add(eastButton);
+				buttonGroup.add(westButton);
+				
+				okButton.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						String xCoordinate = xTextField.getText();
 						String yCoordinate = yTextField.getText();
 						
-						if((xCoordinate.length()>0) && (yCoordinate.length()>0)) {
-							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate));
+						if((xCoordinate.length()>0) && (yCoordinate.length()>0) && (!(direction).equals(""))) {
+							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate), direction);
+							direction = "";
 							addRobotFrame.setVisible(false);
 						}
 					}
 					
 				});
 				
-				addRobotPanel.setLayout(new BoxLayout(addRobotPanel, BoxLayout.X_AXIS));
-				addRobotPanel.add(xLabel);
-				addRobotPanel.add(xTextField);
-				addRobotPanel.add(yLabel);
-				addRobotPanel.add(yTextField);
+				addRobotCoordinatePanel.setLayout(new BoxLayout(addRobotCoordinatePanel, BoxLayout.X_AXIS));
+				addRobotCoordinatePanel.add(xLabel);
+				addRobotCoordinatePanel.add(xTextField);
+				addRobotCoordinatePanel.add(yLabel);
+				addRobotCoordinatePanel.add(yTextField);
+				addRobotDirectionPanel.setLayout(new BoxLayout(addRobotDirectionPanel, BoxLayout.X_AXIS));
+				addRobotDirectionPanel.add(dirLabel);
+				addRobotDirectionPanel.add(northButton);
+				addRobotDirectionPanel.add(eastButton);
+				addRobotDirectionPanel.add(southButton);
+				addRobotDirectionPanel.add(westButton);
+				addRobotPanel.add(addRobotCoordinatePanel,BorderLayout.NORTH);
+				addRobotPanel.add(addRobotDirectionPanel, BorderLayout.CENTER);
+				addRobotPanel.add(okButton, BorderLayout.SOUTH);
 				addRobotFrame.add(addRobotPanel);
-				addRobotFrame.setPreferredSize(new Dimension(250,50));
+				addRobotFrame.setPreferredSize(new Dimension(250,120));
 				addRobotFrame.pack();
 				addRobotFrame.setVisible(true);
 				
@@ -293,6 +338,8 @@ class GridPanel extends JPanel implements Runnable {
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
 	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
+	private List<Robot> robotList;
+	private HashMap<String, MobileRobotWrapper<MovableRobot>> robotTable;
 	
 	private Server server;
 
@@ -300,11 +347,31 @@ class GridPanel extends JPanel implements Runnable {
 		gridMap = MapUtils.createRealWarehouse();
 		sim = new MapBasedSimulation(gridMap);
 		wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
+		this.robotTable = new HashMap<>();
+		this.robotList = server.getConnectedRobots();
 		
 	}
 	
-	public void addRobot(int x, int y) {
-		GridPose gridStart = new GridPose(x, y, Heading.PLUS_Y);
+	public void addRobot(int x, int y, String direction) {
+		
+		GridPose gridStart;
+		
+		switch(direction) {
+		case "N":
+			gridStart = new GridPose(x, y, Heading.PLUS_Y);
+			break;
+		case "E":
+			gridStart = new GridPose(x, y, Heading.PLUS_X);
+			break;
+		case "S":
+			gridStart = new GridPose(x, y, Heading.MINUS_Y);
+			break;
+		case "W":
+			gridStart = new GridPose(x, y, Heading.MINUS_X);
+			break;
+		default:
+				gridStart = new GridPose(x, y, Heading.PLUS_Y);
+		}
 		
 		MobileRobotWrapper<MovableRobot> wrapper = sim.addRobot(SimulatedRobots.makeConfiguration(false, true),
 				gridMap.toPose(gridStart));
@@ -320,13 +387,6 @@ class GridPanel extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		
-	}
-}
-
-class RobotTable{
-	
-	public RobotTable() throws IOException{
 		
 	}
 }
