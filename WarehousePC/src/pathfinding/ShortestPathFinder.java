@@ -84,10 +84,8 @@ public class ShortestPathFinder {
 			pathFind(startingPosition.x, startingPosition.y);
 			secondPath = new ArrayList<Byte>();
 			secondPath.addAll(pathToFollow);
+
 			if (secondPath.size() < firstPath.size()) {
-				
-				System.out.println("Second path is shorter");
-				
 				Collections.reverse(secondPath);
 				for (int i = 0; i < secondPath.size(); i++) {// get a correct path
 					if (secondPath.get(i) == NetworkMessage.MOVE_NORTH) {
@@ -154,6 +152,7 @@ public class ShortestPathFinder {
 					pathFind(currentNode.x, currentNode.y - 1);
 				}
 			} else {// obstacle in the way
+
 				goAroundObstacle(currentNode.x, currentNode.y, true);
 				pathFind(currentNode.x, currentNode.y);
 			}
@@ -193,7 +192,7 @@ public class ShortestPathFinder {
 				currentNode.set(currentNode.x + 1, currentNode.y);
 			} else if (goalPosition.x < currentNode.x) {// we want to go north
 				map[currentNode.x - 1][currentNode.y] = PATH_NODE;// go north
-				pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+				pathToFollow.add(NetworkMessage.MOVE_NORTH);
 				currentNode.set(currentNode.x - 1, currentNode.y);
 			} else {// on the correct north / south
 				if (currentNode.y > goalPosition.y) {// if we want to go west
@@ -231,17 +230,14 @@ public class ShortestPathFinder {
 				}
 			}
 		} else {// we need to go north or south but can't
-			if (currentNode.x < goalPosition.x) {// if we want to go north
-				
-				System.out.println("We want to go north but can't");
-				
+			if (currentNode.x < goalPosition.x) {// if we want to go south
 				if (currentNode.y != 0 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came from
 																								// the
 																								// west
 					map[currentNode.x][currentNode.y - 1] = 1;
 					map[currentNode.x + 1][currentNode.y - 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
-					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 					currentNode.set(currentNode.x + 1, currentNode.y - 1);
 				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we
 																										// came from the
@@ -249,25 +245,22 @@ public class ShortestPathFinder {
 					map[currentNode.x][currentNode.y + 1] = 1;
 					map[currentNode.x + 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
-					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 					currentNode.set(currentNode.x + 1, currentNode.y + 1);
 				} else {// we didn't come from either so just go to the east and north
-					
-					System.out.println("Didn't come from either way");
-					
 					map[currentNode.x][currentNode.y + 1] = PATH_NODE;
 					map[currentNode.x + 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.add(NetworkMessage.MOVE_EAST);
-					pathToFollow.add(NetworkMessage.MOVE_NORTH);
+					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
 					currentNode.set(currentNode.x + 1, currentNode.y + 1);
 				}
-			} else {// we want to go south
+			} else {// we want to go north
 				if (currentNode.y != 0 && map[currentNode.x][currentNode.y - 1] == PATH_NODE) {// check if we came from the
 																								// west
 					map[currentNode.x][currentNode.y - 1] = 1;
 					map[currentNode.x - 1][currentNode.y - 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
 					currentNode.set(currentNode.x - 1, currentNode.y - 1);
 				} else if (currentNode.y != 1 && map[currentNode.x][currentNode.y + 1] == PATH_NODE) {// check if we
 																										// came from the
@@ -275,13 +268,13 @@ public class ShortestPathFinder {
 					map[currentNode.x][currentNode.y + 1] = 1;
 					map[currentNode.x - 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.remove(pathToFollow.size() - 1);
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
 					currentNode.set(currentNode.x - 1, currentNode.y + 1);
-				} else {// we didn't come from either so just go to the east and south
+				} else {// we didn't come from either so just go to the east and north
 					map[currentNode.x][currentNode.y + 1] = PATH_NODE;
 					map[currentNode.x - 1][currentNode.y + 1] = PATH_NODE;
 					pathToFollow.add(NetworkMessage.MOVE_EAST);
-					pathToFollow.add(NetworkMessage.MOVE_SOUTH);
+					pathToFollow.add(NetworkMessage.MOVE_NORTH);
 					currentNode.set(currentNode.x - 1, currentNode.y + 1);
 				}
 			}

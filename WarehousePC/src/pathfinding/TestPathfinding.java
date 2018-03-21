@@ -80,9 +80,6 @@ public class TestPathfinding {
 			path = shortest.pathfind(1, 0, 1, 6);
 			expectedPath.add(0, NetworkMessage.MOVE_EAST);
 			expectedPath.add(NetworkMessage.MOVE_WEST);
-			
-			System.out.println(shortest.toString());
-			
 			assertEquals(expectedPath, path);
 			expectedPath.clear();
 			
@@ -108,11 +105,14 @@ public class TestPathfinding {
 		
 		path = shortest.pathfind(6, 5, 8, 3);
 		expectedPath.add(NetworkMessage.MOVE_NORTH); 
-		expectedPath.add(NetworkMessage.MOVE_WEST);
-		expectedPath.add(NetworkMessage.MOVE_WEST);
+		expectedPath.add(NetworkMessage.MOVE_EAST);
+		expectedPath.add(NetworkMessage.MOVE_EAST);
 		expectedPath.add(NetworkMessage.MOVE_SOUTH);
 		expectedPath.add(NetworkMessage.MOVE_SOUTH);
 		expectedPath.add(NetworkMessage.MOVE_SOUTH);
+		
+		System.out.println(shortest.toString());
+		
 		assertEquals(expectedPath, path);
 	}
 }
