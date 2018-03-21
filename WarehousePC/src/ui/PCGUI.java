@@ -3,21 +3,23 @@ package ui;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import filehandling.JobTable;
 import lejos.util.Delay;
@@ -41,6 +43,8 @@ public class PCGUI extends JFrame implements Runnable {
 
 	private static final String FRAME_TITLE = "Robot Control UI";
 
+	private JMenuBar menuBar;
+	
 	private JPanel jobsPanel;
 	
 	private JPanel activeJobsPanel;
@@ -58,6 +62,14 @@ public class PCGUI extends JFrame implements Runnable {
 	private JobTable jobDataStore;
 
 	private ArrayList<RobotPC> robots;
+	
+	private String itemFileLocation = "/Resources/items.csv";
+	
+	private String locationFileLocation = "/Resources/locations.csv";
+	
+	private String jobFileLocation = "/Resources/jobs.csv";
+	
+	private String cancellationFileLocation = "/Resources/cancellations.csv";
 
 	public PCGUI(JobTable jobDataStore, ArrayList<RobotPC> robots) {
 		this.jobDataStore = jobDataStore;
@@ -68,6 +80,80 @@ public class PCGUI extends JFrame implements Runnable {
 		setPreferredSize(new Dimension(500, 500));
 		setTitle(FRAME_TITLE);
 		setVisible(true);
+		
+		menuBar = new JMenuBar();
+
+        JMenu fileMenu = new JMenu("File");
+        menuBar.add(fileMenu);
+
+        // Menu items to load in the frequencies file and the cipher file
+        JMenuItem loadJobsItem = new JMenuItem("Load Jobs File");
+        loadJobsItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				  JFileChooser fileChooser = new JFileChooser();
+			        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+			        fileChooser.setDialogTitle("Open File");
+			        // Only allow csv files
+			        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files (.csv)", "csv"));
+
+			        if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			            jobFileLocation = fileChooser.getSelectedFile().getAbsolutePath();
+			        }
+			        else{
+			            // If no file is found return null
+			            jobFileLocation = null;
+			        }
+			}
+		});
+        fileMenu.add(loadJobsItem);
+
+        JMenuItem loadItemsItem = new JMenuItem("Load items File");
+        loadItemsItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				  JFileChooser fileChooser = new JFileChooser();
+			        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+			        fileChooser.setDialogTitle("Open File");
+			        // Only allow csv files
+			        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files (.csv)", "csv"));
+
+			        if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			            itemFileLocation = fileChooser.getSelectedFile().getAbsolutePath();
+			        }
+			        else{
+			            // If no file is found return null
+			            itemFileLocation = null;
+			        }
+			}
+		});
+        fileMenu.add(loadItemsItem);
+        
+        JMenuItem loadCancellationsItem = new JMenuItem("Load Cancellations File");
+        loadCancellationsItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				  JFileChooser fileChooser = new JFileChooser();
+			        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+			        fileChooser.setDialogTitle("Open File");
+			        // Only allow csv files
+			        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files (.csv)", "csv"));
+
+			        if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+			            cancellationFileLocation = fileChooser.getSelectedFile().getAbsolutePath();
+			        }
+			        else{
+			            // If no file is found return null
+			            cancellationFileLocation = null;
+			        }
+			}
+		});
+        fileMenu.add(loadCancellationsItem);
+        
+        setJMenuBar(menuBar);
 
 		jobsPanel = new JPanel(new FlowLayout());
 		jobsPanel.setPreferredSize(new Dimension(250, 500));
@@ -89,7 +175,7 @@ public class PCGUI extends JFrame implements Runnable {
 		inactiveJobsPanel = new JPanel();
 		{
 			inactiveJobsPanel.setBorder(BorderFactory.createTitledBorder("Inactive Jobs"));
-			inactiveJobsPanel.setPreferredSize(new Dimension(250, 260));
+			inactiveJobsPanel.setPreferredSize(new Dimension(250, 243));
 			inactiveJobsPanel.setLayout(new BoxLayout(inactiveJobsPanel, BoxLayout.Y_AXIS));
 
 			inactiveJobsInnerPanel = new JPanel();
@@ -116,6 +202,22 @@ public class PCGUI extends JFrame implements Runnable {
 
 		pack();
 
+	}
+	
+	public String getItemFileLocation() {
+		return itemFileLocation;
+	}
+	
+	public String getLocationFileLocation() {
+		return locationFileLocation;
+	}
+	
+	public String getJobFileLocation() {
+		return jobFileLocation;
+	}
+	
+	public String getCancellationFileLocation() {
+		return cancellationFileLocation;
 	}
 	
 	public void updateUI() {

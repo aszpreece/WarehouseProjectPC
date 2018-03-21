@@ -1,7 +1,5 @@
 package jobmanagement;
 
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,18 +47,16 @@ public class JobManagerServer {
 			ItemTable itemTable = new ItemTable();
 			JobTable jobTable = new JobTable();
 			ArrayList<RobotPC> robotList  = new ArrayList<RobotPC>();
-
-			
 			
 			RobotManager robotManager = new RobotManager();
 			robotManager.addNXT("LilBish", "00165317B895");
 			// robotManager.addNXT("Poppy", "001653089A83");
-			robotManager.connect();
-
+			//robotManager.connect();
+			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
+			//robotManager.setMovementQueue("LilBish", messages);
+			
 			Thread m = new Thread(robotManager);
 			m.start();
-
-			// robotManager.start();
 
 			RobotPC r1 = new RobotPC();
 			r1.setCurrentX(0);
@@ -74,28 +70,17 @@ public class JobManagerServer {
 			display.start();
 
 			JobAssignment planner = new JobAssignment(itemTable);
-			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
-			robotManager.setMovementQueue("LilBish", messages);
 			
 			// The loop that gets each of the jobs from the priority queue and pops them off path finding to be run on
 			while (true) {
+				
 				Job currentJob;
-				try {
-					currentJob = jobTable.popQueue();
-				}catch(Exception e) {
-					break;
-				}
+				try { currentJob = jobTable.popQueue(); } catch(Exception e) { break; }
+				
 				ArrayList<Task> tasks = currentJob.getItemList();
-
 				ArrayList<Step> steps = planner.getNextPlan(tasks, r1);
 
-
 				ShortestPathFinder pathfinder = new ShortestPathFinder();
-				
-				
-				//BlockingQueue<>
-				// We may need a instruction type which is a queue of actions, so that when cancellations occur, whole instructions are cancelled, in stead pf just the current action
-				
 				
 				System.out.println("JobID: " + currentJob.getJobID());
 				
@@ -111,19 +96,7 @@ public class JobManagerServer {
 					
 					
 				}
-				
-				/*for (Step s : steps) {
-					System.out.println("");
-					if (s.getCommand().length() == 2) {
-						System.out.println("GET: " + s.getQuantity() + " of " + s.getCommand() + "- LOCATE TO: "
-								+ s.getCoordinate());
-					} else {
-						System.out.println("route to drop off point");
-					}
-					// ArrayList<byte> messages = pathfinder.getPath(point, s.coordinate());
-					spoofRoutePlanning(messages);
 			
-				}*/
 				currentJob.setActive(false);
 			}
 			
