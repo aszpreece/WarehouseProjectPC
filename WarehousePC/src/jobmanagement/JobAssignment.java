@@ -103,7 +103,10 @@ public class JobAssignment {
 			else {
 				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
 				Step step = new Step(nextTask.getId(), quantity, new Node(currentItem.getX(), currentItem.getY()));
+				
+				//this step completes a task, flag to tell the server task has been completed.
 				step.setMyTask(nextTask);
+				
 				plan.add(step);
 				nextTask.setComplete(true);
 				x = currentItem.getX();
