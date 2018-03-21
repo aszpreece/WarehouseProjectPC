@@ -15,10 +15,12 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 import pathfinding.AStar;
-import pathfinding.ShortestPathFinder;
+import pathfinding.CAStar;
+import pathfinding.ReservationTable;
 import types.Job;
 import types.Node;
 import types.Step;
+import types.Task;
 import ui.PCGUI;
 
 public class Server extends Thread {
@@ -29,6 +31,10 @@ public class Server extends Thread {
 		m.start();
 
 	}
+	
+	volatile ReservationTable rTable = new ReservationTable();
+	
+	boolean pause = false;
 	
 	int TimeStep = 0;
 	
@@ -67,7 +73,7 @@ public class Server extends Thread {
 	 * @return A robot object representing the robot.
 	 */
 	public Robot addNXT(String name, String address) {
-		Robot r = new Robot(new NXTInfo(NXTCommFactory.BLUETOOTH, name, address), this);
+		Robot r = new Robot(new NXTInfo(NXTCommFactory.BLUETOOTH, name, address), rTable ,this);
 		connections.add(r);
 		return (r);
 	}
@@ -116,6 +122,10 @@ public class Server extends Thread {
 			return;
 		}
 	
+		//rTable.parkPosition(new Node(1, 0));
+		rTable.reservePosition(new Node(1, 0), 1);
+		System.out.println(rTable.isReserved(new Node(1, 0), 1));
+		System.out.println(rTable.isReserved(new Node(2, 0), 1));
 		ArrayList<Robot> robotList  = new ArrayList<Robot>();
 		Robot bish;
 		robotList.add((bish = addNXT("LilBish", "00165317B895")));
@@ -124,7 +134,12 @@ public class Server extends Thread {
 		Robot poppy;
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
 		poppy.setCurrentX(0);
-		poppy.setCurrentY(1);
+		poppy.setCurrentY(7);
+//		
+//		Robot lego;
+//		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+//		lego.setCurrentX(0);
+//		lego.setCurrentY(4);
 		
 		PCGUI pcGUI = new PCGUI(jobTable, this);
 		Thread display = new Thread(pcGUI);
@@ -134,12 +149,17 @@ public class Server extends Thread {
 		//ShortestPathFinder pathfinder = new ShortestPathFinder(null);
 		connect();
 		
-		AStar pathfinder = new AStar();
+		CAStar pathfinder = new CAStar(rTable);
 		
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
-
+//		Node poppyGoal = new Node(0, 0);
+//		Node bishGoal = new Node(0, 7);
+//		poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(), poppy.getY()), poppyGoal, getTimeStep()));
+//		System.out.println("found poppys path");
+//		bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(), bish.getY()), bishGoal, getTimeStep()));
+//		
 		while (true) {
 
 			for (Robot r : connections) {
@@ -154,15 +174,12 @@ public class Server extends Thread {
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
-						r.setInstructions(pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate()));
+						r.setInstructions(pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(), getTimeStep()));
 					} else {
 						jobMap.get(r).setActive(false);
 					}
 				}
-			}
-			
-			//Method in step, that flags whether the completion of this step completes a task and returns the task object that it completes.
-		
+			}	
 			
 			if (this.checkReady()) {
 				this.setReady(true);

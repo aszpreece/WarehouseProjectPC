@@ -14,6 +14,8 @@ import jobmanagement.Server;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTInfo;
+import pathfinding.ReservationTable;
+import types.Node;
 import types.Task;
 
 /**
@@ -39,13 +41,13 @@ public class Robot {
 	private volatile boolean requestingMove = false;
 	private volatile boolean connected = false;
 	private Server manager;
-	private Task task;
 	
 	private volatile int x = 0;
 	private volatile int y = 0;
 	
 	private float currentWeight;
 	private float maxWeight = 50f;
+	private ReservationTable table;
 	
 	private boolean parked = false;
 	
@@ -56,11 +58,12 @@ public class Robot {
 	
 	private String robotName;
 	
-	public Robot(NXTInfo nxt, Server jobManagerServer) {
+	public Robot(NXTInfo nxt, ReservationTable rTable, Server jobManagerServer) {
 		m_nxt = nxt;
 		name = nxt.name;
-		// Why is the manager imported?
 		manager = jobManagerServer;
+		table = rTable;
+		
 	}
 
 	/**
@@ -185,7 +188,13 @@ public class Robot {
 	}
 
 	public void setParked(boolean b) {
-		parked = true;		
+		if (b) {
+			table.parkPosition(new Node(x,y));
+		} else {
+			table.unparkPosition(new Node(x,y));
+		}
+	
+		parked = b;		
 	}
 	
 	public boolean isParked() {

@@ -14,11 +14,11 @@ import com.whshared.network.NetworkMessage;
 
 import types.Node;
 
-public class AStar {
+public class CAStar {
 
 	int width, height;
 
-	private final Map<Node, String> nodes = new HashMap<Node, String>();
+	private ReservationTable reservationTable;
 
 	final static int[][] graph = { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
 								   { 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1 },
@@ -29,12 +29,13 @@ public class AStar {
 			                       { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
 			                       { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, };
 
-	public AStar() {
+	public CAStar(ReservationTable table) {
+		reservationTable = table;
 		width = graph[0].length - 1;
 		height = graph.length - 1;
 	}
 
-	public List<Byte> pathfind(Node start, Node end) {
+	public List<Byte> pathfind(Node start, Node end, int startTimeStep) {
 		
 		if (end.equals(start)) {
 			return new ArrayList<Byte>();
@@ -58,26 +59,26 @@ public class AStar {
 			potential.add(new Node(currentStep.getCoordinate().getX() - 1, currentStep.getCoordinate().getY()));
 			
 			for (Node node : potential) {
-				if (isSpace(node)) {
-					PathStep s = new PathStep(Optional.of(currentStep), node, heuristic(currentStep.getCoordinate(), end));
-					//System.out.println(node.toString() + " is a space!");
+				PathStep s = new PathStep(Optional.of(currentStep), node, heuristic(currentStep.getCoordinate(), end));
+				if (isFree(node, startTimeStep + s.getG())) {	
+					System.out.println(node.toString() + " is a space!");
 					if (!closedList.contains(s) && !openList.contains(s)) {
 						if (end.equals(s.getCoordinate())) {
-							return reconstruct(s);
+							return reconstruct(s, startTimeStep);
 						}
-						//System.out.println("Added to open list " + s.getCoordinate().getX() + " " + s.getCoordinate().getY());
+						System.out.println("Added to open list " + s.getCoordinate().getX() + " " + s.getCoordinate().getY());
 						openList.add(s);
 					}
 				} else {
-					//System.out.println(node.toString() + " is not a space!");
+					System.out.println(node.toString() + " is not a space!");
 				}
 			}
 			potential.clear();
 		}
-		return new ArrayList<Byte>();
+		return null;
 	}
 
-	private List<Byte> reconstruct(PathStep current) {
+	private List<Byte> reconstruct(PathStep current, int currentTimeStep) {
 		List<Byte> directions = new ArrayList<Byte>();
 		PathStep parent = null;
 		while (current.getParent().isPresent()) {
@@ -91,21 +92,28 @@ public class AStar {
 			} else if(current.getCoordinate().y < parent.getCoordinate().y) {
 				directions.add(NetworkMessage.MOVE_SOUTH);	
 			} 
+			reservationTable.reservePosition(current.getCoordinate(), current.getG());
 			current = parent;
 		}
 		Collections.reverse(directions);
 		return directions;
 	}
 
-	private boolean isSpace(Node n) {
+	private boolean isFree(Node n, int step) {
 		if (n.x <= width && n.x >= 0 && n.y <= height && n.y >= 0) {
-			return graph[n.y][n.x] == 1;
+			return graph[n.y][n.x] == 1 && !reservationTable.isReserved(n, step);
 		}
 		return false;
 	}
 
 	private int heuristic(Node start, Node end) {
-		return Math.abs((end.x - start.x) + (end.y - start.y));
+		AStar p = new AStar();
+		return p.pathfind(start, end).size();
+	}
+	
+	public void clearReservations() {
+		//clear table.
+		//reservations.clear();
 	}
 
 }
