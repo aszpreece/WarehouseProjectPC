@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class FileHandling {
 	
+	public final static String TRAINING_NAME = "training_jobs";
+	public final static String CANCELLATION_NAME = "cancellations";
 	public final static String ITEM_FILE_NAME = "items";
 	public final static String JOBS_FILE_NAME = "jobs";
 	public final static String ITEM_LOCATION_FILE_NAME = "locations";

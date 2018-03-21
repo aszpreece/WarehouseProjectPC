@@ -59,4 +59,8 @@ public class Task {
 		return this.reward;
 	}
 	
+	public String getItemId() {
+		return itemId;
+	}
+	
 }

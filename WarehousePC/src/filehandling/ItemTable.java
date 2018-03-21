@@ -13,12 +13,11 @@ import types.Item;
  */
 public class ItemTable { 
 	
-	private static final Logger logger = Logger.getLogger(ItemTable.class);
 	/*
 	 * Stores all items into a hash map, where the key is item ID which maps to its item class
 	 */
 	public HashMap<String, Item> itemTable;
-	
+
 	public ItemTable() throws IOException{
 		this.itemTable = createTable();
 	}
@@ -32,7 +31,6 @@ public class ItemTable {
 	 * Creates table based on CSV files
 	 */
 	public static HashMap<String, Item> createTable() throws IOException{
-		logger.info("Creating item table");
 		HashMap<String, Item> itemTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader items = new BufferedReader(FileHandling.getFileReader(FileHandling.ITEM_FILE_NAME));

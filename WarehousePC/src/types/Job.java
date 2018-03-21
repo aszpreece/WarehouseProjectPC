@@ -20,9 +20,16 @@ public class Job{
 	 * Total reward for this whole job
 	 */
 	private Float TOTAL_REWARD;
+	/**
+	 * Scale factor to push a job down the queue
+	 */
+	private final int SCALE_FACTOR = 100;
 	
-	public Job(ArrayList<Task> itemList) {
+	private int cancelPredictor; //1 = cancelled 0 = not to cancel
+	
+	public Job(ArrayList<Task> itemList, int cancelPredictor) {
 		this.itemList = itemList;
+		this.cancelPredictor = cancelPredictor;
 		this.TOTAL_REWARD = getReward();
 	}
 	/*
@@ -47,6 +54,11 @@ public class Job{
 			sumReward += crntTask.getReward();
 		}
 		
+		if (this.cancelPredictor == 1) {
+			//Most likely to get cancelled hence a scale factor to push down the queue
+			sumReward *= SCALE_FACTOR;
+		}
+
 		return sumReward;
 	}
 }

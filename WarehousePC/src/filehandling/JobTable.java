@@ -19,7 +19,6 @@ import types.Task;
  */
 public class JobTable {
 	
-	private static final Logger logger = Logger.getLogger(JobTable.class);
 	/*
 	 * Stores all items into a hash map, where the key is job ID which maps to its job class
 	 */
@@ -38,7 +37,7 @@ public class JobTable {
 		try {
 			this.jobTable = createTable();
 		}catch (IOException e){
-			logger.debug(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 	}
 	/*
@@ -47,44 +46,39 @@ public class JobTable {
 	public ArrayList<Task> getTaskList(String id){
 		return jobTable.get(id).getItemList();
 	}
+	/**
+	 * @param id - id of the job we want
+	 * @return job if exists else null
+	 */
+	public HashMap<String, Job> getJobTable() {
+		return jobTable;
+	}
 	/*
 	 * Gets total reward for a job with given id
 	 */
 	public Float getReward(String id){
 		return jobTable.get(id).getTotalReward();
 	}
-	/*
+	/**
 	 * Pops top job from queue and returns it
-	 * returns null if queue is empty
+	 * @return null if queue is empty
 	 */
 	public Job popQueue(){
 		return queue.poll();
 	}
-	//----------------------------------------------------------------------------------------
-	/*
-	 * METHODS ONLY FOR JUNIT TESTING
-	 * Getter for priority queue, mainly used for JUnit testing
-	 * since the main program will only need to pop the queue than
-	 * need the whole queue at once
+	/**
+	 * @return returns item table when instantiating job table
 	 */
-	public Queue<Job> getQueue(){
-		return queue;
+	public ItemTable getItems() {
+		return this.itemTable;
 	}
-	
-	public HashMap<String, Job> getJobTable(){
-		return jobTable;
-	}
-	
-	public ItemTable getItemTable(){
-		return itemTable;
-	}
-	//----------------------------------------------------------------------------------------
 	/*
 	 * Creates table based on CSV files
 	 */
 	public HashMap<String, Job> createTable() throws IOException{
 		itemTable = new ItemTable();
-		logger.info("Creating Job Table");
+		TrainingJobs predictor = new TrainingJobs();
+		
 		HashMap<String, Job> jobTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader jobs = new BufferedReader(FileHandling.getFileReader(FileHandling.JOBS_FILE_NAME));
@@ -106,7 +100,7 @@ public class JobTable {
 				Task crntTask = new Task(itemId, quantity, crntItm);
 				taskList.add(crntTask);
 			}
-			Job currentJob = new Job(taskList);
+			Job currentJob = new Job(taskList, predictor.runNaiveBayes(taskList));
 			//Adding job onto table
             jobTable.put(key, currentJob);
             //Adding job into queue
