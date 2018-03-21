@@ -2,6 +2,7 @@ package bluetooth.threads;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,7 +23,7 @@ public class RobotSender extends Thread {
 		this.output = output;
 	}
 
-	public void setMovementQueue(Queue<Byte> queue) {
+	public void setMovement(List<Byte> queue) {
 		messageQueue.clear();
 		messageQueue.addAll(queue);
 	}

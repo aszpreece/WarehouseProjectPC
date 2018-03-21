@@ -24,7 +24,7 @@ public class Multiples {
 	
     MultiGraph multiGraph = new MultiGraph(graph);
 	
-	public ArrayList<Byte> Pathfinder(int startx, int starty, int endx, int endy) {
+	public ArrayList<Byte> findPath(int startx, int starty, int endx, int endy) {
 		
 		// The ArrayList of moves
 		ArrayList<Byte> multiList = new ArrayList<Byte>();

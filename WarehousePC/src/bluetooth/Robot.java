@@ -3,6 +3,9 @@ package bluetooth;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 import bluetooth.threads.RobotReciever;
@@ -141,6 +144,10 @@ public class Robot {
 
 	public boolean isConnected() {
 		return connected;
+	}
+	
+	public void setInstructions(List<Byte> ins) {
+		sender.setMovement(ins);
 	}
 	
 	public boolean requestingMove() {

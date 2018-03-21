@@ -15,11 +15,13 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
 import pathfinding.MultiPathfinder;
+import pathfinding.ShortestPathFinder;
 import types.Job;
 import types.Step;
 import ui.PCGUI;
 
 public class Server extends Thread {
+	
 	
 	public static void main(String[] args) {
 		Server m = new Server();
@@ -91,6 +93,17 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
+	   int[][] graph = { 
+	    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
+	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+	    };
+	    
 		ItemTable itemTable;
 		JobTable jobTable;
 		try {
@@ -104,7 +117,7 @@ public class Server extends Thread {
 	
 		ArrayList<Robot> robotList  = new ArrayList<Robot>();
 		robotList.add(addNXT("LilBish", "00165317B895"));
-		
+		robotList.add(addNXT("Poppy", "001653089A83"));
 		
 		PCGUI pcGUI = new PCGUI(jobTable, this);
 		Thread display = new Thread(pcGUI);
@@ -114,12 +127,12 @@ public class Server extends Thread {
 		//ShortestPathFinder pathfinder = new ShortestPathFinder(null);
 		connect();
 		
-		MultiPathfinder pathfinder = new MultiPathfinder();
-		ArrayList<Byte> directions = new ArrayList<Byte>();
+		ShortestPathFinder pathfinder = new ShortestPathFinder(graph);
 		
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
+		boolean onejob = false;
 		while (true) {
 
 			for (Robot r : connections) {
@@ -132,12 +145,7 @@ public class Server extends Thread {
 				}
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
-					directions = pathfinder.Pathfinder(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY());
-				}
-				
-				
-				if (!r.hasInstructions()) {
-					//give robot next set of moves.
+					r.setInstructions(pathfinder.pathfind(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
 				}
 			}
 		
