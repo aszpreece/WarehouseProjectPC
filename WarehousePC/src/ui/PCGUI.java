@@ -70,7 +70,7 @@ public class PCGUI extends JFrame implements Runnable {
 	private JMenu toolsMenu;
 	private JMenuItem addRobotMenuItem;
 	
-	private String direction = "";
+	private int direction = -1;
 
 	private Server server;
 
@@ -164,7 +164,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						direction = "N";
+						direction = 0;
 					}
 					
 				});
@@ -174,7 +174,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						direction = "S";						
+						direction = 180;						
 					}
 					
 				});
@@ -184,13 +184,22 @@ public class PCGUI extends JFrame implements Runnable {
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						direction = "E";
+						direction = 90;
 						
 					}
 					
 				});
 				
 				JRadioButton westButton = new JRadioButton("W");
+				westButton.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						direction = 270;
+						
+					}
+					
+				});
 				
 				ButtonGroup buttonGroup = new ButtonGroup();
 				buttonGroup.add(northButton);
@@ -205,9 +214,9 @@ public class PCGUI extends JFrame implements Runnable {
 						String xCoordinate = xTextField.getText();
 						String yCoordinate = yTextField.getText();
 						
-						if((xCoordinate.length()>0) && (yCoordinate.length()>0) && (!(direction).equals(""))) {
+						if((xCoordinate.length()>0) && (yCoordinate.length()>0) && (direction != -1)) {
 							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate), direction);
-							direction = "";
+							direction = -1;
 							addRobotFrame.setVisible(false);
 						}
 					}
@@ -339,7 +348,7 @@ class GridPanel extends JPanel implements Runnable {
 	private MapBasedSimulation sim;
 	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
 	private List<Robot> robotList;
-	private HashMap<String, MobileRobotWrapper<MovableRobot>> robotTable;
+	private HashMap<String, GridPilot> robotTable;
 	
 	private Server server;
 
@@ -350,31 +359,28 @@ class GridPanel extends JPanel implements Runnable {
 		this.robotTable = new HashMap<>();
 		this.robotList = server.getConnectedRobots();
 		for(Robot r : robotList) {
-			r.getCurrentWeight();
-			r.getCurrentX();
-			r.getCurrentY();
-			r.getName();
-			r.getMaxWeight();
-			//new GridPilot(_robot.getPilot(), _gridMap, _start);
+			robotTable.put(r.getName(), addRobot(r.getCurrentX(), r.getCurrentY(), r.getCurrentDirection()));
+			//r.getCurrentWeight();
+			//r.getMaxWeight();
 		}
 		
 	}
 	
-	public GridPilot addRobot(int x, int y, String direction) {
+	public GridPilot addRobot(int x, int y, int direction) {
 		
 		GridPose gridStart;
 		
 		switch(direction) {
-		case "N":
+		case 0:
 			gridStart = new GridPose(x, y, Heading.PLUS_Y);
 			break;
-		case "E":
+		case 90:
 			gridStart = new GridPose(x, y, Heading.PLUS_X);
 			break;
-		case "S":
+		case 180:
 			gridStart = new GridPose(x, y, Heading.MINUS_Y);
 			break;
-		case "W":
+		case 270:
 			gridStart = new GridPose(x, y, Heading.MINUS_X);
 			break;
 		default:
@@ -388,7 +394,7 @@ class GridPanel extends JPanel implements Runnable {
 		
 		GridPositionDistribution dist = new GridPositionDistribution(gridMap);
 		GridPositionDistributionVisualisation mapVis = new GridPositionDistributionVisualisation(dist, gridMap);
-				MapVisualisationComponent.populateVisualisation(mapVis, sim);
+		MapVisualisationComponent.populateVisualisation(mapVis, sim);
 		removeAll();
 		add(mapVis);
 		
@@ -397,6 +403,35 @@ class GridPanel extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
+		while(true) {
+			for(Robot r : robotList) {
+				if(!(robotTable.get(r.getName()).getGridPose()).equals(new GridPose(r.getCurrentX(), r.getCurrentY(), degToHeading(r.getCurrentDirection())))) {
+					//robotTable.get(r.getName()).
+				}
+			}
+		}
+	}
+	
+	private Heading degToHeading(int angle) {
+		Heading direction;
 		
+		switch(angle) {
+		case 0:
+			direction = Heading.PLUS_Y;
+			break;
+		case 90:
+			direction = Heading.PLUS_X;
+			break;
+		case 180:
+			direction = Heading.MINUS_Y;
+			break;
+		case 270:
+			direction = Heading.MINUS_X;
+			break;
+		default:
+				direction = Heading.PLUS_Y;
+		}
+		
+		return direction;
 	}
 }

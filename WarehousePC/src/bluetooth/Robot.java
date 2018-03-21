@@ -50,7 +50,7 @@ public class Robot {
 	/**
 	 * Current direction is degrees.
 	 */
-	private Integer currentDirection;
+	private Integer currentDirection = NORTH;
 	
 	private String robotName;
 	
@@ -60,6 +60,10 @@ public class Robot {
 	 */
 	public void setDirectionCurrent(Integer direction) {
 		currentDirection = direction;
+	}
+	
+	public int getCurrentDirection() {
+		return currentDirection;
 	}
 
 	public Integer getCurrentX() {
