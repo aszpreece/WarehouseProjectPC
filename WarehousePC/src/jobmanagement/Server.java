@@ -14,8 +14,7 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-import pathfinding.MultiPathfinder;
-import pathfinding.ShortestPathFinder;
+import pathfinding.Multiples;
 import types.Job;
 import types.Step;
 import ui.PCGUI;
@@ -127,7 +126,7 @@ public class Server extends Thread {
 		//ShortestPathFinder pathfinder = new ShortestPathFinder(null);
 		connect();
 		
-		ShortestPathFinder pathfinder = new ShortestPathFinder(graph);
+		Multiples pathfinder = new Multiples();
 		
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
@@ -145,7 +144,7 @@ public class Server extends Thread {
 				}
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
-					r.setInstructions(pathfinder.pathfind(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
+					r.setInstructions(pathfinder.pathfinder(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
 				}
 			}
 		

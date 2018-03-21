@@ -5,11 +5,11 @@ import java.util.ArrayList;
 public class MultiGraph {
 	final static int GRAPH_STEPS = 30;
 	final static int GRAPH_WIDTH = 12;
-    final static int GRAPH_HEIGHT =8;
+    final static int GRAPH_HEIGHT = 8;
     final static int POINT_OCCUPIED = 8;
     final static int POINT_PARKED = 9;
     
-	ArrayList<int [][]> multiGraph = new ArrayList<int [][]>();
+	public ArrayList<int [][]> multiGraph = new ArrayList<int [][]>();
 
 	public MultiGraph(int[][] graph) {
 		for (int i = 0; i < GRAPH_STEPS; i++) {
@@ -18,17 +18,29 @@ public class MultiGraph {
 	}
 	
     public int[][] getGraph(int time) {
-    	return multiGraph.get(time);
+    	return multiGraph.get(time % 30);
     }
-	
-	public void refresh(int time) {
-		for (int i = 0; i < GRAPH_HEIGHT; i++) {
-			for (int j = 0; j < GRAPH_WIDTH; j++) {
-				if (multiGraph.get(time)[i][j] != POINT_PARKED) {
-					multiGraph.get(time)[i][j] = 1;
+    
+    public void printGraph(int time) {
+    	for (int  i = 0; i < GRAPH_HEIGHT; i++) {
+    		for (int j = 0; j < GRAPH_WIDTH; j++) {
+    			System.out.print(multiGraph.get(time % 30)[i][j] + "   ");
+    		}
+    		System.out.println();
+    	}
+    }
+    
+	public void refresh() {
+		for (int k = 0; k < GRAPH_STEPS; k++)
+			for (int i = 0; i < GRAPH_HEIGHT; i++) {
+				for (int j = 0; j < GRAPH_WIDTH; j++) {
+					if (multiGraph.get(k)[i][j] != POINT_PARKED 
+							&& multiGraph.get(k)[i][j] != POINT_OCCUPIED 
+							&& multiGraph.get(k)[i][j] != 0) {
+						multiGraph.get(k)[i][j] = 1;
+					}
 				}
 			}
-		}
 	}
 	/*
 	public void occupy(int x, int y, int time) {
