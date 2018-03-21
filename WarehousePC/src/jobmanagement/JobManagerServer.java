@@ -49,18 +49,19 @@ public class JobManagerServer {
 			ArrayList<RobotPC> robotList  = new ArrayList<RobotPC>();
 			
 			RobotManager robotManager = new RobotManager();
-			robotManager.addNXT("LilBish", "00165317B895");
-			// robotManager.addNXT("Poppy", "001653089A83");
-			//robotManager.connect();
+			//robotManager.addNXT("LilBish", "00165317B895");
+			robotManager.addNXT("Poppy", "001653089A83");
+			robotManager.connect();
 			BlockingQueue<Byte> messages = new LinkedBlockingQueue<Byte>();
 			//robotManager.setMovementQueue("LilBish", messages);
+			robotManager.setMovementQueue("Poppy", messages);
 			
 			Thread m = new Thread(robotManager);
 			m.start();
 
 			RobotPC r1 = new RobotPC();
 			r1.setCurrentX(0);
-			r1.setCurrentY(0);
+			r1.setCurrentY(1);
 			r1.setCurrentWeight(0.0f);
 			robotList.add(r1);
 			
@@ -91,6 +92,7 @@ public class JobManagerServer {
 					
 					messages.addAll(pathfinder.pathfind(r1.getCurrentX(), r1.getCurrentY(), s.getCoordinate().x, s.getCoordinate().y));
 					
+					//messages.add(NetworkMessage.AWAIT_PICKUP);
 					r1.setCurrentX(s.getCoordinate().x);
 					r1.setCurrentY(s.getCoordinate().y);
 					
