@@ -254,7 +254,7 @@ public class PCGUI extends JFrame implements Runnable {
 			float percentageComplete = j.getPercentageComplete();
 
 			if (j.getActive()) {
-				activeJobsInnerPanel.add(new JobPanel(jobID, percentageComplete));
+				activeJobsInnerPanel.add(new JobPanel(jobID, percentageComplete, jobDataStore));
 			} else {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
 			}
@@ -294,7 +294,7 @@ class JobPanel extends JPanel {
 	/*
 	 * Active Job Panel Constructor
 	 */
-	public JobPanel(String jobID, Float percentageComplete) {
+	public JobPanel(String jobID, Float percentageComplete, JobTable jobDataStore) {
 		setLayout(new BorderLayout());
 		// setPreferredSize(new Dimension(100, 100));
 
@@ -349,10 +349,18 @@ class GridPanel extends JPanel implements Runnable {
 		wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
 		this.robotTable = new HashMap<>();
 		this.robotList = server.getConnectedRobots();
+		for(Robot r : robotList) {
+			r.getCurrentWeight();
+			r.getCurrentX();
+			r.getCurrentY();
+			r.getName();
+			r.getMaxWeight();
+			//new GridPilot(_robot.getPilot(), _gridMap, _start);
+		}
 		
 	}
 	
-	public void addRobot(int x, int y, String direction) {
+	public GridPilot addRobot(int x, int y, String direction) {
 		
 		GridPose gridStart;
 		
@@ -383,6 +391,8 @@ class GridPanel extends JPanel implements Runnable {
 				MapVisualisationComponent.populateVisualisation(mapVis, sim);
 		removeAll();
 		add(mapVis);
+		
+		return new GridPilot(wrapper.getRobot().getPilot(), gridMap, gridStart);
 	}
 
 	@Override
