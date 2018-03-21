@@ -39,11 +39,10 @@ public class Robot {
 	private volatile boolean requestingMove = false;
 	private volatile boolean connected = false;
 	private Server manager;
-	private int x = 0, y = 0;
 	private Task task;
 	
-	private int currentX;
-	private int currentY;
+	private volatile int x = 0;
+	private volatile int y = 0;
 	
 	private float currentWeight;
 	private float maxWeight = 50f; // Maybe finalis
@@ -64,19 +63,19 @@ public class Robot {
 	}
 
 	public Integer getCurrentX() {
-		return currentX;
+		return x;
 	}
 
-	public void setCurrentX(int currentX) {
-		this.currentX = currentX;
+	public void setCurrentX(int x) {
+		this.x = x;
 	}
 
 	public Integer getCurrentY() {
-		return currentY;
+		return y;
 	}
 
-	public void setCurrentY(int currentY) {
-		this.currentY = currentY;
+	public void setCurrentY(int y) {
+		this.y = y;
 	}
 
 	public Float getCurrentWeight() {

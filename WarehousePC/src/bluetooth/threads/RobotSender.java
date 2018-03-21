@@ -36,7 +36,7 @@ public class RobotSender extends Thread {
 	public void run() {
 		while (!stop && !Thread.currentThread().isInterrupted()) {
 
-			if (robot.getCanMakeMove()) {
+			if (robot.getCanMakeMove() && hasCommands()) {
 
 				try {
 					robot.setRequestingMove(false);
@@ -49,13 +49,22 @@ public class RobotSender extends Thread {
 					switch(message) {
 	    			case NetworkMessage.MOVE_NORTH:
 	    				robot.setCurrentY(robot.getCurrentY() + 1);
+	    				System.out.println("Sending " + robot.getName() + " north");
+	    				break;
 	    			case NetworkMessage.MOVE_EAST:
 	    				robot.setCurrentX(robot.getCurrentX() + 1);
+	    				System.out.println("Sending " + robot.getName() + " east");
+	    				break;
 	    			case NetworkMessage.MOVE_WEST:
 	    				robot.setCurrentX(robot.getCurrentX() - 1);
+	    				System.out.println("Sending " + robot.getName() + " west");
+	    				break;
 	    			case NetworkMessage.MOVE_SOUTH:
 	    				robot.setCurrentY(robot.getCurrentY() - 1);
+	    				System.out.println("Sending " + robot.getName() + " south");
+	    				break;
 	    			}
+					System.out.println("Coords of " + robot.getName() + ": " + robot.getX() + " " + robot.getY());
 					output.flush();
 				} catch (IOException e) {
 					if (!stop) {

@@ -115,8 +115,14 @@ public class Server extends Thread {
 		}
 	
 		ArrayList<Robot> robotList  = new ArrayList<Robot>();
-		robotList.add(addNXT("LilBish", "00165317B895"));
-		robotList.add(addNXT("Poppy", "001653089A83"));
+		Robot bish;
+		robotList.add((bish = addNXT("LilBish", "00165317B895")));
+		bish.setCurrentX(0);
+		bish.setCurrentY(1);
+		Robot poppy;
+		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
+		poppy.setCurrentX(11);
+		poppy.setCurrentY(1);
 		
 		PCGUI pcGUI = new PCGUI(jobTable, this);
 		Thread display = new Thread(pcGUI);
