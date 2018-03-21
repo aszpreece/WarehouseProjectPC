@@ -9,6 +9,12 @@ public class Step {
 	private String command;
 
 	private int quantity;
+	
+	
+	/**
+	 * which task does this step complete (if at all)?
+	 */
+	private Task myTask = null;
 
 	/**
 	 * @param command the command (drop or an item name for pickup)
@@ -52,5 +58,13 @@ public class Step {
 		Step step = (Step)s;
 		return coordinate.equals(step.getCoordinate()) && command.equals(step.getCommand())
 				&& quantity == step.getQuantity();
+	}
+	
+	public Task getMyTask() {
+		return myTask;
+	}
+
+	public void setMyTask(Task myTask) {
+		this.myTask = myTask;
 	}
 }
