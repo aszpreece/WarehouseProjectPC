@@ -55,8 +55,20 @@ public class ShortestPathFinder {
 
 		map = new int[MAX_Y][MAX_X];
 	}
+	
+	public ArrayList<Byte> pathfindStart(int starty, int startx, int goaly, int goalx) {
+		starty = MAX_X - starty;
+		startx = MAX_Y - startx;
+		
+		goaly = MAX_X - goaly;
+		goalx = MAX_Y - startx;
+		
+		pathfind(startx, starty, goalx, goaly);
+		
+		return pathToFollow;
+	}
 
-	public ArrayList<Byte> pathfind(int starty, int startx, int goaly, int goalx) {
+	public void pathfind(int starty, int startx, int goaly, int goalx) {
 
 		firstPath.clear();
 		secondPath.clear();
@@ -102,7 +114,6 @@ public class ShortestPathFinder {
 				pathToFollow.addAll(firstPath);
 			}
 		}
-		return pathToFollow;
 	}
 
 	// helper function to check whether the current node is the end node
