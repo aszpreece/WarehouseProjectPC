@@ -61,13 +61,15 @@ public class JobAssignment {
 	 *         coordinates to go to and how much to pick up of it
 	 */
 	public Queue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
-		float robotWeight = robot.getCurrentWeight();
+		float realRobotWeight = robot.getCurrentWeight();
+		float robotWeight = realRobotWeight;
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
 		Queue<Step> plan = new LinkedBlockingQueue<Step>();
 
+		ArrayList<Task> tasksToComplete = new ArrayList<Task>();
 		// try to create a plan that includes all tasks within a job
 		while ((nextTask = getClosestTask(tasks, x, y)) != null) {
 			int quantity = nextTask.getQuantity();
@@ -91,7 +93,10 @@ public class JobAssignment {
 						}
 						// the robot is now full so it needs to head towards the drop point
 						logger.debug("sending robot to drop off point");
-						plan.add(new Step("DROP", DROP_LOCATION));
+						Step step = new Step("DROP", DROP_LOCATION);
+						step.setDropAssociatedTasks(tasksToComplete);
+						plan.add(step);
+						tasksToComplete = new ArrayList<Task>();
 						x = DROP_LOCATION.getX();
 						y = DROP_LOCATION.getY();
 						robotWeight = 0;
@@ -105,20 +110,20 @@ public class JobAssignment {
 				Step step = new Step(nextTask.getId(), quantity, new Node(currentItem.getX(), currentItem.getY()));
 				
 				//this step completes a task, flag to tell the server task has been completed.
-				step.setMyTask(nextTask);
 				
 				plan.add(step);
 				nextTask.setComplete(true);
+				tasksToComplete.add(nextTask);
 				x = currentItem.getX();
 				y = currentItem.getY();
 				robotWeight += currentItem.getWeight() * quantity;
 			}
 		}
-		plan.add(new Step("DROP", DROP_LOCATION));
+		Step step = new Step("DROP", DROP_LOCATION);
+		step.setDropAssociatedTasks(tasksToComplete);
+		plan.add(step);
 		logger.debug("sending robot to drop off point");
-		x = (int) Math.round(DROP_LOCATION.getX());
-		y = (int) Math.round(DROP_LOCATION.getY());
-		robot.setCurrentWeight(0f);
+		robot.setCurrentWeight(realRobotWeight);
 
 		// tasks were set to complete when trying to find out how to best complete
 		// tasks, therefore set them back to not complete.

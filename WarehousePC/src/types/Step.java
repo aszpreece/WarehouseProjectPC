@@ -1,6 +1,7 @@
 package types;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 public class Step {
 
@@ -10,11 +11,7 @@ public class Step {
 
 	private int quantity;
 	
-	
-	/**
-	 * which task does this step complete (if at all)?
-	 */
-	private Task myTask = null;
+	private ArrayList<Task> tasks;
 
 	/**
 	 * @param command the command (drop or an item name for pickup)
@@ -60,11 +57,16 @@ public class Step {
 				&& quantity == step.getQuantity();
 	}
 	
-	public Task getMyTask() {
-		return myTask;
+	
+	public void setStepComplete() {
+		if(command == "DROP") {
+			for(Task t: tasks) {
+				t.setComplete(true);
+			}
+		}
 	}
-
-	public void setMyTask(Task myTask) {
-		this.myTask = myTask;
+	
+	public void setDropAssociatedTasks(ArrayList<Task> tasks) {
+		this.tasks = tasks;
 	}
 }
