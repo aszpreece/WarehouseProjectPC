@@ -172,7 +172,7 @@ public class Robot {
 	}
 
 	public void cancelJob() {
-		// TODO Auto-generated method stub
+		
 	}
 
 	public boolean hasInstructions() {

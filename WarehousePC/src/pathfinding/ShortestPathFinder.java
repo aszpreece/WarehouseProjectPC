@@ -57,13 +57,13 @@ public class ShortestPathFinder {
 	}
 	
 	public ArrayList<Byte> pathfindStart(int starty, int startx, int goaly, int goalx) {
-		starty = MAX_X - starty;
-		startx = MAX_Y - startx;
+		starty = MAX_X - starty - 1;
+		//startx = MAX_Y - startx;
 		
-		goaly = MAX_X - goaly;
-		goalx = MAX_Y - startx;
+		goaly = MAX_X - goaly - 1;
+		//goalx = MAX_Y - startx;
 		
-		pathfind(startx, starty, goalx, goaly);
+		pathfind(starty, startx, goaly, goalx);
 		
 		return pathToFollow;
 	}

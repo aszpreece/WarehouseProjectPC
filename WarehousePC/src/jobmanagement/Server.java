@@ -153,7 +153,7 @@ public class Server extends Thread {
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
-						r.setInstructions(pathfinder.pathfind(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
+						r.setInstructions(pathfinder.pathfindStart(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
 					} else {
 						jobMap.get(r).setActive(false);
 					}
