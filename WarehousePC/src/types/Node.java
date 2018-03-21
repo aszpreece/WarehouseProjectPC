@@ -26,4 +26,8 @@ public class Node {
 		 Node node = (Node)n;
 		 return this.getX() == node.getX() && this.getY() == node.getY();
 	 }
+	 @Override
+	 public String toString(){
+		 return "X: " + x + " Y: " + y;
+	 }
 }
