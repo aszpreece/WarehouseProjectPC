@@ -16,6 +16,7 @@ public class Job{
 	public boolean isCancelled() {
 		return cancelled;
 	}
+	
 	public void setCancelled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
@@ -30,7 +31,7 @@ public class Job{
 	/*
 	 * Total reward for this whole job
 	 */
-	private Float TOTAL_REWARD;
+	private float TOTAL_REWARD;
 	
 	private String jobID;
 	
@@ -63,7 +64,7 @@ public class Job{
 	 * Ascertains whether the job is active
 	 */
 	public boolean getActive() {
-		return this.active;
+		return this.active && !isCancelled();
 	}
 	/*
 	 * Calculation to get reward for this job

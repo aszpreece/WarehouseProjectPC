@@ -45,7 +45,9 @@ public class Robot {
 	private volatile int y = 0;
 	
 	private float currentWeight;
-	private float maxWeight = 50f; // Maybe finalis
+	private float maxWeight = 50f;
+	
+	private boolean parked = false;
 	
 	/**
 	 * Current direction is degrees.
@@ -54,6 +56,13 @@ public class Robot {
 	
 	private String robotName;
 	
+	public Robot(NXTInfo nxt, Server jobManagerServer) {
+		m_nxt = nxt;
+		name = nxt.name;
+		// Why is the manager imported?
+		manager = jobManagerServer;
+	}
+
 	/**
 	 * Set to a value NORTH (0), EAST (90), SOUTH (180), WEST (270)
 	 * @param direction The direction to set
@@ -78,7 +87,7 @@ public class Robot {
 		this.y = y;
 	}
 
-	public Float getCurrentWeight() {
+	public float getCurrentWeight() {
 		return currentWeight;
 	}
 
@@ -86,7 +95,7 @@ public class Robot {
 		this.currentWeight = currentWeight;
 	}
 
-	public Float getMaxWeight() {
+	public float getMaxWeight() {
 		return maxWeight;
 	}
 
@@ -100,13 +109,6 @@ public class Robot {
 
 	public int getY() {
 		return y;
-	}
-
-	public Robot(NXTInfo nxt, Server jobManagerServer) {
-		m_nxt = nxt;
-		name = nxt.name;
-		// Why is the manager imported?
-		manager = jobManagerServer;
 	}
 
 	public boolean connect(NXTComm comm) throws NXTCommException {
@@ -180,6 +182,14 @@ public class Robot {
 	public void clearInstructions() {
 		sender.clearInstructions();
 		
+	}
+
+	public void setParked(boolean b) {
+		parked = true;		
+	}
+	
+	public boolean isParked() {
+		return true;
 	}
 
 }

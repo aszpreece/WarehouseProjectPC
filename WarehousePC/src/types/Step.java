@@ -9,7 +9,7 @@ public class Step {
 	private String command;
 
 	private int quantity;
-
+	
 	/**
 	 * @param command the command (drop or an item name for pickup)
 	 * @param coordinate A type node containing coordinates to travel to in the plan

@@ -84,7 +84,7 @@ public class Server extends Thread {
 	 */
 	public boolean checkReady() {
 		for (Robot c : connections) {
-			if (!c.requestingMove())
+			if (!c.requestingMove() || !c.isParked())
 				return false;
 		}
 		return true;
@@ -137,11 +137,12 @@ public class Server extends Thread {
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
-		boolean onejob = false;
+
 		while (true) {
 
 			for (Robot r : connections) {
 				if (!jobMap.containsKey(r) || !jobMap.get(r).getActive()) {	
+					System.out.println("Giving a new job to " + r.getName());
 					Job newJob = jobTable.popQueue();
 					jobMap.put(r, newJob);
 					Queue<Step> robotSteps = assigner.getNextPlan(newJob.getItemList(), r);
@@ -150,9 +151,15 @@ public class Server extends Thread {
 				}
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
-					r.setInstructions(pathfinder.pathfinder(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
+					if (robotStep != null) {
+						r.setInstructions(pathfinder.pathfinder(r.getX(), r.getY(), robotStep.getCoordinate().getX(), robotStep.getCoordinate().getY()));
+					} else {
+						jobMap.get(r).setActive(false);
+					}
 				}
 			}
+			
+			//Method in step, that flags whether the completion of this step completes a task and returns the task object that it completes.
 		
 			
 			if (this.checkReady()) {

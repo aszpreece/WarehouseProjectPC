@@ -49,19 +49,28 @@ public class RobotSender extends Thread {
 					switch(message) {
 	    			case NetworkMessage.MOVE_NORTH:
 	    				robot.setCurrentY(robot.getCurrentY() + 1);
+	    				robot.setParked(false);
 	    				System.out.println("Sending " + robot.getName() + " north");
 	    				break;
 	    			case NetworkMessage.MOVE_EAST:
 	    				robot.setCurrentX(robot.getCurrentX() + 1);
+	    				robot.setParked(false);
 	    				System.out.println("Sending " + robot.getName() + " east");
 	    				break;
 	    			case NetworkMessage.MOVE_WEST:
 	    				robot.setCurrentX(robot.getCurrentX() - 1);
+	    				robot.setParked(false);
 	    				System.out.println("Sending " + robot.getName() + " west");
 	    				break;
 	    			case NetworkMessage.MOVE_SOUTH:
 	    				robot.setCurrentY(robot.getCurrentY() - 1);
+	    				robot.setParked(false);
 	    				System.out.println("Sending " + robot.getName() + " south");
+	    				break;
+	    			case NetworkMessage.NO_MOVE :
+	    			case NetworkMessage.AWAIT_DROPOFF :
+	    			case NetworkMessage.AWAIT_PICKUP :
+	    				robot.setParked(true);
 	    				break;
 	    			}
 					System.out.println("Coords of " + robot.getName() + ": " + robot.getX() + " " + robot.getY());
