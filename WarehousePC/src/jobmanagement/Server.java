@@ -117,19 +117,20 @@ public class Server extends Thread {
 		}
 
 		ArrayList<Robot> robotList = new ArrayList<Robot>();
-		/*Robot bish;
+		Robot bish;
 		robotList.add((bish = addNXT("LilBish", "00165317B895")));
 		bish.setCurrentX(0);
 		bish.setCurrentY(1);
-		Robot poppy;
+		bish.setDestination(bish.getX(), bish.getY());
+		/*Robot poppy;
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
 		poppy.setCurrentX(0);
 		poppy.setCurrentY(7);*/
-		//
-		 Robot lego;
+		
+		/* Robot lego;
 		 robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
 		 lego.setCurrentX(0);
-		 lego.setCurrentY(4);
+		 lego.setCurrentY(4);*/
 
 		Thread pcGUI = new Thread(new PCGUI(jobTable, this));
 		pcGUI.start();
@@ -178,6 +179,7 @@ public class Server extends Thread {
 					if (robotStep != null) {
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
+						r.setDestination(robotStep.getCoordinate().x, robotStep.getCoordinate().y);
 						if (robotStep.getCommand().equals("DROP")) {
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
