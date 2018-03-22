@@ -227,4 +227,8 @@ public class Server extends Thread {
 			connections.get(0).disconnect();
 	}
 
+	public List<Robot> getConnectedRobots() {
+		return connections;
+	}
+
 }
