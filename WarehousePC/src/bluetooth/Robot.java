@@ -188,11 +188,11 @@ public class Robot {
 	}
 
 	public void setParked(boolean b) {
-		if (b) {
-			table.parkPosition(new Node(x,y));
-		} else {
-			table.unparkPosition(new Node(x,y));
-		}
+//		if (b) {
+//			table.parkPosition(new Node(x,y));
+//		} else {
+//			table.unparkPosition(new Node(x,y));
+//		}
 	
 		parked = b;		
 	}

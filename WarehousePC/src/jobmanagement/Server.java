@@ -122,7 +122,7 @@ public class Server extends Thread {
 			return;
 		}
 	
-		//rTable.parkPosition(new Node(1, 0));
+
 		rTable.reservePosition(new Node(1, 0), 1);
 		System.out.println(rTable.isReserved(new Node(1, 0), 1));
 		System.out.println(rTable.isReserved(new Node(2, 0), 1));
@@ -146,7 +146,6 @@ public class Server extends Thread {
 		display.start();
 
 		JobAssignment assigner = new JobAssignment(itemTable);
-		//ShortestPathFinder pathfinder = new ShortestPathFinder(null);
 		connect();
 		
 		CAStar pathfinder = new CAStar(rTable);
@@ -154,8 +153,16 @@ public class Server extends Thread {
 		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
-//		Node poppyGoal = new Node(0, 0);
-//		Node bishGoal = new Node(0, 7);
+//		Node Goal = new Node(0, 0);
+//		Node AStart = new Node(6, 0);
+//		Node BStart = new Node(5, 0);
+//		Node goal2 = new Node (3 , 0);
+//		for (Byte p : pathfinder.pathfind(AStart, Goal, 0)) System.out.println(p);
+//		System.out.println();
+//		for (Byte p : pathfinder.pathfind(BStart, Goal, 0)) System.out.println(p);
+//		System.out.println();
+//		for (Byte p : pathfinder.pathfind(Goal, goal2, 5)) System.out.println(p);
+//		System.out.println();
 //		poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(), poppy.getY()), poppyGoal, getTimeStep()));
 //		System.out.println("found poppys path");
 //		bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(), bish.getY()), bishGoal, getTimeStep()));

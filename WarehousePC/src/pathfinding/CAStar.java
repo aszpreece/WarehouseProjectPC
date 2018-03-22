@@ -61,16 +61,16 @@ public class CAStar {
 			for (Node node : potential) {
 				PathStep s = new PathStep(Optional.of(currentStep), node, heuristic(currentStep.getCoordinate(), end));
 				if (isFree(node, startTimeStep + s.getG())) {	
-					System.out.println(node.toString() + " is a space!");
+					//System.out.println(node.toString() + " is a space!");
 					if (!closedList.contains(s) && !openList.contains(s)) {
 						if (end.equals(s.getCoordinate())) {
 							return reconstruct(s, startTimeStep);
 						}
-						System.out.println("Added to open list " + s.getCoordinate().getX() + " " + s.getCoordinate().getY());
+						//System.out.println("Added to open list " + s.getCoordinate().getX() + " " + s.getCoordinate().getY());
 						openList.add(s);
 					}
 				} else {
-					System.out.println(node.toString() + " is not a space!");
+					//System.out.println(node.toString() + " is not a space!");
 				}
 			}
 			potential.clear();
@@ -93,6 +93,7 @@ public class CAStar {
 				directions.add(NetworkMessage.MOVE_SOUTH);	
 			} 
 			reservationTable.reservePosition(current.getCoordinate(), current.getG());
+			reservationTable.reservePosition(parent.getCoordinate(), current.getG());
 			current = parent;
 		}
 		Collections.reverse(directions);

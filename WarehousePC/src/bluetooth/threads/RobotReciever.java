@@ -21,9 +21,12 @@ public class RobotReciever extends Thread {
 	public void run() {
 		while(!Thread.currentThread().isInterrupted()) {
 			try {
-				if (input.readByte() == NetworkMessage.REQUEST_MOVE) {
-					//System.out.println(robot.getName() + " is requesting a move.");
+				if (input.readByte() == NetworkMessage.REQUEST_MOVE && !robot.isParked()) {
+					robot.setParked(false);
 					robot.setRequestingMove(true);
+				if (input.readByte() == NetworkMessage.AWAIT_DROPOFF || input.readByte() == NetworkMessage.AWAIT_PICKUP) {
+					robot.setRequestingMove(true);
+				}
 				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
 					robot.cancelJob();
 				}
