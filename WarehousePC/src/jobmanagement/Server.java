@@ -127,10 +127,10 @@ public class Server extends Thread {
 		poppy.setCurrentX(0);
 		poppy.setCurrentY(7);*/
 		
-		/* Robot lego;
+		 Robot lego;
 		 robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
 		 lego.setCurrentX(0);
-		 lego.setCurrentY(4);*/
+		 lego.setCurrentY(4);
 
 		Thread pcGUI = new Thread(new PCGUI(jobTable, this));
 		pcGUI.start();
