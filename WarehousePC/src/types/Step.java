@@ -61,7 +61,7 @@ public class Step {
 	
 	
 	public void setStepComplete() {
-		if(command == "DROP") {
+		if(command.equals("DROP")) {
 			for(Task t: tasks) {
 				t.setComplete(true);
 			}

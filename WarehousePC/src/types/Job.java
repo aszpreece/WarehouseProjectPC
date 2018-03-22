@@ -8,6 +8,8 @@ import java.util.Iterator;
 public class Job{
 	private volatile boolean cancelled = false;
 	
+	//private volatile boolean completed = 
+	
 	public boolean isCancelled() {
 		return cancelled;
 	}
