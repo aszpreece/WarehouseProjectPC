@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 
 import com.whshared.network.NetworkMessage;
@@ -127,20 +128,21 @@ public class Server extends Thread {
 		// robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
 		// lego.setCurrentX(0);
 		// lego.setCurrentY(4);
-
-		// PCGUI pcGUI = new PCGUI(jobTable, this);
-		// Thread display = new Thread(pcGUI);
-		// display.start();
+		
+		 connect();
+		 
+//		 PCGUI pcGUI = new PCGUI(jobTable, this);
+//		 Thread display = new Thread(pcGUI);
+//		 display.start();
 
 		JobAssignment assigner = new JobAssignment(itemTable);
-		connect();
+
 
 		CAStar pathfinder = new CAStar(rTable);
 
 		// once all the set up is complete we begin the main server loop. This
 		// constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
-		Map<Robot, Step> currentStep = new HashMap<Robot, Step>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
 //		Node AStart = new Node(0, 7);
 //		Node BStart = new Node(0, 0);
@@ -163,21 +165,28 @@ public class Server extends Thread {
 					stepMap.put(r, robotSteps);
 					r.clearInstructions();
 				}
+
+				//if the robot is out of instructions, i.e it has completed a given route...
 				if (!r.hasInstructions() && r.isReady()) {
-					Step robotStep = stepMap.get(r).poll();
+					//if the robots current step hasn't been completed then it must have been told to wait.
+					Step robotStep;
+					if (r.getCurrentStep() != null && !r.getCurrentStep().isComplete()) {
+						robotStep = r.getCurrentStep();
+					} else {
+						robotStep = stepMap.get(r).poll();
+					}
+	
 					if (robotStep != null) {
-						if (currentStep.containsKey(r)) {
-							currentStep.get(r).setStepComplete();
-							System.out.println(r.getName() + "completed step");
-						}			
-						currentStep.put(r, robotStep);
+						if (r.getCurrentStep() != null) {
+							r.getCurrentStep().setStepComplete();
+							System.out.println(r.getName() + " completed a step");
+						}
+						r.setCurrentStep(robotStep);
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
-						if (instructions == null) {
-							
-						} else if (robotStep.getCommand().equals("DROP")) {
+					    if (robotStep.getCommand().equals("DROP")) {
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
-						} else {
+						} else if (robotStep.getCommand().equals("PICKUP")) {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
 						}
 						System.out.println(r.getName() + " instructions: " + instructions);
@@ -187,7 +196,7 @@ public class Server extends Thread {
 						jobMap.get(r).setActive(false);
 					}
 				}
-			}
+     		}
 			if (this.checkReady() && !pause) {
 				this.setReady(true);
 		/*		try {

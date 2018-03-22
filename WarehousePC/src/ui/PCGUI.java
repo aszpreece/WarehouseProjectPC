@@ -417,7 +417,7 @@ class GridPanel extends JPanel {
 		List<Robot> searchList = new ArrayList<Robot>(robotList);
 		for (Robot r : searchList) {
 			GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
-			System.out.println("(" + r.getCurrentX() + "," + r.getCurrentY() + ")");
+			//System.out.println("(" + r.getCurrentX() + "," + r.getCurrentY() + ")");
 			robotTable.put(r.getName(), p);
 			// r.getCurrentWeight();
 			// r.getMaxWeight();

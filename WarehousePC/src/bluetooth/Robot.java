@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
@@ -16,6 +17,7 @@ import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTInfo;
 import pathfinding.ReservationTable;
 import types.Node;
+import types.Step;
 import types.Task;
 
 /**
@@ -48,7 +50,7 @@ public class Robot {
 	private float currentWeight;
 	private float maxWeight = 50f;
 	private ReservationTable table;
-	
+	private Step currentStep;
 	private boolean parked = false;
 	
 	/**
@@ -72,6 +74,14 @@ public class Robot {
 	 */
 	public void setDirectionCurrent(Integer direction) {
 		currentDirection = direction;
+	}
+
+	public Step getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(Step currentStep) {
+		this.currentStep = currentStep;
 	}
 
 	public Integer getCurrentX() {

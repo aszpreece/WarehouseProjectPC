@@ -8,6 +8,8 @@ public class Step {
 	private Node coordinate;
 
 	private String command;
+	
+	private boolean complete = false;
 
 	private int quantity;
 	
@@ -64,6 +66,11 @@ public class Step {
 				t.setComplete(true);
 			}
 		}
+		complete = true;
+	}
+	
+	public boolean isComplete() {
+		return complete;
 	}
 	
 	public void setDropAssociatedTasks(ArrayList<Task> tasks) {
