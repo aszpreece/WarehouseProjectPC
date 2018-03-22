@@ -11,7 +11,7 @@ public class Job{
 	/*
 	 * Job ID
 	 */
-	String jobID;
+	public String jobID;
 	/**
 	 * Stores all the items that pertain to each job.
 	 */
@@ -23,9 +23,9 @@ public class Job{
 	/**
 	 * Scale factor to push a job down the queue
 	 */
-	private final int SCALE_FACTOR = 100;
+	private final float SCALE_FACTOR = 0.01f;
 	
-	private int cancelPredictor; //1 = cancelled 0 = not to cancel
+	public int cancelPredictor; //1 = cancelled 0 = not to cancel
 	
 	public Job(ArrayList<Task> itemList, int cancelPredictor) {
 		this.itemList = itemList;
