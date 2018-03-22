@@ -1,14 +1,8 @@
 package types;
-
-import java.util.Queue;
-
-/*
- * Created by Minhal - Job Selection
+/**
+ * @author Minhal - Job Selection
  */
 public class Task {
-	
-	
-	private Job myJob;
 	
 	boolean completed = false;
 	/*
@@ -34,15 +28,6 @@ public class Task {
 		this.myItem = myItem;
 		setReward(myItem);
 	}
-
-	public boolean isCancelled() {
-		return myJob.isCancelled();
-	}
-	
-	public void cancelJob() {
-		myJob.setCancelled(true);
-	}
-	
 	/*
 	 * Calculates reward for completing this task
 	 */
@@ -72,6 +57,10 @@ public class Task {
 	
 	public Float getReward(){
 		return this.reward;
+	}
+	
+	public String getItemId() {
+		return itemId;
 	}
 	
 }

@@ -26,6 +26,8 @@ public class RobotReciever extends Thread {
 					robot.setRequestingMove(true);
 				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
 					robot.cancelJob();
+				} else if (input.readByte() == NetworkMessage.AWAIT_PICKUP) {
+					//robot.sentPickupInfo();
 				}
 			} catch (IOException e) {
 				if (!stop) {
