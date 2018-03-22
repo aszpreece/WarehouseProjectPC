@@ -42,7 +42,7 @@ public class CAStar {
 	 * @param start the starting grid position of the robot
 	 * @param end its goal
 	 * @param startTimeStep the current time step
-	 * @return
+	 * @return a list of bytes corresponding to NetworkMessage to send to the real robot
 	 */
 	public List<Byte> pathfind(Node start, Node end, int startTimeStep) {
 		
@@ -58,6 +58,7 @@ public class CAStar {
 		//the nodes that have already been expanded
 		Set<PathStep> closedList = new HashSet<PathStep>();
 		
+		//the starting node is added to the open list
 		openList.add(new PathStep(Optional.empty(), start, heuristic(start, end)));
 		
 		//list to store adjacent nodes
@@ -69,6 +70,7 @@ public class CAStar {
 			//System.out.println("Iteration " + currentStep.getCoordinate().toString());
 			closedList.add(currentStep);
 	
+			//add add all adjacent nodes to the potential nodes to expand
 			potential.add(new Node(currentStep.getCoordinate().getX(), currentStep.getCoordinate().getY() + 1));
 			potential.add(new Node(currentStep.getCoordinate().getX(), currentStep.getCoordinate().getY() - 1));
 			potential.add(new Node(currentStep.getCoordinate().getX() + 1, currentStep.getCoordinate().getY()));
@@ -83,6 +85,7 @@ public class CAStar {
 					//if the current node isn't in either node list that means it is newly discovered therefore add it to the open list
 					if (!closedList.contains(s) && !openList.contains(s)) {
 						if (end.equals(s.getCoordinate())) {
+							
 							//the end goal has been reached: return the reconstructed path to get to it
 							return reconstruct(s, startTimeStep);
 						}
@@ -122,6 +125,8 @@ public class CAStar {
 			//add the reserve the coordinate at the cur
 			reservationTable.reservePosition(current.getCoordinate(), currentTimeStep + current.getG());
 			reservationTable.reservePosition(parent.getCoordinate(), currentTimeStep + current.getG());
+			
+			//advance to previous node
 			current = parent;
 		}
 		//since the path is reconstructed in reverse it needs to be reversed to get it back into the correct chronological order
