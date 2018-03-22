@@ -106,5 +106,9 @@ public class JobTable {
 		}
 		return jobTable;
 	}
+	
+	public void setCancelled(String jobID) {
+		jobTable.get(jobID).setCancelled(true);
+	}
 
 }

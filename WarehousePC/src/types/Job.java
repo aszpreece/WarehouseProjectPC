@@ -37,7 +37,7 @@ public class Job{
 	/**
 	 * Scale factor to push a job down the queue
 	 */
-	private final int SCALE_FACTOR = 100;
+	private final float SCALE_FACTOR = 0.01f;
 	
 	private int cancelPredictor; //1 = cancelled 0 = not to cancel
 	
@@ -103,7 +103,5 @@ public class Job{
 		
 		return new Float((numTasksCompleted/itemList.size())*100);
 	}
-
-
 	
 }
