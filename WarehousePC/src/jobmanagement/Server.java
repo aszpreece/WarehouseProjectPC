@@ -27,20 +27,19 @@ import types.Task;
 import ui.PCGUI;
 
 public class Server extends Thread {
-	
-	
+
 	public static void main(String[] args) {
 		Server m = new Server();
 		m.start();
 
 	}
-	
+
 	volatile ReservationTable rTable = new ReservationTable();
-	
-	boolean pause = false;
-	
+
+	volatile boolean pause = false;
+
 	int TimeStep = 0;
-	
+
 	List<Robot> connections = new ArrayList<Robot>();
 
 	/**
@@ -59,7 +58,7 @@ public class Server extends Thread {
 			}
 		}
 		connections.removeAll(failed);
-		
+
 	}
 
 	public int getTimeStep() {
@@ -76,13 +75,14 @@ public class Server extends Thread {
 	 * @return A robot object representing the robot.
 	 */
 	public Robot addNXT(String name, String address) {
-		Robot r = new Robot(new NXTInfo(NXTCommFactory.BLUETOOTH, name, address), rTable ,this);
+		Robot r = new Robot(new NXTInfo(NXTCommFactory.BLUETOOTH, name, address), rTable, this);
 		connections.add(r);
 		return (r);
 	}
 
 	/**
-	 * flags that all the robots are ready to move and the time step can advance.
+	 * flags that all the robots are ready to move and the time step can
+	 * advance.
 	 */
 	public void setReady(boolean v) {
 		for (Robot c : connections) {
@@ -95,7 +95,8 @@ public class Server extends Thread {
 	 */
 	public boolean checkReady() {
 		for (Robot c : connections) {
-			if (!c.requestingMove() || !c.isParked())
+			System.out.println("Robot " + c.getName() + " is req " + c.requestingMove() + " and is parked " + c.isParked());
+			if (!c.requestingMove() || c.isParked())
 				return false;
 		}
 		return true;
@@ -103,17 +104,7 @@ public class Server extends Thread {
 
 	@Override
 	public void run() {
-	   int[][] graph = { 
-	    		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	    };
-	    
+
 		ItemTable itemTable;
 		JobTable jobTable;
 		try {
@@ -124,12 +115,8 @@ public class Server extends Thread {
 			System.out.println("Server failed to start");
 			return;
 		}
-	
 
-		rTable.reservePosition(new Node(1, 0), 1);
-		System.out.println(rTable.isReserved(new Node(1, 0), 1));
-		System.out.println(rTable.isReserved(new Node(2, 0), 1));
-		ArrayList<Robot> robotList  = new ArrayList<Robot>();
+		ArrayList<Robot> robotList = new ArrayList<Robot>();
 		Robot bish;
 		robotList.add((bish = addNXT("LilBish", "00165317B895")));
 		bish.setCurrentX(0);
@@ -138,58 +125,62 @@ public class Server extends Thread {
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
 		poppy.setCurrentX(0);
 		poppy.setCurrentY(7);
-//		
-//		Robot lego;
-//		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
-//		lego.setCurrentX(0);
-//		lego.setCurrentY(4);
-		
-		//PCGUI pcGUI = new PCGUI(jobTable, this);
-		//Thread display = new Thread(pcGUI);
-		//display.start();
+		//
+		// Robot lego;
+		// robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+		// lego.setCurrentX(0);
+		// lego.setCurrentY(4);
+
+		// PCGUI pcGUI = new PCGUI(jobTable, this);
+		// Thread display = new Thread(pcGUI);
+		// display.start();
 
 		JobAssignment assigner = new JobAssignment(itemTable);
 		connect();
-		
+
 		CAStar pathfinder = new CAStar(rTable);
-		
-		//once all the set up is complete we bign the main server loop. This constantly makes sure that each robot has a job assigned to it.
+
+		// once all the set up is complete we begin the main server loop. This
+		// constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
-//		Node Goal = new Node(0, 0);
-//		Node AStart = new Node(6, 0);
-//		Node BStart = new Node(5, 0);
-//		Node goal2 = new Node (3 , 0);
-//		for (Byte p : pathfinder.pathfind(AStart, Goal, 0)) System.out.println(p);
-//		System.out.println();
-//		for (Byte p : pathfinder.pathfind(BStart, Goal, 0)) System.out.println(p);
-//		System.out.println();
-//		for (Byte p : pathfinder.pathfind(Goal, goal2, 5)) System.out.println(p);
-//		System.out.println();
-//		poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(), poppy.getY()), poppyGoal, getTimeStep()));
-//		System.out.println("found poppys path");
-//		bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(), bish.getY()), bishGoal, getTimeStep()));
-//		
+		// Node Goal = new Node(0, 0);
+		// Node AStart = new Node(6, 0);
+		// Node BStart = new Node(5, 0);
+		// Node goal2 = new Node (3 , 0);
+		// for (Byte p : pathfinder.pathfind(AStart, Goal, 0))
+		// System.out.println(p);
+		// System.out.println();
+		// for (Byte p : pathfinder.pathfind(BStart, Goal, 0))
+		// System.out.println(p);
+		// System.out.println();
+		// for (Byte p : pathfinder.pathfind(Goal, goal2, 5))
+		// System.out.println(p);
+		// System.out.println();
+		// poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(),
+		// poppy.getY()), poppyGoal, getTimeStep()));
+		// System.out.println("found poppys path");
+		// bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(),
+		// bish.getY()), bishGoal, getTimeStep()));
+		//
 		while (true) {
-
 			for (Robot r : connections) {
-				if (!jobMap.containsKey(r) || !jobMap.get(r).getActive()) {	
+				if (!jobMap.containsKey(r) || !jobMap.get(r).getActive()) {
 					System.out.println("Giving a new job to " + r.getName());
 					Job newJob = jobTable.popQueue();
+					newJob.setActive(true);
 					jobMap.put(r, newJob);
-					System.out.println(newJob.getItemList());
 					Queue<Step> robotSteps = assigner.getNextPlan(newJob.getItemList(), r);
-					System.out.println("ROBOT STEPS:");
-					System.out.println(robotSteps);
 					stepMap.put(r, robotSteps);
 					r.clearInstructions();
 				}
-				if(!r.hasInstructions()) {
+				if (!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
-						List<Byte> instructions = new LinkedList<Byte>();
-						r.setInstructions(pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(), getTimeStep()));						if(robotStep.getCommand().equals("DROP")) {
-							instructions.add(NetworkMessage.AWAIT_DROPOFF);			
+						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
+								getTimeStep());
+						if (robotStep.getCommand().equals("DROP")) {
+							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
 						}
@@ -200,7 +191,7 @@ public class Server extends Thread {
 					}
 				}
 			}
-			
+
 			if (this.checkReady()) {
 				this.setReady(true);
 				TimeStep++;
@@ -215,15 +206,18 @@ public class Server extends Thread {
 
 	}
 
+	public void setPaused(boolean p) {
+		pause = p;
+	}
+
 	public void removeRobot(Robot robot) {
 		connections.remove(robot);
-		System.out.println("Robot: " + robot.getName() + " has disconnected");	
+		System.out.println("Robot: " + robot.getName() + " has disconnected");
 	}
 
 	public void halt() {
-		while(connections.size() > 0)
-			connections.get(0).disconnect();	
+		while (connections.size() > 0)
+			connections.get(0).disconnect();
 	}
-	
 
 }

@@ -14,11 +14,12 @@ public class FileHandling {
 	public final static String JOBS_FILE_NAME = "jobs";
 	public final static String ITEM_LOCATION_FILE_NAME = "locations";
 	private final static String FOLDER_PATH = "/WarehousePC/Resources/";
+	private final static String RESOURCES_FILE = "Resources";
 	private final static String DOT_CSV = ".csv";
 	public final static String cvsSplitBy = ","; //split by a comma
 	
 	public static FileReader getFileReader(String fileName) throws FileNotFoundException{
-		String directory = System.getProperty("user.dir") + FOLDER_PATH + fileName + DOT_CSV; //   .../FOLDER_NAME/'fileName'.csv
+		String directory = RESOURCES_FILE + "/" + fileName + DOT_CSV;
 		return new FileReader(directory);
 	}
 	

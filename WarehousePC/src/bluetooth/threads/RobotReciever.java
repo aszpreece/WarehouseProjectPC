@@ -19,15 +19,18 @@ public class RobotReciever extends Thread {
 	
 	@Override
 	public void run() {
+		byte message;
 		while(!Thread.currentThread().isInterrupted()) {
 			try {
-				if (input.readByte() == NetworkMessage.REQUEST_MOVE && !robot.isParked()) {
-					robot.setRequestingMove(true);
-				if (input.readByte() == NetworkMessage.AWAIT_DROPOFF || input.readByte() == NetworkMessage.AWAIT_PICKUP) {
+				message = input.readByte();
+				System.out.println("Message recieved: " + message);
+				if (message == NetworkMessage.REQUEST_MOVE && !robot.isParked()) {
 					robot.setParked(false);
 					robot.setRequestingMove(true);
-				}
-				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
+				} else if (message == NetworkMessage.AWAIT_DROPOFF || message == NetworkMessage.AWAIT_PICKUP) {
+					System.out.println("Robot dropoff has been comp");
+					robot.setParked(false);
+				} else if (message == NetworkMessage.CANCEL_JOB) {
 					robot.cancelJob();
 				}
 			} catch (IOException e) {

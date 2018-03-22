@@ -38,6 +38,8 @@ public class CAStar {
 	public List<Byte> pathfind(Node start, Node end, int startTimeStep) {
 		
 		if (end.equals(start)) {
+			reservationTable.reservePosition(start, startTimeStep);
+			reservationTable.reservePosition(start, startTimeStep + 1);
 			return new ArrayList<Byte>();
 		}
 		

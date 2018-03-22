@@ -35,9 +35,7 @@ public class RobotSender extends Thread {
 	@Override
 	public void run() {
 		while (!stop && !Thread.currentThread().isInterrupted()) {
-
 			if (robot.getCanMakeMove() && hasCommands()) {
-
 				try {
 					robot.setRequestingMove(false);
 					robot.setMakeNextMove(false);
@@ -45,6 +43,7 @@ public class RobotSender extends Thread {
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
 					}
+					System.out.println("Sending command " + message); 
 					output.writeByte(message);
 					switch(message) {
 	    			case NetworkMessage.MOVE_NORTH:
@@ -68,9 +67,7 @@ public class RobotSender extends Thread {
 	    				System.out.println("Sending " + robot.getName() + " south");
 	    				break;
 	    			case NetworkMessage.NO_MOVE :
-	    				break;
 	    			case NetworkMessage.AWAIT_DROPOFF :
-	    				break;
 	    			case NetworkMessage.AWAIT_PICKUP :
 	    				robot.setParked(true);
 	    				break;
