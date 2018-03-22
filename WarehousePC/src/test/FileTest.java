@@ -26,7 +26,7 @@ public class FileTest {
 		
 		Job x = jt.popQueue();
 		while (x != null) {
-			System.out.println(x.cancelPredictor +  "  " + x.getTotalReward());
+			System.out.println(x.cancelPredictor +  "  " + " Reward:" + x.getTotalReward());
 			x = jt.popQueue();
 		}
 

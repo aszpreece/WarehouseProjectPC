@@ -62,22 +62,27 @@ public class TrainingJobs {
 	public int runNaiveBayes(ArrayList<Task> job){
 		double ZeroProb = (double) Ck;
 		double OneProb = (double) Ck;
-
+		//Runs through each task, and gets P(crntTask | {0,1}) then multiplies it by One/ZeroProb to give the final probability
 		for (Iterator<Task> iterator = job.iterator(); iterator.hasNext();) {
 			Task crntT = iterator.next();
 			ItemProbability crnProb = itemProbabilities.get(crntT.getItemId());
 			ZeroProb = (double) (ZeroProb * (double) crnProb.ZERO); 
 			OneProb = (double) (OneProb * (double) crnProb.ONE); 
 		}
-				
+		//Argmax Function
+		//If the probability of it being cancelled > probability of it being not cancelled 
+		//then return 1
 		if (Double.compare(OneProb, ZeroProb) > 0) {
 			//Zero > 1
 			return 1;
 		}
-		
+		//else return 0 not cancelled
 		return 0;
 	}
-	
+	/**
+	 * Used to train and create a probability table
+	 * @param itemTable
+	 */
 	private void runProbabilities(HashMap<String, Item>  itemTable){
 		
 		Iterator<Entry<String, Item>> it = itemTable.entrySet().iterator();
@@ -101,7 +106,7 @@ public class TrainingJobs {
 		
 	}
 	/**
-	 * Runs to get P(itemID | 1)
+	 * Calculates P(x1, x2 ... xn | 1)
 	 */
 	private int runCancelTable(String ItemId) {
 		int sum = 0;
@@ -116,7 +121,7 @@ public class TrainingJobs {
 		return sum;
 	}
 	/**
-	 * 
+	 * Calculates P(x1, x2 ... xn | 0)
 	 * @return sum of items including quantities
 	 */
 	private int runNotCancelTable(String ItemId) {
@@ -153,11 +158,8 @@ public class TrainingJobs {
 			}
 			
 		}
-		System.out.println(sum);
-		System.out.println(valid);
-		
+
 		return ((double)valid/sum)*100;
-		
 	}
 	
 	
