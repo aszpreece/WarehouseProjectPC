@@ -1,8 +1,13 @@
+//tim: Job assignment tests will no longer work in this submission branch since the server's presentation of the robot has been updated to use server. Working tests are in the intermediate submission branch of WarehousePC
+
 //package test;
 //
 //import java.awt.Point;
 //import java.io.IOException;
 //import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.Queue;
+//
 //import org.junit.Assert;
 //
 //import org.junit.Test;
@@ -17,7 +22,7 @@
 //
 //public class JobAssignmentTests {
 //	
-//	private final Node DROP_LOCATION = new Node(4,4);
+//	private ArrayList<Node> drops = new ArrayList<Node>(Arrays.asList(new Node (4,4)));
 //	
 //	private final ItemTable items;
 //	
@@ -38,18 +43,18 @@
 //		// what the plan should be:
 //		ArrayList<Step> percievedPlan = new ArrayList<Step>();
 //		percievedPlan.add(new Step("aa", 1, new Node(item.getX(),item.getY())));
-//		percievedPlan.add(new Step("DROP", DROP_LOCATION));
+//		percievedPlan.add(new Step("DROP", drops.get(0)));
 //		ItemTable itemTable;
 //		try {
 //			itemTable = new ItemTable();
 //
-//			Robot robot = new Robot(null, null);
+//			Robot robot = new Robot(null, null, null);
 //			robot.setCurrentWeight(0f);
 //			robot.setCurrentX(0);
 //			robot.setCurrentY(0);
 //
-//			JobAssignment jobAllocator = new JobAssignment(itemTable);
-//			ArrayList<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+//			JobAssignment jobAllocator = new JobAssignment(itemTable,drops);
+//			Queue<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
 //			
 //			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
 //		} catch (IOException e) {
@@ -76,19 +81,19 @@
 //		ArrayList<Step> percievedPlan = new ArrayList<Step>();
 //		percievedPlan.add(new Step("ab", 1, new Node(item2.getX(),item2.getY())));
 //		percievedPlan.add(new Step("aa", 1, new Node(item1.getX(),item1.getY())));
-//		percievedPlan.add(new Step("DROP", DROP_LOCATION));
+//		percievedPlan.add(new Step("DROP", drops.get(0)));
 //		
 //		ItemTable itemTable;
 //		try {
 //			itemTable = new ItemTable();
 //
-//			Robot robot = new Robot();
+//			Robot robot = new Robot(null, null, null);
 //			robot.setCurrentWeight(0f);
 //			robot.setCurrentX(3);
 //			robot.setCurrentY(3);
 //
-//			JobAssignment jobAllocator = new JobAssignment(itemTable);
-//			ArrayList<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+//			JobAssignment jobAllocator = new JobAssignment(itemTable,drops);
+//			Queue<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
 //			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block
@@ -114,21 +119,21 @@
 //		ArrayList<Step> percievedPlan = new ArrayList<Step>();
 //		percievedPlan.add(new Step("aa", 1, new Node(item1.getX(),item1.getY())));
 //		percievedPlan.add(new Step("fb", 9, new Node(item2.getX(),item2.getY())));
-//		percievedPlan.add(new Step("DROP", DROP_LOCATION));
+//		percievedPlan.add(new Step("DROP", drops.get(0)));
 //		percievedPlan.add(new Step("fb", 1, new Node(item2.getX(),item2.getY())));
-//		percievedPlan.add(new Step("DROP", DROP_LOCATION));
+//		percievedPlan.add(new Step("DROP", drops.get(0)));
 //		
 //		ItemTable itemTable;
 //		try {
 //			itemTable = new ItemTable();
 //
-//			Robot robot = new Robot();
+//			Robot robot = new Robot(null, null, null);
 //			robot.setCurrentWeight(0f);
 //			robot.setCurrentX(1);
 //			robot.setCurrentY(1);
 //
-//			JobAssignment jobAllocator = new JobAssignment(itemTable);
-//			ArrayList<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+//			JobAssignment jobAllocator = new JobAssignment(itemTable,drops);
+//			Queue<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
 //			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block
