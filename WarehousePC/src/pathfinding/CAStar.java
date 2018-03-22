@@ -83,6 +83,7 @@ public class CAStar {
 	private List<Byte> reconstruct(PathStep current, int currentTimeStep) {
 		List<Byte> directions = new ArrayList<Byte>();
 		PathStep parent = null;
+		reservationTable.reservePosition(current.getCoordinate(), current.getG() + 1);
 		while (current.getParent().isPresent()) {
 			parent = current.getParent().get();
 			if (current.getCoordinate().x > parent.getCoordinate().x) {

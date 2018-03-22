@@ -95,7 +95,7 @@ public class Server extends Thread {
 	 */
 	public boolean checkReady() {
 		for (Robot c : connections) {
-			System.out.println("Robot " + c.getName() + " is req " + c.requestingMove() + " and is parked " + c.isParked());
+			//System.out.println("Robot " + c.getName() + " is req " + c.requestingMove() + " and is parked " + c.isParked());
 			if (!c.requestingMove() || c.isParked())
 				return false;
 		}
@@ -194,6 +194,11 @@ public class Server extends Thread {
 
 			if (this.checkReady()) {
 				this.setReady(true);
+				try {
+					System.in.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				TimeStep++;
 			}
 			try {
