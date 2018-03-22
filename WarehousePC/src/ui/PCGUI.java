@@ -5,17 +5,17 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
-
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -23,10 +23,24 @@ import bluetooth.Robot;
 import filehandling.JobTable;
 import jobmanagement.Server;
 import lejos.util.Delay;
+import rp.robotics.MobileRobotWrapper;
+import rp.robotics.localisation.GridPositionDistribution;
+import rp.robotics.mapping.GridMap;
+import rp.robotics.mapping.MapUtils;
+import rp.robotics.navigation.GridPilot;
+import rp.robotics.navigation.GridPose;
+import rp.robotics.navigation.Heading;
+import rp.robotics.simulation.MapBasedSimulation;
+import rp.robotics.simulation.MovableRobot;
+import rp.robotics.simulation.SimulatedRobots;
+import rp.robotics.visualisation.GridMapVisualisation;
+import rp.robotics.visualisation.GridPositionDistributionVisualisation;
+import rp.robotics.visualisation.KillMeNow;
+import rp.robotics.visualisation.MapVisualisationComponent;
 import types.Job;
-
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 /**
  * 
@@ -35,41 +49,43 @@ import javax.swing.JScrollPane;
  */
 public class PCGUI extends JFrame implements Runnable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 902776736269552333L;
-	private Server server;
-
 	private static final String FRAME_TITLE = "Robot Control UI";
 
 	private JPanel jobsPanel;
-	
+
 	private JPanel activeJobsPanel;
 	private JScrollPane activeScrollPane;
 	private JPanel activeJobsInnerPanel;
-	
+
 	private JPanel inactiveJobsPanel;
 	private JScrollPane inactiveScrollPane;
 	private JPanel inactiveJobsInnerPanel;
-	
-	private JPanel robotPanel;
+
+	private GridPanel gridPanel;
+	private JPanel gridInnerPanel;
+	private JMenuBar menuBar;
+	private JMenu toolsMenu;
+	private JMenuItem addRobotMenuItem;
+
+	private Server server;
 
 	// This will be the JobTable class used to get information about the jobs
 	// And will require certain methods to be added to the JobTable class
 	private JobTable jobDataStore;
 
-	private ArrayList<Robot> robots;
+	private List<Robot> robots;
 
 	public PCGUI(JobTable jobDataStore, Server server) {
 		this.jobDataStore = jobDataStore;
 		this.server = server;
+		this.robots = server.getConnectedRobots();
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setPreferredSize(new Dimension(500, 500));
+		setPreferredSize(new Dimension(800, 600));
 		setTitle(FRAME_TITLE);
 		setVisible(true);
-
+				
 		jobsPanel = new JPanel(new FlowLayout());
 		jobsPanel.setPreferredSize(new Dimension(250, 500));
 
@@ -78,7 +94,7 @@ public class PCGUI extends JFrame implements Runnable {
 			activeJobsPanel.setBorder(BorderFactory.createTitledBorder("Active Jobs"));
 			activeJobsPanel.setPreferredSize(new Dimension(250, 200));
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
-			
+
 			activeJobsInnerPanel = new JPanel();
 
 			activeScrollPane = new JScrollPane(activeJobsInnerPanel);
@@ -104,43 +120,108 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(jobsPanel, BorderLayout.WEST);
 
-		robotPanel = new JPanel();
+		gridPanel = new GridPanel(server);
 		{
-			robotPanel.setBorder(BorderFactory.createTitledBorder("Robots"));
-			robotPanel.setPreferredSize(new Dimension(245, 500));
-			robotPanel.setLayout(new BoxLayout(robotPanel, BoxLayout.Y_AXIS));
+			gridPanel.setBorder(BorderFactory.createTitledBorder("Robots"));
+			gridPanel.setPreferredSize(new Dimension(245, 500));
+			gridPanel.setLayout(new BoxLayout(gridPanel, BoxLayout.Y_AXIS));
+
+			gridInnerPanel = new JPanel();
+			gridInnerPanel.setLayout(new BoxLayout(gridInnerPanel, BoxLayout.X_AXIS));
 		}
+
+		add(gridPanel, BorderLayout.CENTER);
 		
+		menuBar = new JMenuBar();
+		toolsMenu = new JMenu("Tools");
+		menuBar.add(toolsMenu);
+		addRobotMenuItem = new JMenuItem("Add Robot Menu Item");
+		addRobotMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFrame addRobotFrame = new JFrame("Add Robot");
+				JPanel addRobotPanel = new JPanel();
+				JLabel xLabel = new JLabel("X: ");
+				JLabel yLabel = new JLabel("Y: ");
+				
+				JTextField xTextField = new JTextField();
+				JTextField yTextField = new JTextField();
+				
+				xTextField.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						String xCoordinate = xTextField.getText();
+						String yCoordinate = yTextField.getText();
+						
+						if((xCoordinate.length()>0) && (yCoordinate.length()>0)) {
+							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate));
+							addRobotFrame.setVisible(false);
+						}
+					}
+					
+				});
+				
+				yTextField.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						String xCoordinate = xTextField.getText();
+						String yCoordinate = yTextField.getText();
+						
+						if((xCoordinate.length()>0) && (yCoordinate.length()>0)) {
+							gridPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate));
+							addRobotFrame.setVisible(false);
+						}
+					}
+					
+				});
+				
+				addRobotPanel.setLayout(new BoxLayout(addRobotPanel, BoxLayout.X_AXIS));
+				addRobotPanel.add(xLabel);
+				addRobotPanel.add(xTextField);
+				addRobotPanel.add(yLabel);
+				addRobotPanel.add(yTextField);
+				addRobotFrame.add(addRobotPanel);
+				addRobotFrame.setPreferredSize(new Dimension(250,50));
+				addRobotFrame.pack();
+				addRobotFrame.setVisible(true);
+				
+			}
+			
+		});
+		toolsMenu.add(addRobotMenuItem);
+		
+		this.setJMenuBar(menuBar);
+
 		updateUI();
-		
-		add(robotPanel, BorderLayout.EAST);
 
 		pack();
 
 	}
-	
+
 	public void updateUI() {
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
-		for(String jobID : jobDataStore.getJobTable().keySet()) {
+		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
-				
-			if(j.getActive()) {
-				activeJobsInnerPanel.add(new JobPanel(jobID,percentageComplete));
+
+			if (j.getActive()) {
+				activeJobsInnerPanel.add(new JobPanel(jobID, percentageComplete));
 			} else {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
 			}
-			
-			
+
 		}
 		revalidate();
 	}
 
 	@Override
 	public void run() {
-	
-		while(true) {
+
+		while (true) {
 			// Maybe set a delay
 			Delay.msDelay(1000);
 			updateUI();
@@ -152,20 +233,23 @@ public class PCGUI extends JFrame implements Runnable {
 // Will have cancel button, % complete if it is an active job and JobID
 class JobPanel extends JPanel {
 
-	private static final long serialVersionUID = -6584237164987663902L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2180129182481579585L;
 
 	private JLabel jobLabel;
 
 	private JButton cancelButton;
 
 	private JobTable jobDataStore;
-	
+
 	private JLabel percentageCompleteLabel;
 
 	/*
 	 * Active Job Panel Constructor
 	 */
-	public JobPanel(String jobID, Float percentageComplete){
+	public JobPanel(String jobID, Float percentageComplete) {
 		setLayout(new BorderLayout());
 		// setPreferredSize(new Dimension(100, 100));
 
@@ -182,22 +266,67 @@ class JobPanel extends JPanel {
 			}
 		});
 		add(cancelButton, BorderLayout.SOUTH);
-		
+
 		percentageCompleteLabel = new JLabel(percentageComplete + "% Complete");
 		add(percentageCompleteLabel, BorderLayout.EAST);
 
 	}
-	
+
 	/*
 	 * Inactive Job Panel constructor
 	 */
 	public JobPanel(String jobID) {
-		setLayout(new BorderLayout());			
+		setLayout(new BorderLayout());
 		jobLabel = new JLabel("Job ID: " + jobID);
 		jobLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		add(jobLabel, BorderLayout.CENTER);
 	}
-	
-	
 
+}
+
+class GridPanel extends JPanel implements Runnable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 892150393382176613L;
+	private GridMap gridMap;
+	private MapBasedSimulation sim;
+	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
+	
+	private Server server;
+
+	public GridPanel(Server server) {
+		gridMap = MapUtils.createRealWarehouse();
+		sim = new MapBasedSimulation(gridMap);
+		wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
+		
+	}
+	
+	public void addRobot(int x, int y) {
+		GridPose gridStart = new GridPose(x, y, Heading.PLUS_Y);
+		
+		MobileRobotWrapper<MovableRobot> wrapper = sim.addRobot(SimulatedRobots.makeConfiguration(false, true),
+				gridMap.toPose(gridStart));
+		
+		wrapperList.add(wrapper);
+		
+		GridPositionDistribution dist = new GridPositionDistribution(gridMap);
+		GridPositionDistributionVisualisation mapVis = new GridPositionDistributionVisualisation(dist, gridMap);
+				MapVisualisationComponent.populateVisualisation(mapVis, sim);
+		removeAll();
+		add(mapVis);
+	}
+
+	@Override
+	public void run() {
+		
+	}
+}
+
+class RobotTable{
+	
+	public RobotTable() throws IOException{
+		
+	}
 }
