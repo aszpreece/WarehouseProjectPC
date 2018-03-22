@@ -128,14 +128,14 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(jobsPanel, BorderLayout.WEST);
 
-		gridPanel = new JPanel();
+		/*gridPanel = new JPanel();
 		{
 			gridInnerPanel = new GridPanel(server);
 			gridPanel.setBorder(BorderFactory.createTitledBorder("Robot Warehouse"));
 			gridPanel.add(gridInnerPanel);
 		}
 
-		add(gridPanel, BorderLayout.CENTER);
+		add(gridPanel, BorderLayout.CENTER);*/
 
 		robotDetailsPanel = new JPanel();
 		{
@@ -270,7 +270,7 @@ public class PCGUI extends JFrame implements Runnable {
 	public void updateUI() {
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
-		gridPanel.removeAll();
+		//gridPanel.removeAll();
 
 		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
@@ -282,10 +282,10 @@ public class PCGUI extends JFrame implements Runnable {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
 			}
 
-			GridPanel gridInnerPanel = new GridPanel(server);
+			/*GridPanel gridInnerPanel = new GridPanel(server);
 			System.gc();
 			
-			gridPanel.add(gridInnerPanel);
+			gridPanel.add(gridInnerPanel);*/
 
 		}
 
