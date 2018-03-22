@@ -57,6 +57,8 @@ public class Robot {
 	private Integer currentDirection;
 	
 	private String robotName;
+	private int destX;
+	private int destY;
 	
 	public Robot(NXTInfo nxt, ReservationTable rTable, Server jobManagerServer) {
 		m_nxt = nxt;
@@ -193,6 +195,19 @@ public class Robot {
 	
 	public boolean isParked() {
 		return parked;
+	}
+	
+	public void setDestination(int x, int y) {
+		destX = x;
+		destY = y;
+	}
+	
+	public int getDestinationX() {
+		return destX;
+	}
+	
+	public int getDestinationY() {
+		return destY;
 	}
 
 }
