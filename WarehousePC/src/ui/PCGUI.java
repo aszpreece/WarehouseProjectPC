@@ -283,7 +283,8 @@ public class PCGUI extends JFrame implements Runnable {
 			}
 
 			GridPanel gridInnerPanel = new GridPanel(server);
-
+			System.gc();
+			
 			gridPanel.add(gridInnerPanel);
 
 		}
@@ -385,7 +386,7 @@ class GridPanel extends JPanel {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 892150393382176613L;
+	//private static final long serialVersionUID = 892150393382176613L;
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
 	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
