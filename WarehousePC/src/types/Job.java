@@ -8,6 +8,20 @@ import java.util.Map.Entry;
  * @author Minhal - Job Selection
  */
 public class Job{
+	private volatile boolean cancelled = false;
+	
+	public boolean isCancelled() {
+		return cancelled;
+	}
+	
+	public void setCancelled(boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+	/*
+	 * Indicates whether a job is active
+	 */
+	private boolean active = false;
+
 	/*
 	 * Job ID
 	 */
@@ -61,4 +75,35 @@ public class Job{
 
 		return sumReward;
 	}
+	
+	/*
+	 * Determines whether the job is active
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	/*
+	 * Ascertains whether the job is active
+	 */
+	public boolean getActive() {
+		return this.active && !isCancelled();
+	}
+	
+	/*
+	 * Gives the percentage completion of this job
+	 */
+	public Float getPercentageComplete() { 
+		int numTasksCompleted=0;
+		
+		for(int i=0; i<itemList.size(); i++) {
+			if(itemList.get(i).getComplete() == true) {
+				numTasksCompleted++;
+			}
+		}
+		
+		return new Float((numTasksCompleted/itemList.size())*100);
+	}
+
+
+	
 }

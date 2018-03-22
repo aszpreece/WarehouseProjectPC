@@ -144,9 +144,9 @@ public class Server extends Thread {
 //		lego.setCurrentX(0);
 //		lego.setCurrentY(4);
 		
-		PCGUI pcGUI = new PCGUI(jobTable, this);
-		Thread display = new Thread(pcGUI);
-		display.start();
+		//PCGUI pcGUI = new PCGUI(jobTable, this);
+		//Thread display = new Thread(pcGUI);
+		//display.start();
 
 		JobAssignment assigner = new JobAssignment(itemTable);
 		connect();

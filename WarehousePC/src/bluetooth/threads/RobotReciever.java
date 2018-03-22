@@ -22,15 +22,13 @@ public class RobotReciever extends Thread {
 		while(!Thread.currentThread().isInterrupted()) {
 			try {
 				if (input.readByte() == NetworkMessage.REQUEST_MOVE && !robot.isParked()) {
-					robot.setParked(false);
 					robot.setRequestingMove(true);
 				if (input.readByte() == NetworkMessage.AWAIT_DROPOFF || input.readByte() == NetworkMessage.AWAIT_PICKUP) {
+					robot.setParked(false);
 					robot.setRequestingMove(true);
 				}
 				} else if (input.readByte() == NetworkMessage.CANCEL_JOB) {
 					robot.cancelJob();
-				} else if (input.readByte() == NetworkMessage.AWAIT_PICKUP) {
-					//robot.sentPickupInfo();
 				}
 			} catch (IOException e) {
 				if (!stop) {

@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import org.apache.log4j.Logger;
 
-import jobmanagement.JobComparator;
 import types.Item;
 import types.Job;
 import types.Task;

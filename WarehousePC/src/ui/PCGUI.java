@@ -178,7 +178,7 @@ class JobPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Send Cancel message up
-				jobDataStore.cancel(jobID);
+				//jobDataStore.cancel(jobID);
 			}
 		});
 		add(cancelButton, BorderLayout.SOUTH);
