@@ -119,6 +119,7 @@ public class Server extends Thread {
 		robotList.add((bish = addNXT("LilBish", "00165317B895")));
 		bish.setCurrentX(0);
 		bish.setCurrentY(1);
+		bish.setDestination(bish.getX(), bish.getY());
 		Robot poppy;
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
 		poppy.setCurrentX(0);
@@ -184,10 +185,12 @@ public class Server extends Thread {
 						r.setCurrentStep(robotStep);
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
+
 						robotStep.getCommand();
 						System.out.println(robotStep.getCoordinate().toString());
 						System.out.println(robotStep.getCommand());
 					    if (robotStep.getCommand().equals("DROP")) {
+
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
