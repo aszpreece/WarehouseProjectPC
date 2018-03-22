@@ -270,7 +270,7 @@ public class PCGUI extends JFrame implements Runnable {
 	public void updateUI() {
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
-		gridPanel.removeAll();
+		//gridPanel.removeAll();
 
 		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
@@ -282,10 +282,10 @@ public class PCGUI extends JFrame implements Runnable {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
 			}
 
-			GridPanel gridInnerPanel = new GridPanel(server);
-			System.gc();
+			//GridPanel gridInnerPanel = new GridPanel(server);
+			//System.gc();
 			
-			gridPanel.add(gridInnerPanel);
+			//gridPanel.add(gridInnerPanel);
 
 		}
 
@@ -371,10 +371,11 @@ class RobotPanel extends JPanel {
 			JLabel robotNameLabel = new JLabel(r.getName());
 			JLabel robotPositionLabel = new JLabel("Position: " + "(" + r.getX() + "," + r.getY() + ")");
 			JLabel robotWeightLabel = new JLabel("Weight: " + r.getCurrentWeight() + "/" + r.getMaxWeight());
-			JLabel robotDestinationLabel = new JLabel();
+			JLabel robotDestinationLabel = new JLabel("Destination: (" + r.getDestinationX() + "," + r.getDestinationY() + ")");
 			robotInnerPanel.setLayout(new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
 			robotInnerPanel.add(robotNameLabel);//, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
 			robotInnerPanel.add(robotPositionLabel);//, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
+			robotInnerPanel.add(robotDestinationLabel);
 			robotInnerPanel.add(robotWeightLabel);//, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
 			
 			add(robotInnerPanel);
@@ -382,7 +383,7 @@ class RobotPanel extends JPanel {
 	}
 }
 
-class GridPanel extends JPanel {
+class GridPanel extends JPanel implements Runnable {
 
 	/**
 	 * 
@@ -411,6 +412,9 @@ class GridPanel extends JPanel {
 			GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
 			robotTable.put(r.getName(), p);
 		}
+		
+		Thread gridPanelThread = new Thread(this);
+		gridPanelThread.start();
 
 	}
 
@@ -452,5 +456,17 @@ class GridPanel extends JPanel {
 		}
 
 		return new GridPilot(wrapper.getRobot().getPilot(), gridMap, gridStart);
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			List<Robot> searchList = new ArrayList<Robot>(robotList);
+			for (Robot r : searchList) {
+				GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0, false);
+				robotTable.get(r.getName()).setGridPose(p.getGridPose());
+			}
+		}
+		
 	}
 }
