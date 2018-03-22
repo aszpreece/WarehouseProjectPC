@@ -12,7 +12,7 @@ public class JobComparator implements Comparator<Job> {
 	 */
 	@Override
 	public int compare(Job jobOne, Job jobTwo) {
-		return Math.round(jobTwo.getTotalReward() - jobOne.getTotalReward());
+		return Math.round(jobTwo.getPriority() - jobOne.getPriority());
 	}
 
 }

@@ -43,7 +43,6 @@ public class RobotSender extends Thread {
 					if (message == null) {
 						message = NetworkMessage.NO_MOVE;
 					}
-					System.out.println("Sending command " + message); 
 					output.writeByte(message);
 					switch(message) {
 	    			case NetworkMessage.MOVE_NORTH:
@@ -69,10 +68,14 @@ public class RobotSender extends Thread {
 	    			case NetworkMessage.NO_MOVE :
 	    			case NetworkMessage.AWAIT_DROPOFF :
 	    			case NetworkMessage.AWAIT_PICKUP :
-	    				robot.setParked(true);
 	    				break;
 	    			}
 					System.out.println("Coords of " + robot.getName() + ": " + robot.getX() + " " + robot.getY());
+					if (!messageQueue.isEmpty() && (messageQueue.peek() == NetworkMessage.AWAIT_PICKUP || messageQueue.peek() == NetworkMessage.AWAIT_DROPOFF)) {
+	    				System.out.println("Sending pickup/dropoff " + robot.getName());
+						output.writeByte(messageQueue.poll());
+						robot.setParked(true);
+					}
 					output.flush();
 				} catch (IOException e) {
 					if (!stop) {

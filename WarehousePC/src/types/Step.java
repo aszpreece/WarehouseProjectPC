@@ -1,6 +1,7 @@
 package types;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 public class Step {
 
@@ -10,6 +11,8 @@ public class Step {
 
 	private int quantity;
 	
+	private ArrayList<Task> tasks;
+
 	/**
 	 * @param command the command (drop or an item name for pickup)
 	 * @param coordinate A type node containing coordinates to travel to in the plan
@@ -52,5 +55,18 @@ public class Step {
 		Step step = (Step)s;
 		return coordinate.equals(step.getCoordinate()) && command.equals(step.getCommand())
 				&& quantity == step.getQuantity();
+	}
+	
+	
+	public void setStepComplete() {
+		if(command == "DROP") {
+			for(Task t: tasks) {
+				t.setComplete(true);
+			}
+		}
+	}
+	
+	public void setDropAssociatedTasks(ArrayList<Task> tasks) {
+		this.tasks = tasks;
 	}
 }

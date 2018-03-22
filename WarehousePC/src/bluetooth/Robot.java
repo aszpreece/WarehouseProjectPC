@@ -195,4 +195,8 @@ public class Robot {
 		return parked;
 	}
 
+	public boolean isReady() {
+		return !parked && requestingMove;
+	}
+
 }

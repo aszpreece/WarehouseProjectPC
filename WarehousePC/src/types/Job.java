@@ -1,8 +1,6 @@
 package types;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 /**
  * @author Minhal - Job Selection
@@ -33,18 +31,21 @@ public class Job{
 	/*
 	 * Total reward for this whole job
 	 */
-	private Float TOTAL_REWARD;
+	private float totalReward;
+	
+	private float priority;
 	/**
 	 * Scale factor to push a job down the queue
 	 */
-	private final int SCALE_FACTOR = 100;
+	private final float SCALE_FACTOR = 0.01f;
 	
 	private int cancelPredictor; //1 = cancelled 0 = not to cancel
 	
 	public Job(ArrayList<Task> itemList, int cancelPredictor) {
+		this.totalReward = calculateReward();
 		this.itemList = itemList;
 		this.cancelPredictor = cancelPredictor;
-		this.TOTAL_REWARD = getReward();
+		this.priority = calculatePriority();
 	}
 	/*
 	 * Getter for attribute itemList
@@ -53,13 +54,22 @@ public class Job{
 		return itemList;
 	}
 	
-	public Float getTotalReward(){
-		return TOTAL_REWARD;
+	public float getPriority(){
+		return priority;
 	}
+	
+	private float calculateReward() {
+		float total = 0;
+		for (Task t : itemList) {
+			total += t.getReward();
+		}
+		return total;
+	}
+	
 	/*
 	 * Calculation to get reward for this job
 	 */
-	private Float getReward(){
+	private float calculatePriority(){
 		Float sumReward = 0f;
 		Iterator<Task> i = itemList.iterator();
 		
@@ -74,6 +84,10 @@ public class Job{
 		}
 
 		return sumReward;
+	}
+	
+	public float getTotalReward() {
+		return totalReward;
 	}
 	
 	/*
@@ -92,7 +106,7 @@ public class Job{
 	/*
 	 * Gives the percentage completion of this job
 	 */
-	public Float getPercentageComplete() { 
+	public float getPercentageComplete() { 
 		int numTasksCompleted=0;
 		
 		for(int i=0; i<itemList.size(); i++) {
@@ -103,7 +117,5 @@ public class Job{
 		
 		return new Float((numTasksCompleted/itemList.size())*100);
 	}
-
-
 	
 }

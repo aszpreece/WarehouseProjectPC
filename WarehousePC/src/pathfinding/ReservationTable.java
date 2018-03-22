@@ -34,5 +34,21 @@ public class ReservationTable {
 	public void unparkPosition(Node pos) {
 		parkedPositions.remove(pos);
 	}
+	
+	public void print(int start, int num) {
+		for (int i = start; i < start + num; i++) {
+			System.out.println(i);
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 11; x ++) {
+					if (reservations.getOrDefault(i, new ArrayList<Node>()).contains(new Node(x, y)))
+						System.out.print("R ");
+					else {
+						System.out.print("N ");
+					}
+				}
+				System.out.println();
+			}
+		}
+	}
 
 }

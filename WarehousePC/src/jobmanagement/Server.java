@@ -3,7 +3,6 @@ package jobmanagement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -17,13 +16,11 @@ import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
 import lejos.pc.comm.NXTInfo;
-import pathfinding.AStar;
 import pathfinding.CAStar;
 import pathfinding.ReservationTable;
 import types.Job;
 import types.Node;
 import types.Step;
-import types.Task;
 import ui.PCGUI;
 
 public class Server extends Thread {
@@ -33,12 +30,12 @@ public class Server extends Thread {
 		m.start();
 
 	}
-
+	
+	volatile float score = 0;
 	volatile ReservationTable rTable = new ReservationTable();
-
 	volatile boolean pause = false;
 
-	int TimeStep = 0;
+	int timeStep = 0;
 
 	List<Robot> connections = new ArrayList<Robot>();
 
@@ -62,7 +59,7 @@ public class Server extends Thread {
 	}
 
 	public int getTimeStep() {
-		return TimeStep;
+		return timeStep;
 	}
 
 	/**
@@ -143,27 +140,19 @@ public class Server extends Thread {
 		// once all the set up is complete we begin the main server loop. This
 		// constantly makes sure that each robot has a job assigned to it.
 		Map<Robot, Job> jobMap = new HashMap<Robot, Job>();
+		Map<Robot, Step> currentStep = new HashMap<Robot, Step>();
 		Map<Robot, Queue<Step>> stepMap = new HashMap<Robot, Queue<Step>>();
-		// Node Goal = new Node(0, 0);
-		// Node AStart = new Node(6, 0);
-		// Node BStart = new Node(5, 0);
-		// Node goal2 = new Node (3 , 0);
-		// for (Byte p : pathfinder.pathfind(AStart, Goal, 0))
-		// System.out.println(p);
-		// System.out.println();
-		// for (Byte p : pathfinder.pathfind(BStart, Goal, 0))
-		// System.out.println(p);
-		// System.out.println();
-		// for (Byte p : pathfinder.pathfind(Goal, goal2, 5))
-		// System.out.println(p);
-		// System.out.println();
-		// poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(),
-		// poppy.getY()), poppyGoal, getTimeStep()));
-		// System.out.println("found poppys path");
-		// bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(),
-		// bish.getY()), bishGoal, getTimeStep()));
-		//
+//		Node AStart = new Node(0, 7);
+//		Node BStart = new Node(0, 0);
+//
+//		poppy.setInstructions(pathfinder.pathfind(new Node(poppy.getX(),
+//		poppy.getY()), BStart, getTimeStep()));
+//		System.out.println("found poppys path");
+//		bish.setInstructions(pathfinder.pathfind(new Node(bish.getX(),
+//		bish.getY()), AStart, getTimeStep()));
+		
 		while (true) {
+	
 			for (Robot r : connections) {
 				if (!jobMap.containsKey(r) || !jobMap.get(r).getActive()) {
 					System.out.println("Giving a new job to " + r.getName());
@@ -174,32 +163,41 @@ public class Server extends Thread {
 					stepMap.put(r, robotSteps);
 					r.clearInstructions();
 				}
-				if (!r.hasInstructions()) {
+				if (!r.hasInstructions() && r.isReady()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
+						if (currentStep.containsKey(r)) {
+							currentStep.get(r).setStepComplete();
+							System.out.println(r.getName() + "completed step");
+						}			
+						currentStep.put(r, robotStep);
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
-						if (robotStep.getCommand().equals("DROP")) {
+						if (instructions == null) {
+							
+						} else if (robotStep.getCommand().equals("DROP")) {
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
 						}
-						System.out.println("Instructions: " + instructions);
+						System.out.println(r.getName() + " instructions: " + instructions);
 						r.setInstructions(instructions);
 					} else {
+						score += jobMap.get(r).getTotalReward();
 						jobMap.get(r).setActive(false);
 					}
 				}
 			}
-
-			if (this.checkReady()) {
+			if (this.checkReady() && !pause) {
 				this.setReady(true);
-				try {
+		/*		try {
 					System.in.read();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
-				TimeStep++;
+				}*/
+				timeStep++;
+//				System.out.println(timeStep);
+//				rTable.print(timeStep, 3);
 			}
 			try {
 				Thread.sleep(100);
@@ -211,6 +209,10 @@ public class Server extends Thread {
 
 	}
 
+	public float getScore() {
+		return score;
+	}
+	
 	public void setPaused(boolean p) {
 		pause = p;
 	}

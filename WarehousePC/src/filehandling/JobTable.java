@@ -55,7 +55,7 @@ public class JobTable {
 	 * Gets total reward for a job with given id
 	 */
 	public Float getReward(String id){
-		return jobTable.get(id).getTotalReward();
+		return jobTable.get(id).getPriority();
 	}
 	/**
 	 * Pops top job from queue and returns it
