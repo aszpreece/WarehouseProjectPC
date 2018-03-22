@@ -100,7 +100,7 @@ public class PCGUI extends JFrame implements Runnable {
 		activeJobsPanel = new JPanel();
 		{
 			activeJobsPanel.setBorder(BorderFactory.createTitledBorder("Active Jobs"));
-			activeJobsPanel.setPreferredSize(new Dimension(250, 200));
+			activeJobsPanel.setPreferredSize(new Dimension(250, 100));
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
 
 			activeJobsInnerPanel = new JPanel();
@@ -114,7 +114,7 @@ public class PCGUI extends JFrame implements Runnable {
 		inactiveJobsPanel = new JPanel();
 		{
 			inactiveJobsPanel.setBorder(BorderFactory.createTitledBorder("Inactive Jobs"));
-			inactiveJobsPanel.setPreferredSize(new Dimension(250, 260));
+			inactiveJobsPanel.setPreferredSize(new Dimension(250, 375));
 			inactiveJobsPanel.setLayout(new BoxLayout(inactiveJobsPanel, BoxLayout.Y_AXIS));
 
 			inactiveJobsInnerPanel = new JPanel();
