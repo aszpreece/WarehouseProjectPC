@@ -33,14 +33,15 @@ public class JobAssignment {
 	/**
 	 * the drop location
 	 */
-	private Node DROP_LOCATION = new Node(4, 4);
+	private ArrayList<Node> drops;
 
 	/**
 	 * @param items
 	 *            an item table consisting of their locations and weights
 	 */
-	public JobAssignment(ItemTable items) {
+	public JobAssignment(ItemTable items, ArrayList<Node> drops) {
 		this.items = items;
+		this.drops = drops;
 	}
 
 	/**
@@ -61,12 +62,15 @@ public class JobAssignment {
 	 *         coordinates to go to and how much to pick up of it
 	 */
 	public Queue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
+		//initialize the robots current values
 		float realRobotWeight = robot.getCurrentWeight();
 		float robotWeight = realRobotWeight;
 		float maxWeight = robot.getMaxWeight();
 		Task nextTask;
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
+		
+		//create an empty plan
 		Queue<Step> plan = new LinkedBlockingQueue<Step>();
 
 		ArrayList<Task> tasksToComplete = new ArrayList<Task>();
@@ -93,12 +97,13 @@ public class JobAssignment {
 						}
 						// the robot is now full so it needs to head towards the drop point
 						logger.debug("sending robot to drop off point");
-						Step step = new Step("DROP", DROP_LOCATION);
+						Node dropLocation = getClosestDropLocation(x,y);
+						Step step = new Step("DROP", dropLocation);
 						step.setDropAssociatedTasks(tasksToComplete);
 						plan.add(step);
 						tasksToComplete = new ArrayList<Task>();
-						x = DROP_LOCATION.getX();
-						y = DROP_LOCATION.getY();
+						x = dropLocation.getX();
+						y = dropLocation.getY();
 						robotWeight = 0;
 						break;
 					}
@@ -119,7 +124,7 @@ public class JobAssignment {
 				robotWeight += currentItem.getWeight() * quantity;
 			}
 		}
-		Step step = new Step("DROP", DROP_LOCATION);
+		Step step = new Step("DROP", getClosestDropLocation(x, y));
 		step.setDropAssociatedTasks(tasksToComplete);
 		plan.add(step);
 		logger.debug("sending robot to drop off point");
@@ -131,6 +136,25 @@ public class JobAssignment {
 			t.setComplete(false);
 		}
 		return plan;
+	}
+
+	/**
+	 * @param x current x
+	 * @param y current y
+	 * @return the closest drop node
+	 */
+	private Node getClosestDropLocation(int x, int y) {
+		Node shortestNode = null;
+		float shortestDistance = Float.MAX_VALUE;
+		for (Node n: drops) {
+			//euclidian distance between current position and node
+			float distance = (float) Math.sqrt(Math.pow(x - n.getX(), 2) + Math.pow(y - n.getY(), 2));
+			if(distance < shortestDistance) {
+				shortestDistance = distance;
+				shortestNode = n;
+			}
+		}
+		return shortestNode;
 	}
 
 	/**
