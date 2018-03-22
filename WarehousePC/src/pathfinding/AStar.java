@@ -49,7 +49,6 @@ public class AStar {
 		while (!openList.isEmpty()) {
 			
 			PathStep currentStep = openList.poll();
-			//System.out.println("Iteration " + currentStep.getCoordinate().toString());
 			closedList.add(currentStep);
 	
 			potential.add(new Node(currentStep.getCoordinate().getX(), currentStep.getCoordinate().getY() + 1));
@@ -60,16 +59,12 @@ public class AStar {
 			for (Node node : potential) {
 				if (isSpace(node)) {
 					PathStep s = new PathStep(Optional.of(currentStep), node, heuristic(currentStep.getCoordinate(), end));
-					//System.out.println(node.toString() + " is a space!");
 					if (!closedList.contains(s) && !openList.contains(s)) {
 						if (end.equals(s.getCoordinate())) {
 							return reconstruct(s);
 						}
-						//System.out.println("Added to open list " + s.getCoordinate().getX() + " " + s.getCoordinate().getY());
 						openList.add(s);
 					}
-				} else {
-					//System.out.println(node.toString() + " is not a space!");
 				}
 			}
 			potential.clear();

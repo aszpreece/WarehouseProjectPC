@@ -39,10 +39,11 @@ public class CAStar {
 	}
 
 	/**
+	 * finds a path from one node to another SIDE EFFECTS: Reserves found route on reservation table.
 	 * @param start the starting grid position of the robot
 	 * @param end its goal
 	 * @param startTimeStep the current time step
-	 * @return
+	 * @return a list of moves to make, null if there is not paths. 
 	 */
 	public List<Byte> pathfind(Node start, Node end, int startTimeStep) {
 		
