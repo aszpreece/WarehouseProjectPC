@@ -6,14 +6,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import org.apache.log4j.Logger;
 
+import jobmanagement.JobComparator;
 import types.Item;
 import types.Job;
 import types.Task;
-/*
- * Created by Minhal - Job Selection
+
+
+/**
+ * @author Minhal - Job Selection
  */
 public class JobTable {
+	
 	/*
 	 * Stores all items into a hash map, where the key is job ID which maps to its job class
 	 */
@@ -21,14 +26,19 @@ public class JobTable {
 	/*
 	 * Priorities all jobs into a queue based on the sum of rewards of each task
 	 */
-	private Queue<Job> queue = new PriorityQueue<Job>(new JobComparator());
+	Queue<Job> queue = new PriorityQueue<Job>(new JobComparator());
 	/*
 	 * Creates item table, to pass item to each task
 	 */
-	private ItemTable itemTable = new ItemTable();;
+	private ItemTable itemTable;
 	
-	public JobTable() throws IOException {
-		this.jobTable = createTable();
+	
+	public JobTable(){
+		try {
+			this.jobTable = createTable();
+		}catch (IOException e){
+			System.out.println(e.getMessage());
+		}
 	}
 	/*
 	 * Gets jobs tasks with id
@@ -36,11 +46,12 @@ public class JobTable {
 	public ArrayList<Task> getTaskList(String id){
 		return jobTable.get(id).getItemList();
 	}
-	/*
-	 * Get the table of jobs
+	/**
+	 * @param id - id of the job we want
+	 * @return job if exists else null
 	 */
-	public HashMap<String, Job> getJobTable(){
-		return this.jobTable;
+	public HashMap<String, Job> getJobTable() {
+		return jobTable;
 	}
 	/*
 	 * Gets total reward for a job with given id
@@ -48,29 +59,30 @@ public class JobTable {
 	public Float getReward(String id){
 		return jobTable.get(id).getTotalReward();
 	}
-	/*
+	/**
 	 * Pops top job from queue and returns it
-	 * returns null if queue is empty
+	 * @return null if queue is empty
 	 */
 	public Job popQueue(){
-		Job j = queue.poll();
-		j.setActive(true);
-		return j; 
+		return queue.poll();
 	}
-	/*
-	 * Cancels a job by removing it according
-	 * to its JobID
+	/**
+	 * @return returns item table when instantiating job table
 	 */
-	public void cancel(String id) {
-		jobTable.get(id).setActive(false);
+	public ItemTable getItems() {
+		return this.itemTable;
 	}
 	/*
 	 * Creates table based on CSV files
 	 */
 	public HashMap<String, Job> createTable() throws IOException{
+		itemTable = new ItemTable();
+		TrainingJobs predictor = new TrainingJobs();
+		
 		HashMap<String, Job> jobTable = new HashMap<>();
 		//Opening files to read
 		BufferedReader jobs = new BufferedReader(FileHandling.getFileReader(FileHandling.JOBS_FILE_NAME));
+		//logger.debug("");
 		//current lines we are looping
 		String jobLine = ""; 
 		//Loop through each line
@@ -88,7 +100,7 @@ public class JobTable {
 				Task crntTask = new Task(itemId, quantity, crntItm);
 				taskList.add(crntTask);
 			}
-			Job currentJob = new Job(key, taskList);
+			Job currentJob = new Job(taskList, predictor.runNaiveBayes(taskList));
 			//Adding job onto table
             jobTable.put(key, currentJob);
             //Adding job into queue
@@ -96,4 +108,5 @@ public class JobTable {
 		}
 		return jobTable;
 	}
+
 }

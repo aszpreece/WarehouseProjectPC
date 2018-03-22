@@ -1,24 +1,19 @@
 package filehandling;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-/*
- * Created by Minhal - Job Selection
- * Assuming all files are stores in the same directory of the java files
+/**
+ * @author Minhal - Job Selection
  */
 public class FileHandling {
 	
+	public final static String TRAINING_NAME = "training_jobs";
+	public final static String CANCELLATION_NAME = "cancellations";
 	public final static String ITEM_FILE_NAME = "items";
 	public final static String JOBS_FILE_NAME = "jobs";
 	public final static String ITEM_LOCATION_FILE_NAME = "locations";
-	private final static String FOLDER_PATH = "/Resources/";
+	private final static String FOLDER_PATH = "/WarehousePC/Resources/";
 	private final static String DOT_CSV = ".csv";
 	public final static String cvsSplitBy = ","; //split by a comma
 	

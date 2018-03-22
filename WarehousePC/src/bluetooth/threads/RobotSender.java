@@ -68,7 +68,9 @@ public class RobotSender extends Thread {
 	    				System.out.println("Sending " + robot.getName() + " south");
 	    				break;
 	    			case NetworkMessage.NO_MOVE :
+	    				break;
 	    			case NetworkMessage.AWAIT_DROPOFF :
+	    				break;
 	    			case NetworkMessage.AWAIT_PICKUP :
 	    				robot.setParked(true);
 	    				break;

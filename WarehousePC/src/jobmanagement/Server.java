@@ -3,9 +3,12 @@ package jobmanagement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
+import com.whshared.network.NetworkMessage;
 
 import bluetooth.Robot;
 import filehandling.ItemTable;
@@ -174,19 +177,29 @@ public class Server extends Thread {
 					System.out.println("Giving a new job to " + r.getName());
 					Job newJob = jobTable.popQueue();
 					jobMap.put(r, newJob);
+					System.out.println(newJob.getItemList());
 					Queue<Step> robotSteps = assigner.getNextPlan(newJob.getItemList(), r);
+					System.out.println("ROBOT STEPS:");
+					System.out.println(robotSteps);
 					stepMap.put(r, robotSteps);
 					r.clearInstructions();
 				}
 				if(!r.hasInstructions()) {
 					Step robotStep = stepMap.get(r).poll();
 					if (robotStep != null) {
-						r.setInstructions(pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(), getTimeStep()));
+						List<Byte> instructions = new LinkedList<Byte>();
+						r.setInstructions(pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(), getTimeStep()));						if(robotStep.getCommand().equals("DROP")) {
+							instructions.add(NetworkMessage.AWAIT_DROPOFF);			
+						} else {
+							instructions.add(NetworkMessage.AWAIT_PICKUP);
+						}
+						System.out.println("Instructions: " + instructions);
+						r.setInstructions(instructions);
 					} else {
 						jobMap.get(r).setActive(false);
 					}
 				}
-			}	
+			}
 			
 			if (this.checkReady()) {
 				this.setReady(true);
