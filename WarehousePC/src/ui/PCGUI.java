@@ -464,6 +464,11 @@ class GridPanel extends JPanel implements Runnable {
 			List<Robot> searchList = new ArrayList<Robot>(robotList);
 			for (Robot r : searchList) {
 				GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0, false);
+				GridPose prev = robotTable.get(r.getName()).getGridPose();
+				GridPose post = p.getGridPose();
+				if((prev.getX()!=post.getX()) || (prev.getY() != post.getY())) {
+					System.out.println("Position Changed");
+				}
 				robotTable.get(r.getName()).setGridPose(p.getGridPose());
 			}
 		}
