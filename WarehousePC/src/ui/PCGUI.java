@@ -371,6 +371,7 @@ class RobotPanel extends JPanel {
 			JLabel robotNameLabel = new JLabel(r.getName());
 			JLabel robotPositionLabel = new JLabel("Position: " + "(" + r.getX() + "," + r.getY() + ")");
 			JLabel robotWeightLabel = new JLabel("Weight: " + r.getCurrentWeight() + "/" + r.getMaxWeight());
+			JLabel robotDestinationLabel = new JLabel();
 			robotInnerPanel.setLayout(new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
 			robotInnerPanel.add(robotNameLabel);//, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
 			robotInnerPanel.add(robotPositionLabel);//, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));

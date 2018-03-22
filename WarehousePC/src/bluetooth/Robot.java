@@ -62,8 +62,7 @@ public class Robot {
 		m_nxt = nxt;
 		name = nxt.name;
 		manager = jobManagerServer;
-		table = rTable;
-		
+		table = rTable;		
 	}
 
 	/**
