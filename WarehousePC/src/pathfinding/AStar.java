@@ -74,11 +74,8 @@ public class AStar {
 			for (Node node : potential) {
 				if (isSpace(node)) {
 					PathStep s = new PathStep(Optional.of(currentStep), node, heuristic(currentStep.getCoordinate(), end));
-<<<<<<< HEAD
-=======
 					
 					//if the current node isn't in either node list that means it is newly discovered therefore add it to the open list
->>>>>>> 3a89af7f963a1b2923855f686ddfc3563c7a3107
 					if (!closedList.contains(s) && !openList.contains(s)) {
 						
 						//the end goal has been reached: return the reconstructed path to get to it
