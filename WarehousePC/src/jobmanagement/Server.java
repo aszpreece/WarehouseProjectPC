@@ -122,20 +122,24 @@ public class Server extends Thread {
 		Robot poppy;
 		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
 		poppy.setCurrentX(0);
-		poppy.setCurrentY(7);
-		//
-		// Robot lego;
-		// robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
-		// lego.setCurrentX(0);
-		// lego.setCurrentY(4);
+		poppy.setCurrentY(2);
+		
+		Robot lego;
+		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+		lego.setCurrentX(0);
+		lego.setCurrentY(4);
 		
 		 connect();
 		 
 //		 PCGUI pcGUI = new PCGUI(jobTable, this);
 //		 Thread display = new Thread(pcGUI);
 //		 display.start();
-
-		JobAssignment assigner = new JobAssignment(itemTable);
+		 
+		ArrayList<Node> dropOffs = new ArrayList<Node>();
+		dropOffs.add(new Node(0, 0));
+		dropOffs.add(new Node(11, 7));
+		 
+		JobAssignment assigner = new JobAssignment(itemTable, dropOffs);
 
 
 		CAStar pathfinder = new CAStar(rTable);
@@ -168,13 +172,9 @@ public class Server extends Thread {
 
 				//if the robot is out of instructions, i.e it has completed a given route...
 				if (!r.hasInstructions() && r.isReady()) {
-					//if the robots current step hasn't been completed then it must have been told to wait.
+
 					Step robotStep;
-					if (r.getCurrentStep() != null && !r.getCurrentStep().isComplete()) {
-						robotStep = r.getCurrentStep();
-					} else {
-						robotStep = stepMap.get(r).poll();
-					}
+					robotStep = stepMap.get(r).poll();
 	
 					if (robotStep != null) {
 						if (r.getCurrentStep() != null) {
@@ -184,14 +184,18 @@ public class Server extends Thread {
 						r.setCurrentStep(robotStep);
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
+						robotStep.getCommand();
+						System.out.println(robotStep.getCoordinate().toString());
+						System.out.println(robotStep.getCommand());
 					    if (robotStep.getCommand().equals("DROP")) {
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
-						} else if (robotStep.getCommand().equals("PICKUP")) {
+						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
 						}
 						System.out.println(r.getName() + " instructions: " + instructions);
 						r.setInstructions(instructions);
 					} else {
+						System.out.println("Job completed");
 						score += jobMap.get(r).getTotalReward();
 						jobMap.get(r).setActive(false);
 					}
