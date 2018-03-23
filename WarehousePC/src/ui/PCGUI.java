@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 
 import bluetooth.Robot;
 import filehandling.JobTable;
-import jobmanagement.JobAssignment;
 import jobmanagement.Server;
 import lejos.util.Delay;
 import rp.robotics.MobileRobotWrapper;
