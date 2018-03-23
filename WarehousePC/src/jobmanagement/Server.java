@@ -107,6 +107,8 @@ public class Server extends Thread {
 		JobTable jobTable;
 		try {
 			itemTable = new ItemTable();
+		
+			
 			jobTable = new JobTable();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -120,21 +122,24 @@ public class Server extends Thread {
 		bish.setCurrentX(0);
 		bish.setCurrentY(4);
 		bish.setDestination(bish.getX(), bish.getY());*/
-		Robot poppy;
-		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
-		poppy.setCurrentX(0);
-		poppy.setCurrentY(2);
-		poppy.setDestination(poppy.getX(), poppy.getY());
-		Robot lego;
-		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
-		lego.setCurrentX(0);
-		lego.setCurrentY(7);
-		lego.setDestination(lego.getX(), lego.getY());
-		/*Robot devil;
+//		Robot poppy;
+//		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
+//		poppy.setCurrentX(0);
+//		poppy.setCurrentY(2);
+//		poppy.setDestination(poppy.getX(), poppy.getY());
+//		
+//		Robot lego;
+//		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+//		lego.setCurrentX(0);
+//		lego.setCurrentY(7);
+//		lego.setDestination(lego.getX(), lego.getY()); 
+
+		
+		Robot devil;
 		robotList.add((devil = addNXT("Devil's Tricycle", "001653156768")));
 		devil.setCurrentX(0);
 		devil.setCurrentY(1);
-		devil.setDestination(devil.getX(), devil.getY());*/
+		devil.setDestination(devil.getX(), devil.getY());
 		
 		connect();
 		 
@@ -181,8 +186,9 @@ public class Server extends Thread {
 
 					Step robotStep;
 					robotStep = stepMap.get(r).poll();
-					r.setDestination(robotStep.getCoordinate().x, robotStep.getCoordinate().y);
+					
 					if (robotStep != null) {
+						r.setDestination(robotStep.getCoordinate().x, robotStep.getCoordinate().y);
 						if (r.getCurrentStep() != null) {
 							r.getCurrentStep().setStepComplete();
 							System.out.println(r.getName() + " completed a step");
