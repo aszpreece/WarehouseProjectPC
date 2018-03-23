@@ -1,4 +1,4 @@
-package unused;
+package unused.localisation;
 
 public class Node {
 	int x;

@@ -1,7 +1,7 @@
 /**
  *
  */
-package unused.models;
+package unused.localisation.models;
 
 import rp.robotics.localisation.GridPositionDistribution;
 import rp.robotics.mapping.GridMap;

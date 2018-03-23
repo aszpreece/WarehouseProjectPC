@@ -1,5 +1,5 @@
 
-package unused.models;
+package unused.localisation.models;
 
 import rp.robotics.localisation.ActionModel;
 import rp.robotics.localisation.GridPositionDistribution;

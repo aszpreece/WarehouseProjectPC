@@ -1,4 +1,4 @@
-package unused;
+package unused.localisation;
 
 
 import java.util.Optional;
@@ -11,8 +11,8 @@ import rp.robotics.LocalisedRangeScanner;
 import rp.robotics.MobileRobotWrapper;
 import rp.robotics.localisation.ActionModel;
 import rp.robotics.localisation.GridPositionDistribution;
-import unused.models.PerfectActionModel;
-import unused.models.PerfectSensorModel;
+import unused.localisation.models.PerfectActionModel;
+import unused.localisation.models.PerfectSensorModel;
 import rp.robotics.mapping.GridMap;
 import rp.robotics.mapping.MapUtils;
 import rp.robotics.navigation.GridPilot;
