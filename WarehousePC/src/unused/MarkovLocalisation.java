@@ -1,3 +1,5 @@
+package unused;
+
 
 import java.util.Optional;
 import java.util.Random;
@@ -9,8 +11,8 @@ import rp.robotics.LocalisedRangeScanner;
 import rp.robotics.MobileRobotWrapper;
 import rp.robotics.localisation.ActionModel;
 import rp.robotics.localisation.GridPositionDistribution;
-import models.PerfectActionModel;
-import models.PerfectSensorModel;
+import unused.models.PerfectActionModel;
+import unused.models.PerfectSensorModel;
 import rp.robotics.mapping.GridMap;
 import rp.robotics.mapping.MapUtils;
 import rp.robotics.navigation.GridPilot;
