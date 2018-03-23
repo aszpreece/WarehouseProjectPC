@@ -107,6 +107,8 @@ public class Server extends Thread {
 		JobTable jobTable;
 		try {
 			itemTable = new ItemTable();
+		
+			
 			jobTable = new JobTable();
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -115,25 +117,38 @@ public class Server extends Thread {
 		}
 
 		ArrayList<Robot> robotList = new ArrayList<Robot>();
-		Robot bish;
+		/*Robot bish;
 		robotList.add((bish = addNXT("LilBish", "00165317B895")));
 		bish.setCurrentX(0);
-		bish.setCurrentY(1);
-		Robot poppy;
-		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
-		poppy.setCurrentX(0);
-		poppy.setCurrentY(2);
+		bish.setCurrentY(4);
+		bish.setDestination(bish.getX(), bish.getY());*/
+//		Robot poppy;
+//		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
+//		poppy.setCurrentX(0);
+//		poppy.setCurrentY(2);
+//		poppy.setDestination(poppy.getX(), poppy.getY());
+
 		
-		Robot lego;
-		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
-		lego.setCurrentX(0);
-		lego.setCurrentY(4);
+//		
+//		Robot lego;
+//		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+//		lego.setCurrentX(0);
+//		lego.setCurrentY(7);
+//		lego.setDestination(lego.getX(), lego.getY()); 
+
 		
-		 connect();
+
+		Robot devil;
+		robotList.add((devil = addNXT("Devil's Tricycle", "001653156768")));
+		devil.setCurrentX(0);
+		devil.setCurrentY(1);
+		devil.setDestination(devil.getX(), devil.getY());
+
+		
+		connect();
 		 
-//		 PCGUI pcGUI = new PCGUI(jobTable, this);
-//		 Thread display = new Thread(pcGUI);
-//		 display.start();
+		Thread display = new Thread(new PCGUI(jobTable, this));
+		display.start();
 		 
 		ArrayList<Node> dropOffs = new ArrayList<Node>();
 		dropOffs.add(new Node(0, 0));
@@ -175,8 +190,9 @@ public class Server extends Thread {
 
 					Step robotStep;
 					robotStep = stepMap.get(r).poll();
-	
+					
 					if (robotStep != null) {
+						r.setDestination(robotStep.getCoordinate().x, robotStep.getCoordinate().y);
 						if (r.getCurrentStep() != null) {
 							r.getCurrentStep().setStepComplete();
 							System.out.println(r.getName() + " completed a step");
@@ -184,10 +200,12 @@ public class Server extends Thread {
 						r.setCurrentStep(robotStep);
 						List<Byte> instructions = pathfinder.pathfind(new Node(r.getX(), r.getY()), robotStep.getCoordinate(),
 								getTimeStep());
+
 						robotStep.getCommand();
 						System.out.println(robotStep.getCoordinate().toString());
 						System.out.println(robotStep.getCommand());
 					    if (robotStep.getCommand().equals("DROP")) {
+
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);
@@ -195,8 +213,9 @@ public class Server extends Thread {
 						System.out.println(r.getName() + " instructions: " + instructions);
 						r.setInstructions(instructions);
 					} else {
-						System.out.println("Job completed");
+						
 						score += jobMap.get(r).getTotalReward();
+						System.out.println(jobMap.get(r).getTotalReward());
 						jobMap.get(r).setActive(false);
 					}
 				}

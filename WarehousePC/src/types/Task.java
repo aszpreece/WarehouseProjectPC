@@ -63,4 +63,8 @@ public class Task {
 		return itemId;
 	}
 	
+	public float getTotalReward(){
+		return myItem.getReward()*quantity;
+	}
+	
 }

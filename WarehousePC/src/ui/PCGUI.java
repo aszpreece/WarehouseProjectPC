@@ -1,9 +1,7 @@
 package ui;
 
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,7 +10,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -20,8 +17,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+
+import org.apache.log4j.Logger;
 
 import bluetooth.Robot;
 import filehandling.JobTable;
@@ -31,7 +29,6 @@ import rp.robotics.MobileRobotWrapper;
 import rp.robotics.localisation.GridPositionDistribution;
 import rp.robotics.mapping.GridMap;
 import rp.robotics.mapping.MapUtils;
-import rp.robotics.navigation.GridPilot;
 import rp.robotics.navigation.GridPose;
 import rp.robotics.navigation.Heading;
 import rp.robotics.simulation.MapBasedSimulation;
@@ -42,37 +39,47 @@ import rp.robotics.visualisation.MapVisualisationComponent;
 import types.Job;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 /**
  * 
- * @author Brandon Goodwin, Osanne Gbayere
+ * @author Osanne Gbayere, Brandon Goodwin
+ * The PC display window
  *
  */
 public class PCGUI extends JFrame implements Runnable {
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3943010528198460967L;
+	
+	private static final Logger logger = Logger.getLogger(PCGUI.class);
+
 	private static final String FRAME_TITLE = "Robot Control UI";
 
-	private JPanel jobsPanel;
-
 	private JPanel activeJobsPanel;
-	private JScrollPane activeScrollPane;
-	private JPanel activeJobsInnerPanel;
-
 	private JPanel inactiveJobsPanel;
-	private JScrollPane inactiveScrollPane;
+	private JPanel activeJobsInnerPanel;
 	private JPanel inactiveJobsInnerPanel;
-
-	// private GridPanel gridInnerPanel;
-	private GridPanel gridInnerPanel;
 	private JPanel gridPanel;
 	private JPanel robotDetailsPanel;
-	private RobotPanel robotDetailsInnerPanel;
-	private JMenuBar menuBar;
-	private JMenu toolsMenu;
-	private JMenuItem addRobotMenuItem;
+	private JPanel mainCanvas;
 
-	private int direction = -1;
+	private JScrollPane activeScrollPane;
+	private JScrollPane inactiveScrollPane;
+
+	JLabel reward;
+
+	private GridPanel gridInnerPanel;
+
+	private RobotPanel robotDetailsInnerPanel;
+
+	private JMenuBar menuBar;
+
+	private JMenu toolsMenu;
+
+	private JMenuItem pauseSimMenuItem;
 
 	private Server server;
 
@@ -80,40 +87,49 @@ public class PCGUI extends JFrame implements Runnable {
 	// And will require certain methods to be added to the JobTable class
 	private JobTable jobDataStore;
 
-	private List<Robot> robots;
-
+	/**
+	 * 
+	 * @param jobDataStore HashMap storing job data by JobID
+	 * @param server handle to the server
+	 * PCGUI constructor
+	 */
 	public PCGUI(JobTable jobDataStore, Server server) {
 		this.jobDataStore = jobDataStore;
 		this.server = server;
-		this.robots = server.getConnectedRobots();
+		
+		// Gets a list of the handles to the Robot objects
+		server.getConnectedRobots();
 
+		// Frame settings
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setPreferredSize(new Dimension(800, 600));
 		setTitle(FRAME_TITLE);
 		setVisible(true);
 
-		jobsPanel = new JPanel(new FlowLayout());
-		jobsPanel.setPreferredSize(new Dimension(250, 500));
-
+		// Panel holding the list of the active jobs
 		activeJobsPanel = new JPanel();
 		{
+			logger.debug("Creating Panel holding the list of the active jobs");
 			activeJobsPanel.setBorder(BorderFactory.createTitledBorder("Active Jobs"));
-			activeJobsPanel.setPreferredSize(new Dimension(250, 200));
+			activeJobsPanel.setPreferredSize(new Dimension(150, 200));
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
 
 			activeJobsInnerPanel = new JPanel();
+			activeJobsInnerPanel.setLayout(new BoxLayout(activeJobsInnerPanel, BoxLayout.Y_AXIS));
 
 			activeScrollPane = new JScrollPane(activeJobsInnerPanel);
 			activeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			activeJobsPanel.add(activeScrollPane);
 		}
-		jobsPanel.add(activeJobsPanel);
+		add(activeJobsPanel, BorderLayout.EAST);
 
+		// Panel holding the list of inactive jobs
 		inactiveJobsPanel = new JPanel();
 		{
+			logger.debug("Creating Panel holding the list of inactive jobs");
 			inactiveJobsPanel.setBorder(BorderFactory.createTitledBorder("Inactive Jobs"));
-			inactiveJobsPanel.setPreferredSize(new Dimension(250, 260));
+			inactiveJobsPanel.setPreferredSize(new Dimension(150, 200));
 			inactiveJobsPanel.setLayout(new BoxLayout(inactiveJobsPanel, BoxLayout.Y_AXIS));
 
 			inactiveJobsInnerPanel = new JPanel();
@@ -123,147 +139,60 @@ public class PCGUI extends JFrame implements Runnable {
 			inactiveScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			inactiveJobsPanel.add(inactiveScrollPane);
 		}
-		jobsPanel.add(inactiveJobsPanel);
 
-		add(jobsPanel, BorderLayout.WEST);
+		add(inactiveJobsPanel, BorderLayout.WEST);
 
-		gridPanel = new JPanel();
+		// The Centre of the window in the BorderLayout layout manager
+		mainCanvas = new JPanel();
 		{
+			logger.debug("Creating the Centre of the window in the BorderLayout layout manager");
+			mainCanvas.setLayout(new BoxLayout(mainCanvas, BoxLayout.Y_AXIS));
+			gridPanel = new JPanel();
 			gridInnerPanel = new GridPanel(server);
 			gridPanel.setBorder(BorderFactory.createTitledBorder("Robot Warehouse"));
 			gridPanel.add(gridInnerPanel);
+			mainCanvas.add(gridPanel);
+			reward = new JLabel("Total Reward: " + server.getScore());
+			mainCanvas.add(reward);
 		}
-		
-		// gridInnerPanel = new GridPanel(server);
-		// gridPanel.add(gridInnerPanel);
 
-		// Thread gridPanelThread = new Thread(gridPanel);
+		add(mainCanvas, BorderLayout.CENTER);
 
-		// gridPanelThread.start();
-
-		add(gridPanel, BorderLayout.CENTER);
-
+		// Panel holding information about the robot destination, name and location
 		robotDetailsPanel = new JPanel();
-		// {
-		// robotDetailsInnerPanel = new RobotPanel(server);
-		// robotDetailsPanel.setBorder(BorderFactory.createTitledBorder("Robots"));
-		// robotDetailsPanel.setPreferredSize(new Dimension(245, 100));
-		// robotDetailsPanel.setLayout(new BoxLayout(robotDetailsPanel,
-		// BoxLayout.X_AXIS));
-		// }
+		{
+			logger.debug("Creating panel holding information about the robot destination, name and location");
+			robotDetailsInnerPanel = new RobotPanel(server);
+			robotDetailsPanel.setBorder(BorderFactory.createTitledBorder("Robots"));
+			robotDetailsPanel.setPreferredSize(new Dimension(245, 100));
+			robotDetailsPanel.setLayout(new BoxLayout(robotDetailsPanel, BoxLayout.X_AXIS));
+			robotDetailsPanel.add(robotDetailsInnerPanel);
+		}
 
 		add(robotDetailsPanel, BorderLayout.SOUTH);
 
+		// Menubar holding the pause menu
 		menuBar = new JMenuBar();
 		toolsMenu = new JMenu("Tools");
 		menuBar.add(toolsMenu);
-		addRobotMenuItem = new JMenuItem("Add Robot Menu Item");
-		addRobotMenuItem.addActionListener(new ActionListener() {
+		pauseSimMenuItem = new JMenuItem("Pause");
+		pauseSimMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JFrame addRobotFrame = new JFrame("Add Robot");
-				JPanel addRobotPanel = new JPanel();
-				JPanel addRobotCoordinatePanel = new JPanel();
-				JPanel addRobotDirectionPanel = new JPanel();
-				JLabel xLabel = new JLabel("X: ");
-				JLabel yLabel = new JLabel("Y: ");
-				JLabel dirLabel = new JLabel("Direction");
-				JButton okButton = new JButton("OK");
-
-				JTextField xTextField = new JTextField();
-				xTextField.setPreferredSize(new Dimension(25, 20));
-				JTextField yTextField = new JTextField();
-				yTextField.setPreferredSize(new Dimension(25, 20));
-
-				JRadioButton northButton = new JRadioButton("N");
-				northButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						direction = 0;
-					}
-
-				});
-
-				JRadioButton southButton = new JRadioButton("S");
-				southButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						direction = 180;
-					}
-
-				});
-
-				JRadioButton eastButton = new JRadioButton("E");
-				eastButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						direction = 90;
-
-					}
-
-				});
-
-				JRadioButton westButton = new JRadioButton("W");
-				westButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						direction = 270;
-
-					}
-
-				});
-
-				ButtonGroup buttonGroup = new ButtonGroup();
-				buttonGroup.add(northButton);
-				buttonGroup.add(southButton);
-				buttonGroup.add(eastButton);
-				buttonGroup.add(westButton);
-
-				okButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						String xCoordinate = xTextField.getText();
-						String yCoordinate = yTextField.getText();
-
-						if ((xCoordinate.length() > 0) && (yCoordinate.length() > 0) && (direction != -1)) {
-							gridInnerPanel.addRobot(Integer.parseInt(xCoordinate), Integer.parseInt(yCoordinate),
-									direction);
-							direction = -1;
-							addRobotFrame.setVisible(false);
-						}
-					}
-
-				});
-
-				addRobotCoordinatePanel.setLayout(new BoxLayout(addRobotCoordinatePanel, BoxLayout.X_AXIS));
-				addRobotCoordinatePanel.add(xLabel);
-				addRobotCoordinatePanel.add(xTextField);
-				addRobotCoordinatePanel.add(yLabel);
-				addRobotCoordinatePanel.add(yTextField);
-				addRobotDirectionPanel.setLayout(new BoxLayout(addRobotDirectionPanel, BoxLayout.X_AXIS));
-				addRobotDirectionPanel.add(dirLabel);
-				addRobotDirectionPanel.add(northButton);
-				addRobotDirectionPanel.add(eastButton);
-				addRobotDirectionPanel.add(southButton);
-				addRobotDirectionPanel.add(westButton);
-				addRobotPanel.add(addRobotCoordinatePanel, BorderLayout.NORTH);
-				addRobotPanel.add(addRobotDirectionPanel, BorderLayout.CENTER);
-				addRobotPanel.add(okButton, BorderLayout.SOUTH);
-				addRobotFrame.add(addRobotPanel);
-				addRobotFrame.setPreferredSize(new Dimension(250, 120));
-				addRobotFrame.pack();
-				addRobotFrame.setVisible(true);
-
+				
+				// Menu bar pauses the simulation and changes the menu item text
+				if (pauseSimMenuItem.getText().equals("Pause")) {
+					server.setPaused(true);
+					pauseSimMenuItem.setText("Unpause");
+				} else {
+					server.setPaused(false);
+					pauseSimMenuItem.setText("Pause");
+				}
 			}
-
 		});
-		toolsMenu.add(addRobotMenuItem);
+
+		toolsMenu.add(pauseSimMenuItem);
 
 		this.setJMenuBar(menuBar);
 
@@ -273,33 +202,42 @@ public class PCGUI extends JFrame implements Runnable {
 
 	}
 
+	/**
+	 * Updates the UI
+	 */
 	public void updateUI() {
+		
+		// Removes all the visual components to be changed
+		logger.debug("Removing all the visual components to be changed");
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
-		gridPanel.removeAll();
+		robotDetailsPanel.removeAll();
+		mainCanvas.remove(reward);
 
+		// Updates the active/in active jobs list
+		logger.debug("Updating the active/in active jobs list");
 		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
 
-			if (j.getActive()) {
+			if (j.getActive() || Math.round(percentageComplete) == 100) {
+
 				activeJobsInnerPanel.add(new JobPanel(jobID, percentageComplete, jobDataStore));
+
 			} else {
 				inactiveJobsInnerPanel.add(new JobPanel(jobID));
 			}
-
-			GridPanel gridInnerPanel = new GridPanel(server);
-			
-			gridPanel.add(gridInnerPanel);
-
 		}
 
-		// gridInnerPanel = new GridPanel(server);
-		// gridPanel.add(gridInnerPanel);
-		//
-		// robotDetailsInnerPanel.removeAll();
-		// robotDetailsInnerPanel = new RobotPanel(server);
-		//
+		// Updates the total reward accumulated
+		logger.debug("Updating the total reward accumulated");
+		reward = new JLabel("Total Reward: " + server.getScore());
+		mainCanvas.add(reward);
+
+		robotDetailsInnerPanel = new RobotPanel(server);
+		robotDetailsPanel.add(robotDetailsInnerPanel);
+
+		// Revalidates the top level container and all of those within it
 		revalidate();
 	}
 
@@ -307,55 +245,71 @@ public class PCGUI extends JFrame implements Runnable {
 	public void run() {
 
 		while (true) {
-			// Maybe set a delay
+			// sets a delay of 1 second
 			Delay.msDelay(1000);
 			updateUI();
 		}
 	}
 }
 
-// Wont take the same form and more
-// Will have cancel button, % complete if it is an active job and JobID
 class JobPanel extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2180129182481579585L;
+	
+	private static final Logger logger = Logger.getLogger(JobPanel.class);
 
 	private JLabel jobLabel;
+	private JLabel percentageCompleteLabel;
 
 	private JButton cancelButton;
 
-	private JLabel percentageCompleteLabel;
-
-	/*
-	 * Active Job Panel Constructor
+	/**
+	 * @param jobID
+	 * @param percentageComplete
+	 * @param jobDataStore
+	 * Active Job Panel Constructor - the behaviour of this constructor changes 
+	 * when the percentage complete value has been set to true
 	 */
 	public JobPanel(String jobID, Float percentageComplete, JobTable jobDataStore) {
 		setLayout(new BorderLayout());
-		// setPreferredSize(new Dimension(100, 100));
-
+		//setPreferredSize(new Dimension(150,80));
 		jobLabel = new JLabel("Job ID: " + jobID);
+		
 		jobLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		add(jobLabel, BorderLayout.NORTH);
-		cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Send Cancel message up
-				jobDataStore.setCancelled(jobID);
-			}
-		});
-		add(cancelButton, BorderLayout.SOUTH);
+		// Adds a button when percentage complete is 100%
+		if (Math.round(percentageComplete) != 100) {
+			add(jobLabel, BorderLayout.NORTH);
+			cancelButton = new JButton("Cancel");
+			cancelButton.addActionListener(new ActionListener() {
 
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// Send Cancel message up
+					logger.debug("Cancel Button Pressed");
+					jobDataStore.setCancelled(jobID);
+				}
+			});
+			add(cancelButton, BorderLayout.SOUTH);
+		}
+
+		// Indicates in the active jobs panel that the task is complete
+		if (Math.round(percentageComplete) != 100) {
 		percentageCompleteLabel = new JLabel(percentageComplete + "% Complete");
+		} else {
+			System.out.println("TASK COMPLETE (PERCENTAGE)");
+			percentageCompleteLabel = new JLabel("Task Complete!");
+		}
+		
 		add(percentageCompleteLabel, BorderLayout.EAST);
 
 	}
 
-	/*
+	/**
+	 * @param jobID
 	 * Inactive Job Panel constructor
 	 */
 	public JobPanel(String jobID) {
@@ -373,65 +327,103 @@ class RobotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 3025088648394354280L;
+	
+	// list of all the robot handles
 	private List<Robot> robotList;
 
+	/**
+	 * @param server
+	 * Constructor JPanel that holds the robot informations such as the position and the destination
+	 */
 	public RobotPanel(Server server) {
 		robotList = server.getConnectedRobots();
 		for (Robot r : robotList) {
 			JPanel robotInnerPanel = new JPanel();
 			JLabel robotNameLabel = new JLabel(r.getName());
 			JLabel robotPositionLabel = new JLabel("Position: " + "(" + r.getX() + "," + r.getY() + ")");
-			JLabel robotWeightLabel = new JLabel("Weight: " + r.getCurrentWeight() + "/" + r.getMaxWeight());
-			robotInnerPanel.add(robotNameLabel, new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
-			robotInnerPanel.add(robotPositionLabel, new BoxLayout(robotInnerPanel, BoxLayout.X_AXIS));
-			robotInnerPanel.add(robotWeightLabel, new BoxLayout(robotInnerPanel, BoxLayout.X_AXIS));
+			JLabel robotDestinationLabel = new JLabel(
+					"Destination: (" + r.getDestinationX() + "," + r.getDestinationY() + ")");
+			robotInnerPanel.setLayout(new BoxLayout(robotInnerPanel, BoxLayout.Y_AXIS));
+			robotInnerPanel.add(robotNameLabel);
+			robotInnerPanel.add(robotPositionLabel);
+			robotInnerPanel.add(robotDestinationLabel);
+
 			add(robotInnerPanel);
 		}
 	}
 }
 
-class GridPanel extends JPanel {
+// Displays the robots and continuously updates their location
+class GridPanel extends JPanel implements Runnable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 892150393382176613L;
+	
+	private static final Logger logger = Logger.getLogger(GridPanel.class);
+	
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
-	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
 	private List<Robot> robotList;
-	private ConcurrentHashMap<String, GridPilot> robotTable;
+	private ConcurrentHashMap<String, MobileRobotWrapper<MovableRobot>> robotTable;
 	GridPositionDistribution dist;
 	GridPositionDistributionVisualisation mapVis;
 
-	private Server server;
-
+	/**
+	 * Constructor: sets up the robot simulation window based off the MarkovLocalisation example
+	 * @param server
+	 */
 	public GridPanel(Server server) {
 		setPreferredSize(new Dimension(500, 500));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		gridMap = MapUtils.createRealWarehouse();
 		sim = new MapBasedSimulation(gridMap);
-		wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
 		this.robotTable = new ConcurrentHashMap<>();
 		this.robotList = server.getConnectedRobots();
+
+		// Loads the robot list handles into a seperate list to avoid concurrency errors
+		logger.debug("Loading the robot list handles into a seperate list to avoid concurrency errors");
 		List<Robot> searchList = new ArrayList<Robot>(robotList);
+		
 		for (Robot r : searchList) {
-			GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
-			//System.out.println("(" + r.getCurrentX() + "," + r.getCurrentY() + ")");
+			// Gets a handle to the mobile robot to move it in the simulation
+			MobileRobotWrapper<MovableRobot> p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
+			
+			// Places the handle into a HashMap
 			robotTable.put(r.getName(), p);
-			// r.getCurrentWeight();
-			// r.getMaxWeight();
 		}
+
+		// Starts the thread that checks the robot position
+		logger.debug("Starting the thread that checks the robot position");
+		Thread gridPanelThread = new Thread(this);
+		gridPanelThread.start();
 
 	}
 
-	public GridPilot addRobot(int x, int y, int direction) {
+	/**
+	 * Constructor: spawns a new robot on to the simulation window
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @return
+	 */
+	public MobileRobotWrapper<MovableRobot> addRobot(int x, int y, int direction) {
 		return addRobot(x, y, direction, true);
 	}
 
-	public GridPilot addRobot(int x, int y, int direction, boolean updateScreen) {
+	/**
+	 * Constructor: Adds the robot to the screen. When updateScreen is set to false it doesn't spawn another robot
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @param updateScreen
+	 * @return
+	 */
+	public MobileRobotWrapper<MovableRobot> addRobot(int x, int y, int direction, boolean updateScreen) {
 		GridPose gridStart;
 
+		// Gives a GridPose corresponding to the position and a direction
 		switch (direction) {
 		case 0:
 			gridStart = new GridPose(x, y, Heading.PLUS_Y);
@@ -449,12 +441,12 @@ class GridPanel extends JPanel {
 			gridStart = new GridPose(x, y, Heading.PLUS_Y);
 		}
 
+		// Handle to the simulation robot object
 		MobileRobotWrapper<MovableRobot> wrapper = sim.addRobot(SimulatedRobots.makeConfiguration(false, true),
 				gridMap.toPose(gridStart));
 
 		if (updateScreen) {
-			wrapperList.add(wrapper);
-
+			// robot spawning code
 			dist = new GridPositionDistribution(gridMap);
 			mapVis = new GridPositionDistributionVisualisation(dist, gridMap);
 			MapVisualisationComponent.populateVisualisation(mapVis, sim);
@@ -462,186 +454,24 @@ class GridPanel extends JPanel {
 			add(mapVis);
 		}
 
-		return new GridPilot(wrapper.getRobot().getPilot(), gridMap, gridStart);
+		return wrapper;
 	}
 
-	private void move(GridPilot m_pilot) {
+	@Override
+	public void run() {
+		while (true) {
+			List<Robot> searchList = new ArrayList<Robot>(robotList);
 
-		long delay = 250;
+			for (Robot r : searchList) {
+				// Representation of the simulation grid
+				GridMap myGridMap = MapUtils.createRealWarehouse();
+				
+				// Gets the robot handle from the robotTable and updates the grid pose
+				logger.debug("Getting the robot handle from the robotTable and updates the grid pose");
+				robotTable.get(r.getName()).getRobot()
+						.setPose(myGridMap.toPose(new GridPose(r.getCurrentX(), r.getCurrentY(), Heading.PLUS_Y)));
+			}
+		}
 
-		m_pilot.moveForward();
-
-		Delay.msDelay(delay);
 	}
 }
-
-// class GridPanel extends JPanel implements Runnable {
-//
-// /**
-// *
-// */
-// private static final long serialVersionUID = 892150393382176613L;
-// private GridMap gridMap;
-// private MapBasedSimulation sim;
-// private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
-// private List<Robot> robotList;
-// private ConcurrentHashMap<String, GridPilot> robotTable;
-// GridPositionDistribution dist;
-// GridPositionDistributionVisualisation mapVis;
-//
-// private Server server;
-//
-// public GridPanel(Server server) {
-// gridMap = MapUtils.createRealWarehouse();
-// sim = new MapBasedSimulation(gridMap);
-// wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
-// this.robotTable = new ConcurrentHashMap<>();
-// this.robotList = server.getConnectedRobots();
-// for (Robot r : robotList) {
-// GridPilot p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
-// robotTable.put(r.getName(), p);
-// // r.getCurrentWeight();
-// // r.getMaxWeight();
-// }
-//
-// }
-//
-// public GridPilot addRobot(int x, int y, int direction) {
-// return addRobot(x, y, direction, true);
-// }
-//
-// public GridPilot addRobot(int x, int y, int direction, boolean updateScreen)
-// {
-// GridPose gridStart;
-//
-// switch (direction) {
-// case 0:
-// gridStart = new GridPose(x, y, Heading.PLUS_Y);
-// break;
-// case 90:
-// gridStart = new GridPose(x, y, Heading.PLUS_X);
-// break;
-// case 180:
-// gridStart = new GridPose(x, y, Heading.MINUS_Y);
-// break;
-// case 270:
-// gridStart = new GridPose(x, y, Heading.MINUS_X);
-// break;
-// default:
-// gridStart = new GridPose(x, y, Heading.PLUS_Y);
-// }
-//
-// MobileRobotWrapper<MovableRobot> wrapper =
-// sim.addRobot(SimulatedRobots.makeConfiguration(false, true),
-// gridMap.toPose(gridStart));
-//
-// if (updateScreen) {
-// wrapperList.add(wrapper);
-//
-// dist = new GridPositionDistribution(gridMap);
-// mapVis = new GridPositionDistributionVisualisation(dist, gridMap);
-// MapVisualisationComponent.populateVisualisation(mapVis, sim);
-// removeAll();
-// add(mapVis);
-// }
-//
-// return new GridPilot(wrapper.getRobot().getPilot(), gridMap, gridStart);
-// }
-//
-// @Override
-// public void run() {
-//
-// while (true) {
-// ConcurrentHashMap<String, GridPilot> newRobotTable = new
-// ConcurrentHashMap<String, GridPilot>(robotTable);
-//
-// List<Robot> searchList = new ArrayList<Robot>(robotList);
-//
-// // for(String key : robotTable.keySet()){
-// // robotTable.get(key).moveForward();
-// // }
-// // create up-to-date robot table
-// for (Robot r : searchList) {
-// // System.out.println("");
-// // newRobotTable.put(r.getName(), addRobot(r.getCurrentX(),
-// // r.getCurrentY(), 0, false));
-// // robotTable.put(r.getName(), addRobot(r.getCurrentX(),
-// // r.getCurrentY(), 0, false));
-// newRobotTable.put(r.getName(), addRobot(r.getX(), r.getY(), 0, false));
-// //robotTable.get(r.getName()).setGridPose(new GridPose(0, 0,
-// Heading.PLUS_Y));
-// // r.getCurrentWeight();
-// // r.getMaxWeight();
-// }
-// //
-// // for(Robot r : robotList){
-// // robotTable.get(r.getName()).setGridPose(new GridPose(0, 0,
-// // Heading.PLUS_Y));
-// // System.out.println(r.getName() + " " + new GridPose(r.getX(),
-// // r.getY(), Heading.PLUS_Y));
-// // }
-//
-// // checks and corrects differences
-// for (String key : robotTable.keySet()) {
-// GridPose aPose = robotTable.get(key).getGridPose();
-// GridPose bPose = newRobotTable.get(key).getGridPose();
-// // if ((aPose.getX() != bPose.getX()) || (aPose.getY() !=
-// // bPose.getY())) {
-// // move robots
-//
-// int horizontal = bPose.getX() - aPose.getX();
-// int vertical = bPose.getY() - bPose.getY();
-// System.out.println("Horizontal: " + horizontal + " Vertical: " + vertical);
-// System.out.println("(" + bPose.getX() + "," + ")" bPose.getY());
-// System.out.println(key);
-// int moves;
-//
-// moves = vertical;
-//
-// if (vertical > 0) {
-// for (int i = 0; i < moves; i++) {
-// move(robotTable.get(key));
-// }
-// } else if (vertical < 0) {
-// robotTable.get(key).rotateNegative();
-// robotTable.get(key).rotateNegative();
-// for (int i = 0; i < Math.abs(moves); i++) {
-// move(robotTable.get(key));
-// }
-// robotTable.get(key).rotatePositive();
-// robotTable.get(key).rotatePositive();
-// }
-//
-// moves = horizontal;
-// if (horizontal > 0) {
-// robotTable.get(key).rotateNegative();
-// for (int i = 0; i < moves; i++) {
-// move(robotTable.get(key));
-// }
-// robotTable.get(key).rotatePositive();
-// } else if (horizontal < 0) {
-// robotTable.get(key).rotatePositive();
-// for (int i = 0; i < Math.abs(moves); i++) {
-// move(robotTable.get(key));
-// }
-// robotTable.get(key).rotateNegative();
-// }
-//
-// // }
-// }
-//
-// // Updates the current robot table
-// robotTable = newRobotTable;
-//
-// }
-// }
-//
-// private void move(GridPilot m_pilot) {
-//
-// long delay = 250;
-//
-// m_pilot.moveForward();
-//
-// Delay.msDelay(delay);
-// }
-// }

@@ -8,6 +8,8 @@ import java.util.Iterator;
 public class Job{
 	private volatile boolean cancelled = false;
 	
+	//private volatile boolean completed = 
+	
 	public boolean isCancelled() {
 		return cancelled;
 	}
@@ -61,7 +63,7 @@ public class Job{
 	private float calculateReward() {
 		float total = 0;
 		for (Task t : itemList) {
-			total += t.getReward();
+			total += t.getTotalReward();
 		}
 		return total;
 	}
