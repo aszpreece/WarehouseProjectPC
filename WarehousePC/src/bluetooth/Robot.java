@@ -62,6 +62,11 @@ public class Robot {
 	private int destX;
 	private int destY;
 	
+	//dummy constructor to test job assignment
+	public Robot() {
+		m_nxt = null;
+	}
+	
 	public Robot(NXTInfo nxt, ReservationTable rTable, Server jobManagerServer) {
 		m_nxt = nxt;
 		name = nxt.name;
