@@ -116,6 +116,7 @@ public class PCGUI extends JFrame implements Runnable {
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
 
 			activeJobsInnerPanel = new JPanel();
+			activeJobsInnerPanel.setLayout(new BoxLayout(activeJobsInnerPanel, BoxLayout.Y_AXIS));
 
 			activeScrollPane = new JScrollPane(activeJobsInnerPanel);
 			activeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -219,7 +220,7 @@ public class PCGUI extends JFrame implements Runnable {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
 
-			if (j.getActive()) {
+			if (j.getActive() || Math.round(percentageComplete) == 100) {
 
 				activeJobsInnerPanel.add(new JobPanel(jobID, percentageComplete, jobDataStore));
 
@@ -274,7 +275,7 @@ class JobPanel extends JPanel {
 	 */
 	public JobPanel(String jobID, Float percentageComplete, JobTable jobDataStore) {
 		setLayout(new BorderLayout());
-
+		//setPreferredSize(new Dimension(150,80));
 		jobLabel = new JLabel("Job ID: " + jobID);
 		
 		jobLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -299,6 +300,7 @@ class JobPanel extends JPanel {
 		if (Math.round(percentageComplete) != 100) {
 		percentageCompleteLabel = new JLabel(percentageComplete + "% Complete");
 		} else {
+			System.out.println("TASK COMPLETE (PERCENTAGE)");
 			percentageCompleteLabel = new JLabel("Task Complete!");
 		}
 		
