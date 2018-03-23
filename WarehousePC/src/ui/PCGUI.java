@@ -118,6 +118,7 @@ public class PCGUI extends JFrame implements Runnable {
 		}
 		add(activeJobsPanel, BorderLayout.EAST);
 
+		// Panel holding the list of inactive jobs
 		inactiveJobsPanel = new JPanel();
 		{
 			inactiveJobsPanel.setBorder(BorderFactory.createTitledBorder("Inactive Jobs"));
@@ -134,6 +135,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(inactiveJobsPanel, BorderLayout.WEST);
 
+		// The Centre of the window in the BorderLayout layout manager
 		mainCanvas = new JPanel();
 		{
 			mainCanvas.setLayout(new BoxLayout(mainCanvas, BoxLayout.Y_AXIS));
@@ -148,6 +150,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(mainCanvas, BorderLayout.CENTER);
 
+		// Panel holding information about the robot destination, name and location
 		robotDetailsPanel = new JPanel();
 		{
 			robotDetailsInnerPanel = new RobotPanel(server);
@@ -159,6 +162,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(robotDetailsPanel, BorderLayout.SOUTH);
 
+		// Menubar holding the pause menu
 		menuBar = new JMenuBar();
 		toolsMenu = new JMenu("Tools");
 		menuBar.add(toolsMenu);
@@ -167,6 +171,8 @@ public class PCGUI extends JFrame implements Runnable {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				
+				// Menu bar pauses the simulation and changes the menu item text
 				if (pauseSimMenuItem.getText().equals("Pause")) {
 					server.setPaused(true);
 					pauseSimMenuItem.setText("Unpause");
@@ -187,12 +193,18 @@ public class PCGUI extends JFrame implements Runnable {
 
 	}
 
+	/**
+	 * Updates the UI
+	 */
 	public void updateUI() {
+		
+		// Removes all the visual components to be changed
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
 		robotDetailsPanel.removeAll();
 		mainCanvas.remove(reward);
 
+		// Updates the active/in active jobs list
 		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
@@ -206,12 +218,14 @@ public class PCGUI extends JFrame implements Runnable {
 			}
 		}
 
+		// Updates the total reward accumulated
 		reward = new JLabel("Total Reward: " + server.getScore());
 		mainCanvas.add(reward);
 
 		robotDetailsInnerPanel = new RobotPanel(server);
 		robotDetailsPanel.add(robotDetailsInnerPanel);
 
+		// Revalidates the top level container and all of those within it
 		revalidate();
 	}
 
@@ -219,15 +233,13 @@ public class PCGUI extends JFrame implements Runnable {
 	public void run() {
 
 		while (true) {
-			// Maybe set a delay
+			// sets a delay of 1 second
 			Delay.msDelay(1000);
 			updateUI();
 		}
 	}
 }
 
-// Wont take the same form and more
-// Will have cancel button, % complete if it is an active job and JobID
 class JobPanel extends JPanel {
 
 	/**
@@ -236,26 +248,25 @@ class JobPanel extends JPanel {
 	private static final long serialVersionUID = 2180129182481579585L;
 
 	private JLabel jobLabel;
+	private JLabel percentageCompleteLabel;
 
 	private JButton cancelButton;
 
-	private JLabel percentageCompleteLabel;
-
-	/*
-	 * Active Job Panel Constructor
+	/**
+	 * @param jobID
+	 * @param percentageComplete
+	 * @param jobDataStore
+	 * Active Job Panel Constructor - the behaviour of this constructor changes 
+	 * when the percentage complete value has been set to true
 	 */
 	public JobPanel(String jobID, Float percentageComplete, JobTable jobDataStore) {
 		setLayout(new BorderLayout());
-		// setPreferredSize(new Dimension(100, 100));
 
-		if (Math.round(percentageComplete) != 100) {
 		jobLabel = new JLabel("Job ID: " + jobID);
-		} else {
-			jobLabel = new JLabel("Job ID: " + jobID + " " + "(Complete)");
-		}
 		
 		jobLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+		// Adds a button when percentage complete is 100%
 		if (Math.round(percentageComplete) != 100) {
 			add(jobLabel, BorderLayout.NORTH);
 			cancelButton = new JButton("Cancel");
@@ -270,12 +281,19 @@ class JobPanel extends JPanel {
 			add(cancelButton, BorderLayout.SOUTH);
 		}
 
+		// Indicates in the active jobs panel that the task is complete
+		if (Math.round(percentageComplete) != 100) {
 		percentageCompleteLabel = new JLabel(percentageComplete + "% Complete");
+		} else {
+			percentageCompleteLabel = new JLabel("Task Complete!");
+		}
+		
 		add(percentageCompleteLabel, BorderLayout.EAST);
 
 	}
 
-	/*
+	/**
+	 * @param jobID
 	 * Inactive Job Panel constructor
 	 */
 	public JobPanel(String jobID) {
@@ -293,8 +311,14 @@ class RobotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 3025088648394354280L;
+	
+	// list of all the robot handles
 	private List<Robot> robotList;
 
+	/**
+	 * @param server
+	 * Constructor JPanel that holds the robot informations such as the position and the destination
+	 */
 	public RobotPanel(Server server) {
 		robotList = server.getConnectedRobots();
 		for (Robot r : robotList) {
@@ -313,6 +337,7 @@ class RobotPanel extends JPanel {
 	}
 }
 
+// Displays the robots and continuously updates their location
 class GridPanel extends JPanel implements Runnable {
 
 	/**
@@ -321,39 +346,63 @@ class GridPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 892150393382176613L;
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
-	private ArrayList<MobileRobotWrapper<MovableRobot>> wrapperList;
 	private List<Robot> robotList;
 	private ConcurrentHashMap<String, MobileRobotWrapper<MovableRobot>> robotTable;
 	GridPositionDistribution dist;
 	GridPositionDistributionVisualisation mapVis;
 
+	/**
+	 * Constructor: sets up the robot simulation window based off the MarkovLocalisation example
+	 * @param server
+	 */
 	public GridPanel(Server server) {
 		setPreferredSize(new Dimension(500, 500));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		gridMap = MapUtils.createRealWarehouse();
 		sim = new MapBasedSimulation(gridMap);
-		wrapperList = new ArrayList<MobileRobotWrapper<MovableRobot>>();
 		this.robotTable = new ConcurrentHashMap<>();
 		this.robotList = server.getConnectedRobots();
 
+		// Loads the robot list handles into a seperate list to avoid concurrency errors
 		List<Robot> searchList = new ArrayList<Robot>(robotList);
+		
 		for (Robot r : searchList) {
+			// Gets a handle to the mobile robot to move it in the simulation
 			MobileRobotWrapper<MovableRobot> p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
+			
+			// Places the handle into a HashMap
 			robotTable.put(r.getName(), p);
 		}
 
+		// Starts the thread that checks the robot position
 		Thread gridPanelThread = new Thread(this);
 		gridPanelThread.start();
 
 	}
 
+	/**
+	 * Constructor: spawns a new robot on to the simulation window
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @return
+	 */
 	public MobileRobotWrapper<MovableRobot> addRobot(int x, int y, int direction) {
 		return addRobot(x, y, direction, true);
 	}
 
+	/**
+	 * Constructor: Adds the robot to the screen. When updateScreen is set to false it doesn't spawn another robot
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @param updateScreen
+	 * @return
+	 */
 	public MobileRobotWrapper<MovableRobot> addRobot(int x, int y, int direction, boolean updateScreen) {
 		GridPose gridStart;
 
+		// Gives a GridPose corresponding to the position and a direction
 		switch (direction) {
 		case 0:
 			gridStart = new GridPose(x, y, Heading.PLUS_Y);
@@ -371,12 +420,12 @@ class GridPanel extends JPanel implements Runnable {
 			gridStart = new GridPose(x, y, Heading.PLUS_Y);
 		}
 
+		// Handle to the simulation robot object
 		MobileRobotWrapper<MovableRobot> wrapper = sim.addRobot(SimulatedRobots.makeConfiguration(false, true),
 				gridMap.toPose(gridStart));
 
 		if (updateScreen) {
-			wrapperList.add(wrapper);
-
+			// robot spawning code
 			dist = new GridPositionDistribution(gridMap);
 			mapVis = new GridPositionDistributionVisualisation(dist, gridMap);
 			MapVisualisationComponent.populateVisualisation(mapVis, sim);
@@ -393,7 +442,10 @@ class GridPanel extends JPanel implements Runnable {
 			List<Robot> searchList = new ArrayList<Robot>(robotList);
 
 			for (Robot r : searchList) {
+				// Representation of the simulation grid
 				GridMap myGridMap = MapUtils.createRealWarehouse();
+				
+				// Gets the robot handle from the robotTable and updates the grid pose
 				robotTable.get(r.getName()).getRobot()
 						.setPose(myGridMap.toPose(new GridPose(r.getCurrentX(), r.getCurrentY(), Heading.PLUS_Y)));
 			}
