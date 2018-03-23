@@ -140,4 +140,42 @@ public class JobAssignmentTests {
 		}
 
 	}
+	
+	@Test
+	public void closestDropLocation() {
+		Item item = items.getItem("aa");
+		Task task = new Task("aa", 1, item );
+		ArrayList<Task> tasks = new ArrayList<Task>() {
+			{
+				add(task);
+			}
+		};
+
+		// what the plan should be:
+		ArrayList<Step> percievedPlan = new ArrayList<Step>();
+		percievedPlan.add(new Step("aa", 1, new Node(item.getX(),item.getY())));
+		percievedPlan.add(new Step("DROP", new Node(2,2)));
+		ItemTable itemTable;
+		try {
+			itemTable = new ItemTable();
+
+			Robot robot = new Robot();
+			robot.setCurrentWeight(0f);
+			robot.setCurrentX(0);
+			robot.setCurrentY(0);
+
+			//add a new set of drop points
+			drops = new ArrayList<Node>(Arrays.asList(new Node (2,2), new Node (7,7)));
+			
+			
+			JobAssignment jobAllocator = new JobAssignment(itemTable,drops);
+			Queue<Step> actualPlan = jobAllocator.getNextPlan(tasks, robot);
+			
+			Assert.assertArrayEquals(percievedPlan.toArray(), actualPlan.toArray());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }
