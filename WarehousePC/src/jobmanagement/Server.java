@@ -129,20 +129,20 @@ public class Server extends Thread {
 //		poppy.setDestination(poppy.getX(), poppy.getY());
 
 		
-//		
-//		Robot lego;
-//		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
-//		lego.setCurrentX(0);
-//		lego.setCurrentY(7);
-//		lego.setDestination(lego.getX(), lego.getY()); 
+		
+		Robot lego;
+		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
+		lego.setCurrentX(0);
+		lego.setCurrentY(7);
+		lego.setDestination(lego.getX(), lego.getY()); 
 
 		
 
-		Robot devil;
-		robotList.add((devil = addNXT("Devil's Tricycle", "001653156768")));
-		devil.setCurrentX(0);
-		devil.setCurrentY(1);
-		devil.setDestination(devil.getX(), devil.getY());
+//		Robot devil;
+//		robotList.add((devil = addNXT("Devil's Tricycle", "001653156768")));
+//		devil.setCurrentX(0);
+//		devil.setCurrentY(1);
+//		devil.setDestination(devil.getX(), devil.getY());
 
 		
 		connect();
@@ -215,7 +215,7 @@ public class Server extends Thread {
 					} else {
 						
 						score += jobMap.get(r).getTotalReward();
-						System.out.println(jobMap.get(r).getTotalReward());
+						System.out.println("Total Reward: " + jobMap.get(r).getTotalReward());
 						jobMap.get(r).setActive(false);
 					}
 				}

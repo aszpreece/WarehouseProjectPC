@@ -44,10 +44,10 @@ public class Job{
 	private int cancelPredictor; //1 = cancelled 0 = not to cancel
 	
 	public Job(ArrayList<Task> itemList, int cancelPredictor) {
-		this.totalReward = calculateReward();
 		this.itemList = itemList;
 		this.cancelPredictor = cancelPredictor;
 		this.priority = calculatePriority();
+		this.totalReward = calculateReward();
 	}
 	/*
 	 * Getter for attribute itemList

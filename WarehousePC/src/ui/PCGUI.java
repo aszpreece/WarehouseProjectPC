@@ -42,18 +42,16 @@ import javax.swing.JScrollPane;
 
 /**
  * 
- * @author Osanne Gbayere, Brandon Goodwin
- * The PC display window
+ * @author Osanne Gbayere, Brandon Goodwin The PC display window
  *
  */
 public class PCGUI extends JFrame implements Runnable {
-
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3943010528198460967L;
-	
+
 	private static final Logger logger = Logger.getLogger(PCGUI.class);
 
 	private static final String FRAME_TITLE = "Robot Control UI";
@@ -89,21 +87,23 @@ public class PCGUI extends JFrame implements Runnable {
 
 	/**
 	 * 
-	 * @param jobDataStore HashMap storing job data by JobID
-	 * @param server handle to the server
-	 * PCGUI constructor
+	 * @param jobDataStore
+	 *            HashMap storing job data by JobID
+	 * @param server
+	 *            handle to the server PCGUI constructor
 	 */
 	public PCGUI(JobTable jobDataStore, Server server) {
 		this.jobDataStore = jobDataStore;
 		this.server = server;
-		
+
 		// Gets a list of the handles to the Robot objects
 		server.getConnectedRobots();
 
 		// Frame settings
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setPreferredSize(new Dimension(800, 600));
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		//setPreferredSize(new Dimension(800, 600));
 		setTitle(FRAME_TITLE);
 		setVisible(true);
 
@@ -112,11 +112,10 @@ public class PCGUI extends JFrame implements Runnable {
 		{
 			logger.debug("Creating Panel holding the list of the active jobs");
 			activeJobsPanel.setBorder(BorderFactory.createTitledBorder("Active Jobs"));
-			activeJobsPanel.setPreferredSize(new Dimension(150, 200));
+			activeJobsPanel.setPreferredSize(new Dimension(1250, 200));
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
 
 			activeJobsInnerPanel = new JPanel();
-			activeJobsInnerPanel.setLayout(new BoxLayout(activeJobsInnerPanel, BoxLayout.Y_AXIS));
 
 			activeScrollPane = new JScrollPane(activeJobsInnerPanel);
 			activeScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -158,7 +157,8 @@ public class PCGUI extends JFrame implements Runnable {
 
 		add(mainCanvas, BorderLayout.CENTER);
 
-		// Panel holding information about the robot destination, name and location
+		// Panel holding information about the robot destination, name and
+		// location
 		robotDetailsPanel = new JPanel();
 		{
 			logger.debug("Creating panel holding information about the robot destination, name and location");
@@ -180,7 +180,7 @@ public class PCGUI extends JFrame implements Runnable {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				// Menu bar pauses the simulation and changes the menu item text
 				if (pauseSimMenuItem.getText().equals("Pause")) {
 					server.setPaused(true);
@@ -206,7 +206,7 @@ public class PCGUI extends JFrame implements Runnable {
 	 * Updates the UI
 	 */
 	public void updateUI() {
-		
+
 		// Removes all the visual components to be changed
 		logger.debug("Removing all the visual components to be changed");
 		activeJobsInnerPanel.removeAll();
@@ -258,7 +258,7 @@ class JobPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 2180129182481579585L;
-	
+
 	private static final Logger logger = Logger.getLogger(JobPanel.class);
 
 	private JLabel jobLabel;
@@ -270,19 +270,20 @@ class JobPanel extends JPanel {
 	 * @param jobID
 	 * @param percentageComplete
 	 * @param jobDataStore
-	 * Active Job Panel Constructor - the behaviour of this constructor changes 
-	 * when the percentage complete value has been set to true
+	 *            Active Job Panel Constructor - the behaviour of this
+	 *            constructor changes when the percentage complete value has
+	 *            been set to true
 	 */
 	public JobPanel(String jobID, Float percentageComplete, JobTable jobDataStore) {
-		setLayout(new BorderLayout());
-		//setPreferredSize(new Dimension(150,80));
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// setPreferredSize(new Dimension(150,80));
 		jobLabel = new JLabel("Job ID: " + jobID);
-		
+
 		jobLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		// Adds a button when percentage complete is 100%
 		if (Math.round(percentageComplete) != 100) {
-			add(jobLabel, BorderLayout.NORTH);
+			add(jobLabel);//, BorderLayout.NORTH);
 			cancelButton = new JButton("Cancel");
 			cancelButton.addActionListener(new ActionListener() {
 
@@ -293,24 +294,23 @@ class JobPanel extends JPanel {
 					jobDataStore.setCancelled(jobID);
 				}
 			});
-			add(cancelButton, BorderLayout.SOUTH);
+			add(cancelButton);//, BorderLayout.SOUTH);
 		}
 
 		// Indicates in the active jobs panel that the task is complete
 		if (Math.round(percentageComplete) != 100) {
-		percentageCompleteLabel = new JLabel(percentageComplete + "% Complete");
+			percentageCompleteLabel = new JLabel("In Progress");
 		} else {
-			System.out.println("TASK COMPLETE (PERCENTAGE)");
-			percentageCompleteLabel = new JLabel("Task Complete!");
+			percentageCompleteLabel = new JLabel("Task " + jobID + " Complete!");
 		}
-		
-		add(percentageCompleteLabel, BorderLayout.EAST);
+
+		add(percentageCompleteLabel);//, BorderLayout.EAST);
 
 	}
 
 	/**
 	 * @param jobID
-	 * Inactive Job Panel constructor
+	 *            Inactive Job Panel constructor
 	 */
 	public JobPanel(String jobID) {
 		setLayout(new BorderLayout());
@@ -327,13 +327,14 @@ class RobotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 3025088648394354280L;
-	
+
 	// list of all the robot handles
 	private List<Robot> robotList;
 
 	/**
 	 * @param server
-	 * Constructor JPanel that holds the robot informations such as the position and the destination
+	 *            Constructor JPanel that holds the robot informations such as
+	 *            the position and the destination
 	 */
 	public RobotPanel(Server server) {
 		robotList = server.getConnectedRobots();
@@ -360,9 +361,9 @@ class GridPanel extends JPanel implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 892150393382176613L;
-	
+
 	private static final Logger logger = Logger.getLogger(GridPanel.class);
-	
+
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
 	private List<Robot> robotList;
@@ -371,25 +372,28 @@ class GridPanel extends JPanel implements Runnable {
 	GridPositionDistributionVisualisation mapVis;
 
 	/**
-	 * Constructor: sets up the robot simulation window based off the MarkovLocalisation example
+	 * Constructor: sets up the robot simulation window based off the
+	 * MarkovLocalisation example
+	 * 
 	 * @param server
 	 */
 	public GridPanel(Server server) {
 		setPreferredSize(new Dimension(500, 500));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		gridMap = MapUtils.createRealWarehouse();
+		gridMap = MapUtilsFix.createRealWarehouse2018();
 		sim = new MapBasedSimulation(gridMap);
 		this.robotTable = new ConcurrentHashMap<>();
 		this.robotList = server.getConnectedRobots();
 
-		// Loads the robot list handles into a seperate list to avoid concurrency errors
+		// Loads the robot list handles into a seperate list to avoid
+		// concurrency errors
 		logger.debug("Loading the robot list handles into a seperate list to avoid concurrency errors");
 		List<Robot> searchList = new ArrayList<Robot>(robotList);
-		
+
 		for (Robot r : searchList) {
 			// Gets a handle to the mobile robot to move it in the simulation
 			MobileRobotWrapper<MovableRobot> p = addRobot(r.getCurrentX(), r.getCurrentY(), 0);
-			
+
 			// Places the handle into a HashMap
 			robotTable.put(r.getName(), p);
 		}
@@ -403,6 +407,7 @@ class GridPanel extends JPanel implements Runnable {
 
 	/**
 	 * Constructor: spawns a new robot on to the simulation window
+	 * 
 	 * @param x
 	 * @param y
 	 * @param direction
@@ -413,7 +418,9 @@ class GridPanel extends JPanel implements Runnable {
 	}
 
 	/**
-	 * Constructor: Adds the robot to the screen. When updateScreen is set to false it doesn't spawn another robot
+	 * Constructor: Adds the robot to the screen. When updateScreen is set to
+	 * false it doesn't spawn another robot
+	 * 
 	 * @param x
 	 * @param y
 	 * @param direction
@@ -464,9 +471,10 @@ class GridPanel extends JPanel implements Runnable {
 
 			for (Robot r : searchList) {
 				// Representation of the simulation grid
-				GridMap myGridMap = MapUtils.createRealWarehouse();
-				
-				// Gets the robot handle from the robotTable and updates the grid pose
+				GridMap myGridMap = MapUtilsFix.createRealWarehouse2018();
+
+				// Gets the robot handle from the robotTable and updates the
+				// grid pose
 				logger.debug("Getting the robot handle from the robotTable and updates the grid pose");
 				robotTable.get(r.getName()).getRobot()
 						.setPose(myGridMap.toPose(new GridPose(r.getCurrentX(), r.getCurrentY(), Heading.PLUS_Y)));
