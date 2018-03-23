@@ -120,11 +120,11 @@ public class Server extends Thread {
 		bish.setCurrentX(0);
 		bish.setCurrentY(4);
 		bish.setDestination(bish.getX(), bish.getY());*/
-		/*Robot poppy;
-		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
-		poppy.setCurrentX(0);
-		poppy.setCurrentY(2);
-		poppy.setDestination(poppy.getX(), poppy.getY());*/
+//		Robot poppy;
+//		robotList.add((poppy = addNXT("Poppy", "001653089A83")));
+//		poppy.setCurrentX(0);
+//		poppy.setCurrentY(2);
+//		poppy.setDestination(poppy.getX(), poppy.getY());
 		/*Robot lego;
 		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
 		lego.setCurrentX(0);

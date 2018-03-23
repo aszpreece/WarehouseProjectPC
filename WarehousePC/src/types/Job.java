@@ -63,7 +63,7 @@ public class Job{
 	private float calculateReward() {
 		float total = 0;
 		for (Task t : itemList) {
-			total += t.getReward();
+			total += t.getTotalReward();
 		}
 		return total;
 	}
