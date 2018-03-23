@@ -19,8 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.apache.log4j.Logger;
+
 import bluetooth.Robot;
 import filehandling.JobTable;
+import jobmanagement.JobAssignment;
 import jobmanagement.Server;
 import lejos.util.Delay;
 import rp.robotics.MobileRobotWrapper;
@@ -51,6 +54,8 @@ public class PCGUI extends JFrame implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3943010528198460967L;
+	
+	private static final Logger logger = Logger.getLogger(PCGUI.class);
 
 	private static final String FRAME_TITLE = "Robot Control UI";
 
@@ -106,6 +111,7 @@ public class PCGUI extends JFrame implements Runnable {
 		// Panel holding the list of the active jobs
 		activeJobsPanel = new JPanel();
 		{
+			logger.debug("Creating Panel holding the list of the active jobs");
 			activeJobsPanel.setBorder(BorderFactory.createTitledBorder("Active Jobs"));
 			activeJobsPanel.setPreferredSize(new Dimension(150, 200));
 			activeJobsPanel.setLayout(new BoxLayout(activeJobsPanel, BoxLayout.Y_AXIS));
@@ -121,6 +127,7 @@ public class PCGUI extends JFrame implements Runnable {
 		// Panel holding the list of inactive jobs
 		inactiveJobsPanel = new JPanel();
 		{
+			logger.debug("Creating Panel holding the list of inactive jobs");
 			inactiveJobsPanel.setBorder(BorderFactory.createTitledBorder("Inactive Jobs"));
 			inactiveJobsPanel.setPreferredSize(new Dimension(150, 200));
 			inactiveJobsPanel.setLayout(new BoxLayout(inactiveJobsPanel, BoxLayout.Y_AXIS));
@@ -138,6 +145,7 @@ public class PCGUI extends JFrame implements Runnable {
 		// The Centre of the window in the BorderLayout layout manager
 		mainCanvas = new JPanel();
 		{
+			logger.debug("Creating the Centre of the window in the BorderLayout layout manager");
 			mainCanvas.setLayout(new BoxLayout(mainCanvas, BoxLayout.Y_AXIS));
 			gridPanel = new JPanel();
 			gridInnerPanel = new GridPanel(server);
@@ -153,6 +161,7 @@ public class PCGUI extends JFrame implements Runnable {
 		// Panel holding information about the robot destination, name and location
 		robotDetailsPanel = new JPanel();
 		{
+			logger.debug("Creating panel holding information about the robot destination, name and location");
 			robotDetailsInnerPanel = new RobotPanel(server);
 			robotDetailsPanel.setBorder(BorderFactory.createTitledBorder("Robots"));
 			robotDetailsPanel.setPreferredSize(new Dimension(245, 100));
@@ -199,12 +208,14 @@ public class PCGUI extends JFrame implements Runnable {
 	public void updateUI() {
 		
 		// Removes all the visual components to be changed
+		logger.debug("Removing all the visual components to be changed");
 		activeJobsInnerPanel.removeAll();
 		inactiveJobsInnerPanel.removeAll();
 		robotDetailsPanel.removeAll();
 		mainCanvas.remove(reward);
 
 		// Updates the active/in active jobs list
+		logger.debug("Updating the active/in active jobs list");
 		for (String jobID : jobDataStore.getJobTable().keySet()) {
 			Job j = jobDataStore.getJobTable().get(jobID);
 			float percentageComplete = j.getPercentageComplete();
@@ -219,6 +230,7 @@ public class PCGUI extends JFrame implements Runnable {
 		}
 
 		// Updates the total reward accumulated
+		logger.debug("Updating the total reward accumulated");
 		reward = new JLabel("Total Reward: " + server.getScore());
 		mainCanvas.add(reward);
 
@@ -246,6 +258,8 @@ class JobPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 2180129182481579585L;
+	
+	private static final Logger logger = Logger.getLogger(JobPanel.class);
 
 	private JLabel jobLabel;
 	private JLabel percentageCompleteLabel;
@@ -275,6 +289,7 @@ class JobPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// Send Cancel message up
+					logger.debug("Cancel Button Pressed");
 					jobDataStore.setCancelled(jobID);
 				}
 			});
@@ -344,6 +359,9 @@ class GridPanel extends JPanel implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 892150393382176613L;
+	
+	private static final Logger logger = Logger.getLogger(GridPanel.class);
+	
 	private GridMap gridMap;
 	private MapBasedSimulation sim;
 	private List<Robot> robotList;
@@ -364,6 +382,7 @@ class GridPanel extends JPanel implements Runnable {
 		this.robotList = server.getConnectedRobots();
 
 		// Loads the robot list handles into a seperate list to avoid concurrency errors
+		logger.debug("Loading the robot list handles into a seperate list to avoid concurrency errors");
 		List<Robot> searchList = new ArrayList<Robot>(robotList);
 		
 		for (Robot r : searchList) {
@@ -375,6 +394,7 @@ class GridPanel extends JPanel implements Runnable {
 		}
 
 		// Starts the thread that checks the robot position
+		logger.debug("Starting the thread that checks the robot position");
 		Thread gridPanelThread = new Thread(this);
 		gridPanelThread.start();
 
@@ -446,6 +466,7 @@ class GridPanel extends JPanel implements Runnable {
 				GridMap myGridMap = MapUtils.createRealWarehouse();
 				
 				// Gets the robot handle from the robotTable and updates the grid pose
+				logger.debug("Getting the robot handle from the robotTable and updates the grid pose");
 				robotTable.get(r.getName()).getRobot()
 						.setPose(myGridMap.toPose(new GridPose(r.getCurrentX(), r.getCurrentY(), Heading.PLUS_Y)));
 			}
