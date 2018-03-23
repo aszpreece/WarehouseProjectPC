@@ -59,18 +59,26 @@ public class JobAssignment {
 	 *         these items should be picked up (specifying quantity to stop robot
 	 *         from picking more items than its max weight) plus when it needs to
 	 *         drop items off. USAGE: pop next step off queue to get the item
-	 *         coordinates to go to and how much to pick up of it
+	 *         coordinates to go to and how much to pick up of it. solves the
+	 *         travelling salesman problem by using the nearest neighbour approach
 	 */
 	public Queue<Step> getNextPlan(ArrayList<Task> tasks, Robot robot) {
-		//initialize the robots current values
+		// initialize the robots current attributes
 		float realRobotWeight = robot.getCurrentWeight();
+
+		// weights to make sure any step in the plan doesn't make the robot go over
+		// weight limit.
 		float robotWeight = realRobotWeight;
 		float maxWeight = robot.getMaxWeight();
+
 		Task nextTask;
+
+		// its current location to be able to update its location after each pick to
+		// choose the best picup.
 		int x = robot.getCurrentX();
 		int y = robot.getCurrentY();
-		
-		//create an empty plan
+
+		// create an empty plan
 		Queue<Step> plan = new LinkedBlockingQueue<Step>();
 
 		ArrayList<Task> tasksToComplete = new ArrayList<Task>();
@@ -88,17 +96,25 @@ public class JobAssignment {
 						// if even one of the item cannot be loaded then that means the robot should
 						// just head to the drop point
 						if (i != 1) {
+							// items to take will always be at least on at this point:
 							int itemsToTake = i - 1;
+
 							Step step = new Step(nextTask.getId(), itemsToTake,
 									new Node(currentItem.getX(), currentItem.getY()));
 							plan.add(step);
+
+							// reduces the quantity by what the robot will pick up so the plan will know to
+							// not need to pick all items
 							nextTask.changeQuantity(-itemsToTake);
 							logger.debug("sending robot with " + itemsToTake + " out of " + quantity + " items");
 						}
 						// the robot is now full so it needs to head towards the drop point
 						logger.debug("sending robot to drop off point");
-						Node dropLocation = getClosestDropLocation(x,y);
+						Node dropLocation = getClosestDropLocation(x, y);
 						Step step = new Step("DROP", dropLocation);
+
+						// add a list of tasks that were completed due to this drop step (needed to find
+						// out if jobs are complete)
 						step.setDropAssociatedTasks(tasksToComplete);
 						plan.add(step);
 						tasksToComplete = new ArrayList<Task>();
@@ -113,9 +129,9 @@ public class JobAssignment {
 			else {
 				logger.trace("all quantity of item " + nextTask.getId() + " can be loaded onto robot");
 				Step step = new Step(nextTask.getId(), quantity, new Node(currentItem.getX(), currentItem.getY()));
-				
-				//this step completes a task, flag to tell the server task has been completed.
-				
+
+				// this step completes a task, flag to tell the server task has been completed.
+
 				plan.add(step);
 				nextTask.setComplete(true);
 				tasksToComplete.add(nextTask);
@@ -139,17 +155,21 @@ public class JobAssignment {
 	}
 
 	/**
-	 * @param x current x
-	 * @param y current y
+	 * @param x
+	 *            current x
+	 * @param y
+	 *            current y
 	 * @return the closest drop node
 	 */
 	private Node getClosestDropLocation(int x, int y) {
 		Node shortestNode = null;
 		float shortestDistance = Float.MAX_VALUE;
-		for (Node n: drops) {
-			//euclidian distance between current position and node
+		
+		//look at all drop locations
+		for (Node n : drops) {
+			// euclidian distance between current position and node
 			float distance = (float) Math.sqrt(Math.pow(x - n.getX(), 2) + Math.pow(y - n.getY(), 2));
-			if(distance < shortestDistance) {
+			if (distance < shortestDistance) {
 				shortestDistance = distance;
 				shortestNode = n;
 			}
