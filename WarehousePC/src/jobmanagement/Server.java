@@ -204,8 +204,8 @@ public class Server extends Thread {
 						robotStep.getCommand();
 						System.out.println(robotStep.getCoordinate().toString());
 						System.out.println(robotStep.getCommand());
+						//append the correct drop off or pickup command to the route.
 					    if (robotStep.getCommand().equals("DROP")) {
-
 							instructions.add(NetworkMessage.AWAIT_DROPOFF);
 						} else {
 							instructions.add(NetworkMessage.AWAIT_PICKUP);

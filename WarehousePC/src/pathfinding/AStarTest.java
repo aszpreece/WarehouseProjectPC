@@ -10,6 +10,7 @@ import types.Node;
 
 public class AStarTest {
 
+	//easy route. If it crashes then there is a problem
 	@Test
 	public void easy() {
 		AStar pathf = new AStar();
@@ -22,7 +23,7 @@ public class AStarTest {
 
 	}
 	
-	
+	//harder route. If it crashes there is  a problem.
 	@Test
 	public void med() {
 		AStar pathf = new AStar();
@@ -35,6 +36,7 @@ public class AStarTest {
 
 	}
 
+	//harder route that makes it turn a corner.
 	@Test
 	public void hard() {
 		AStar pathf = new AStar();
@@ -47,6 +49,7 @@ public class AStarTest {
 
 	}
 	
+	//makes it path to the opposite side of the map.
 	@Test
 	public void darkSouls() {
 		AStar pathf = new AStar();
