@@ -127,6 +127,7 @@ public class Server extends Thread {
 //		poppy.setCurrentX(0);
 //		poppy.setCurrentY(2);
 //		poppy.setDestination(poppy.getX(), poppy.getY());
+		
 //		
 //		Robot lego;
 //		robotList.add((lego = addNXT("LEGOlas (DAB)", "0016530898D0")));
@@ -135,6 +136,7 @@ public class Server extends Thread {
 //		lego.setDestination(lego.getX(), lego.getY()); 
 
 		
+
 		Robot devil;
 		robotList.add((devil = addNXT("Devil's Tricycle", "001653156768")));
 		devil.setCurrentX(0);
